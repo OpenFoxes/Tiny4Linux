@@ -2,15 +2,15 @@
 
 [package]
 license = "EUPL-1.2"
-name = "tiny2"
-version = "0.1.0"
-edition = "2021"
-description = "A simple OBSBot Tiny2 GUI control panel for Linux"
-homepage = "https://github.com/cgevans/tiny2"
-repository = "https://github.com/cgevans/tiny2"
-authors = ["Constantine Evans <tiny2@mb.costi.net>"]
+name = "tiny4linux"
+version = "1.0.0"
+edition = "2024"
+description = "A simple GUI control panel for the OBSBot Tiny2 on Linux"
+homepage = "https://github.com/OpenFoxes/Tiny4Linux"
+repository = "https://github.com/OpenFoxes/Tiny4Linux"
+authors = ["Bono Fox <tiny4linux@bono-fox.de>","Constantine Evans <tiny2@mb.costi.net>"]
 readme = "README.md"
-keywords = ["obsbot", "tiny2", "camera", "webcam"]
+keywords = ["obsbot", "tiny2", "camera", "webcam", "linux"]
 categories = ["hardware-support"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -22,9 +22,9 @@ errno = "0"
 hex = "0"
 glob = "0"
 enum_dispatch = "0.3"
-rosc = "^0.10"
-thiserror = "^1.0"
-hexdump = "^0.1"
+rosc = "~0.10"
+thiserror = "1.0"
+hexdump = "0.1"
 clap = { version = "4.4.18", features = ["derive"] }
 
 [[bin]]

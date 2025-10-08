@@ -2,7 +2,7 @@ use iced::widget::{button, column, row, text, text_input, toggler};
 use iced::{executor, window, Alignment, Length};
 use iced::{Application, Command, Element, Settings, Theme};
 
-use tiny2::{AIMode, Camera, OBSBotWebCam, ExposureMode};
+use tiny4linux::{AIMode, Camera, OBSBotWebCam, ExposureMode};
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {

@@ -1,6 +1,6 @@
 use rosc::{OscMessage, OscType};
 use std::net::UdpSocket;
-use tiny2::{Camera, Error, OBSBotWebCam};
+use tiny4linux::{Camera, Error, OBSBotWebCam};
 
 struct OBSBotOSCServer {
     addr: String,
