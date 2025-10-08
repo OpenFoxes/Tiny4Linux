@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "description": "Renovate-Configuration for tiny4linux",
+  "labels": ["👷 renovate"],
+  "prHourlyLimit": 20,
+  "recreateWhen": "always",
+  "commitMessagePrefix": "⬆️ ",
+  "commitMessageAction": "Upgrade",
+  "commitMessageTopic": "Dependency {{depName}}",
+  "commitMessageExtra": "to {{#if isPinDigest}}{{{newDigestShort}}}{{else}}{{#if isMajor}}{{prettyNewMajor}}{{else}}{{#if isSingleVersion}}{{prettyNewVersion}}{{else}}{{#if newValue}}{{{newValue}}}{{else}}{{{newDigestShort}}}{{/if}}{{/if}}{{/if}}{{/if}}",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "commitMessageAction": "Lockfile-Maintenance",
+    "prBodyDefinitions": {
+      "Change": "Updated Lock-File"
+    }
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["pin"],
+      "commitMessagePrefix": "📌 ",
+      "commitMessageAction": "Pin",
+      "addLabels": ["pin"]
+    },
+    {
+      "matchUpdateTypes": ["rollback"],
+      "commitMessagePrefix": "⬇️ ",
+      "commitMessageAction": "Downgrade"
+    }
+  ]
+}
