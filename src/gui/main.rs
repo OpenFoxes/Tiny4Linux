@@ -10,6 +10,7 @@ enum Message {
     ChangeTracking(AIMode),
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
+    ChangeDebugging(bool),
     TextInput(String),
     TextInput02(String),
     CheckCamera,
@@ -23,6 +24,7 @@ struct MainPanel {
     camera: Option<Camera>,
     tracking: AIMode,
     hdr_on: bool,
+    debugging_on: bool,
     text_input: String,
     text_input_02: String,
 }
@@ -49,6 +51,7 @@ impl Application for MainPanel {
                 camera,
                 tracking: status.ai_mode,
                 hdr_on: status.hdr_on,
+                debugging_on: false,
                 text_input: String::new(),
                 text_input_02: String::new(),
             },
@@ -89,6 +92,10 @@ impl Application for MainPanel {
                 camera.set_exposure_mode(mode).unwrap();
                 Command::none()
             }
+            Message::ChangeDebugging(new_mode) => {
+                self.debugging_on = new_mode;
+                Command::none()
+            }
             Message::TextInput(s) => {
                 self.text_input = s;
                 Command::none()
@@ -121,7 +128,7 @@ impl Application for MainPanel {
 
     fn view(&self) -> Element<Message> {
         if self.camera.is_some() {
-            let c = column![
+            let mut elements = column![
                 row![
                     text("Tiny4Linux")
                         .size(26)
@@ -180,26 +187,38 @@ impl Application for MainPanel {
                 ]
                 .spacing(10),
                 toggler(Some("HDR".to_string()), self.hdr_on, Message::ChangeHDR),
-                text_input("0x06 hex string", &self.text_input)
-                    .on_input(Message::TextInput)
-                    .on_submit(Message::SendCommand),
-                text_input("0x02 hex string", &self.text_input_02)
-                    .on_input(Message::TextInput02)
-                    .on_submit(Message::SendCommand02),
-                button("Dump 0x06")
-                    .on_press(Message::HexDump)
-                    .width(Length::Fill),
-                button("Dump 0x02")
-                    .on_press(Message::HexDump02)
-                    .width(Length::Fill),
+                toggler(
+                    Some("Debugging".to_string()),
+                    self.debugging_on,
+                    Message::ChangeDebugging
+                ),
                 text(self.tracking)
-            ]
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .align_items(Alignment::Center)
-            .spacing(10)
-            .padding(10)
-            .into();
+            ];
+
+            if self.debugging_on {
+                elements = elements.push(column![
+                    text_input("0x06 hex string", &self.text_input)
+                        .on_input(Message::TextInput)
+                        .on_submit(Message::SendCommand),
+                    text_input("0x02 hex string", &self.text_input_02)
+                        .on_input(Message::TextInput02)
+                        .on_submit(Message::SendCommand02),
+                    button("Dump 0x06")
+                        .on_press(Message::HexDump)
+                        .width(Length::Fill),
+                    button("Dump 0x02")
+                        .on_press(Message::HexDump02)
+                        .width(Length::Fill),
+                ]);
+            }
+
+            let c = elements
+                .width(Length::Fill)
+                .height(Length::Fill)
+                .align_items(Alignment::Center)
+                .spacing(10)
+                .padding(10)
+                .into();
             c
         } else {
             text("Camera could not be found. Please check the connection of the camera.")
