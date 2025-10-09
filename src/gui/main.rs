@@ -57,7 +57,7 @@ impl Application for MainPanel {
     }
 
     fn title(&self) -> String {
-        "ObsBot Tiny 2 Control Panel".to_string()
+        "Tiny4Linux".to_string()
     }
 
     fn update(&mut self, message: Message) -> Command<Message> {
@@ -122,6 +122,10 @@ impl Application for MainPanel {
     fn view(&self) -> Element<Message> {
         if self.camera.is_some() {
             let c = column![
+                text("Tiny4Linux")
+                    .size(26)
+                    .height(100)
+                    .vertical_alignment(Vertical::Center),
                 button("Static").on_press(Message::ChangeTracking(AIMode::NoTracking)),
                 button("Normal Tracking").on_press(Message::ChangeTracking(AIMode::NormalTracking)),
                 row![
