@@ -1,8 +1,8 @@
 use iced::widget::{button, column, row, text, text_input, toggler};
-use iced::{executor, window, Alignment, Length};
+use iced::{Alignment, Length, executor, window};
 use iced::{Application, Command, Element, Settings, Theme};
 
-use tiny4linux::{AIMode, Camera, OBSBotWebCam, ExposureMode};
+use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam};
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
@@ -78,11 +78,7 @@ impl Application for MainPanel {
                     .width(Length::Fill),
             ]
             .spacing(10),
-            toggler(
-                Some("HDR".to_string()),
-                self.hdr_on,
-                Message::ChangeHDR
-            ),
+            toggler(Some("HDR".to_string()), self.hdr_on, Message::ChangeHDR),
             text_input("0x06 hex string", &self.text_input)
                 .on_input(Message::TextInput)
                 .on_submit(Message::SendCommand),

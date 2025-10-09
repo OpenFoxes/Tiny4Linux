@@ -3,12 +3,18 @@
 mod usbio;
 
 use errno::Errno;
-use usbio::UvcUsbIo;
 use std::{fmt::Display, io};
 use thiserror::Error;
+use usbio::UvcUsbIo;
 
-const AUTO_EXP_CMD: [u8; 18] = [0xaa, 0x25, 0x16, 0x00, 0x0c, 0x00, 0x58, 0x91, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xb2, 0xaf, 0x02, 0x04];
-const MANUAL_EXP_CMD: [u8; 18] = [0xaa, 0x25, 0x15, 0x00, 0x0c, 0x00, 0xa8, 0x9e, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xf9, 0x27, 0x01, 0x32];
+const AUTO_EXP_CMD: [u8; 18] = [
+    0xaa, 0x25, 0x16, 0x00, 0x0c, 0x00, 0x58, 0x91, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xb2, 0xaf,
+    0x02, 0x04,
+];
+const MANUAL_EXP_CMD: [u8; 18] = [
+    0xaa, 0x25, 0x15, 0x00, 0x0c, 0x00, 0xa8, 0x9e, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xf9, 0x27,
+    0x01, 0x32,
+];
 
 #[derive(Error, Debug)]
 pub enum Error {
@@ -31,7 +37,7 @@ pub struct Camera {
 
 pub struct CameraStatus {
     pub ai_mode: AIMode,
-    pub hdr_on: bool
+    pub hdr_on: bool,
 }
 
 impl CameraStatus {
@@ -77,7 +83,7 @@ pub enum AIMode {
 pub enum ExposureMode {
     Manual,
     Global,
-    Face
+    Face,
 }
 
 impl Display for AIMode {
@@ -180,8 +186,6 @@ impl OBSBotWebCam for Camera {
         Ok(())
     }
 
-
-
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error> {
         let cmd = if mode {
             [0x01, 0x01, 0x01]
@@ -198,7 +202,9 @@ impl OBSBotWebCam for Camera {
 
 impl Camera {
     pub fn new(hint: &str) -> Result<Self, Error> {
-        Ok(Self { handle: usbio::open_camera(hint)? })
+        Ok(Self {
+            handle: usbio::open_camera(hint)?,
+        })
     }
 
     pub fn info(&self) -> Result<(), Errno> {
