@@ -145,6 +145,7 @@ pub struct uvc_xu_control_query {
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
+#[allow(dead_code)]
 pub struct uvc_menu_info {
     name: [u8; 32],
     value: u32,
@@ -152,6 +153,7 @@ pub struct uvc_menu_info {
 
 #[allow(non_camel_case_types)]
 #[repr(C)]
+#[allow(dead_code)]
 pub struct uvc_xu_control_mapping {
     id: u32,
     name: [u8; 32],
