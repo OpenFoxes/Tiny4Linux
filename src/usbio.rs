@@ -2,8 +2,7 @@
 
 use enum_dispatch::enum_dispatch;
 use errno::Errno;
-use nix::errno::errno;
-use nix::{ioctl_read_buf, ioctl_readwrite_buf};
+use nix::{Error, ioctl_read_buf, ioctl_readwrite_buf};
 use std::fs::File;
 use std::os::unix::io::AsRawFd;
 //use std::fs::OpenOptions;
@@ -40,7 +39,7 @@ impl UvcUsbIo for CameraHandle {
             }
             _ => {
                 println!("Failed");
-                Err(errno::Errno(errno()))
+                Err(Errno(Error::last_raw()))
             }
         }
     }
@@ -59,7 +58,7 @@ impl UvcUsbIo for CameraHandle {
         unsafe {
             match uvcioc_ctrl_query(dev.as_raw_fd(), &mut [query]) {
                 Ok(_) => Ok(()),
-                _ => Err(errno::Errno(errno())),
+                _ => Err(Errno(Error::last_raw())),
             }
         }
     }
@@ -118,7 +117,7 @@ impl v4l2_capability {
         unsafe {
             match ioctl_videoc_querycap(dev.as_raw_fd(), &mut query) {
                 Ok(_) => Ok(query[0]),
-                _ => Err(errno::Errno(errno())),
+                _ => Err(Errno(Error::last_raw())),
             }
         }
     }
