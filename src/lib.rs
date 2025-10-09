@@ -63,6 +63,13 @@ impl CameraStatus {
 
         CameraStatus { ai_mode, hdr_on }
     }
+
+    pub fn default() -> Self {
+        CameraStatus {
+            ai_mode: AIMode::NoTracking,
+            hdr_on: false,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
