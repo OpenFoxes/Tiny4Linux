@@ -169,6 +169,19 @@ impl OBSBotWebCam for Camera {
         self.send_cmd(0x2, 0x6, &cmd)
     }
 
+    fn get_ai_mode(&self) -> Result<AIMode, Error> {
+        Ok(self.get_status()?.ai_mode)
+    }
+
+    fn set_hdr_mode(&self, mode: bool) -> Result<(), Error> {
+        let cmd = if mode {
+            [0x01, 0x01, 0x01]
+        } else {
+            [0x01, 0x01, 0x00]
+        };
+        self.send_cmd(0x2, 0x6, &cmd)
+    }
+
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error> {
         match mode {
             ExposureMode::Manual => {
@@ -184,19 +197,6 @@ impl OBSBotWebCam for Camera {
             }
         };
         Ok(())
-    }
-
-    fn set_hdr_mode(&self, mode: bool) -> Result<(), Error> {
-        let cmd = if mode {
-            [0x01, 0x01, 0x01]
-        } else {
-            [0x01, 0x01, 0x00]
-        };
-        self.send_cmd(0x2, 0x6, &cmd)
-    }
-
-    fn get_ai_mode(&self) -> Result<AIMode, Error> {
-        Ok(self.get_status()?.ai_mode)
     }
 }
 
