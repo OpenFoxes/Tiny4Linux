@@ -1,5 +1,5 @@
 use iced::alignment::{Horizontal, Vertical};
-use iced::widget::{button, column, row, text, text_input, toggler};
+use iced::widget::{button, column, image, row, text, text_input, toggler};
 use iced::{Alignment, Length, Subscription, executor, time, window};
 use iced::{Application, Command, Element, Settings, Theme};
 use std::time::Duration;
@@ -122,10 +122,13 @@ impl Application for MainPanel {
     fn view(&self) -> Element<Message> {
         if self.camera.is_some() {
             let c = column![
-                text("Tiny4Linux")
-                    .size(26)
-                    .height(100)
-                    .vertical_alignment(Vertical::Center),
+                row![
+                    text("Tiny4Linux")
+                        .size(26)
+                        .height(100)
+                        .vertical_alignment(Vertical::Center),
+                    image("src/assets/obsbot-tiny-2.png").height(100)
+                ],
                 button("Static").on_press(Message::ChangeTracking(AIMode::NoTracking)),
                 button("Normal Tracking").on_press(Message::ChangeTracking(AIMode::NormalTracking)),
                 row![
