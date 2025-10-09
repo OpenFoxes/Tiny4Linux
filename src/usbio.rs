@@ -8,8 +8,8 @@ use std::fs::File;
 use std::os::unix::io::AsRawFd;
 //use std::fs::OpenOptions;
 //use std::os::unix::fs::OpenOptionsExt;
-use glob::glob_with;
 use glob::MatchOptions;
+use glob::glob_with;
 use std::str;
 
 #[enum_dispatch(CameraHandleType)]
@@ -65,8 +65,7 @@ impl UvcUsbIo for CameraHandle {
     }
 }
 
-pub(crate)
-fn open_camera(hint: &str) -> Result<CameraHandle, crate::Error> {
+pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, crate::Error> {
     if let Ok(file) = File::open(hint) {
         return Ok(file.into());
     }

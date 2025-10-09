@@ -39,22 +39,21 @@ impl OBSBotOSCServer {
             }
             _ => {
                 println!("{:?}", msg);
-                Ok(())},
+                Ok(())
+            }
         }
     }
 }
-
 
 use clap::Parser;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about=None)]
 struct Args {
     #[arg(short, long, default_value = "127.0.0.1:9000")]
-    address: String
+    address: String,
 }
 
 fn main() {
-
     let args = Args::parse();
 
     let server = OBSBotOSCServer {
