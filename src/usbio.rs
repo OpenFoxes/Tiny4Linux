@@ -2,13 +2,11 @@
 
 use enum_dispatch::enum_dispatch;
 use errno::Errno;
+use glob::MatchOptions;
+use glob::glob_with;
 use nix::{Error, ioctl_read_buf, ioctl_readwrite_buf};
 use std::fs::File;
 use std::os::unix::io::AsRawFd;
-//use std::fs::OpenOptions;
-//use std::os::unix::fs::OpenOptionsExt;
-use glob::MatchOptions;
-use glob::glob_with;
 use std::str;
 
 #[enum_dispatch(CameraHandleType)]
@@ -82,7 +80,6 @@ pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, crate::Error> {
     for path in glob_with("/dev/video*", options).unwrap().flatten() {
         if let Ok(device) = File::open(&path) {
             if let Ok(video_info) = v4l2_capability::new(&device) {
-                // println!("Info: {}\nCard: {:?}\nBus:  {:?}\ndc {:#X}", , video_info.card, video_info.bus_info, video_info.device_caps & 0x800000);
                 if (str::from_utf8(&video_info.card).unwrap().contains(hint)
                     || str::from_utf8(&video_info.bus_info).unwrap().contains(hint))
                     && (video_info.device_caps & 0x800000 == 0)
