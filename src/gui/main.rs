@@ -217,7 +217,7 @@ impl Application for MainPanel {
 fn main() -> iced::Result {
     MainPanel::run(Settings {
         window: window::Settings {
-            size: (300, 540),
+            size: (300, 640),
             resizable: false,
             decorations: true,
             ..Default::default()
