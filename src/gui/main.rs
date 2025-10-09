@@ -120,7 +120,7 @@ impl Application for MainPanel {
     }
 
     fn view(&self) -> Element<Message> {
-        if let Some(camera) = &self.camera {
+        if self.camera.is_some() {
             let c = column![
                 button("None").on_press(Message::ChangeTracking(AIMode::NoTracking)),
                 button("Normal Tracking").on_press(Message::ChangeTracking(AIMode::NormalTracking)),
