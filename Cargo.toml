@@ -16,15 +16,15 @@ categories = ["hardware-support"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-iced = { version = "0.10", features = ["image", "tokio"] }
-nix = { version = "0.29", features = ["ioctl"] }
-errno = "0"
-hex = "0"
-glob = "0"
-enum_dispatch = "0.3"
-rosc = "~0.10"
-thiserror = "1.0"
-hexdump = "0.1"
+iced = { version = "0.10.0", features = ["image", "tokio"] }
+nix = { version = "0.29.0", features = ["ioctl"] }
+errno = "0.3.14"
+hex = "0.4.3"
+glob = "0.3.3"
+enum_dispatch = "0.3.13"
+rosc = "0.10.1"
+thiserror = "1.0.69"
+hexdump = "0.1.2"
 clap = { version = "4.4.18", features = ["derive"] }
 
 [[bin]]
