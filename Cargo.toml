@@ -22,7 +22,7 @@ errno = "0.3.14"
 hex = "0.4.3"
 glob = "0.3.3"
 enum_dispatch = "0.3.13"
-rosc = "0.10.1"
+rosc = "0.11.0"
 thiserror = "1.0.69"
 hexdump = "0.1.2"
 clap = { version = "4.4.18", features = ["derive"] }
