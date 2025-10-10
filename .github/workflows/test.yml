@@ -1,0 +1,66 @@
+name: PR Pipeline
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref ||  github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  pr:
+    name: Run PR-Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Extract last commit message
+        id: last_commit
+        run: |
+          last_commit_msg=$(git log -1 --pretty=%s)
+          echo "lastcommit=$last_commit_msg" >> $GITHUB_ENV
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Execute tests
+        run: cargo test
+
+      - name: Check on unwanted file changes
+        run: |
+          git status --short
+          git add -A
+          git diff --cached --exit-code
+
+      - name: Format code
+        if: >-
+          ${{
+          !contains(env.lastcommit, '🎨 Formatted code')
+          }}
+        run: cargo fmt
+
+      - name: Add formatting-commit
+        if: >-
+          ${{
+          !contains(env.lastcommit, '🎨 Formatted code')
+          }}
+        run: |
+          git config --global user.name 'OpenFoxes Maintenance Bot'
+          git config --global user.email 'openfoxes@bono-fox.de'
+          git checkout ${{ github.event.pull_request.head.ref }}
+          git add .
+          git diff-index --quiet ${{ github.event.pull_request.head.ref }} || {
+          git commit -m "🎨 Formatted code"
+          git push origin ${{ github.event.pull_request.head.ref }}
+          }
