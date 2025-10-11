@@ -42,10 +42,17 @@ pub struct CameraStatus {
 
 impl CameraStatus {
     pub fn decode(bytes: &[u8]) -> Self {
+        CameraStatus {
+            ai_mode: Self::decode_ai_mode(bytes),
+            hdr_on: Self::decode_hdr_on(bytes),
+        }
+    }
+
+    fn decode_ai_mode(bytes: &[u8]) -> AIMode {
         let m = bytes[0x18];
         let n = bytes[0x1c];
 
-        let ai_mode = match (m, n) {
+        match (m, n) {
             (0, 0) => AIMode::NoTracking,
             (2, 0) => AIMode::NormalTracking,
             (2, 1) => AIMode::UpperBody,
@@ -57,11 +64,11 @@ impl CameraStatus {
             (6, 0) => AIMode::Hand,
             (1, 0) => AIMode::Group,
             (_, _) => panic!(),
-        };
+        }
+    }
 
-        let hdr_on = bytes[0x6] != 0;
-
-        CameraStatus { ai_mode, hdr_on }
+    fn decode_hdr_on(bytes: &[u8]) -> bool {
+        bytes[0x6] != 0
     }
 
     pub fn default() -> Self {
