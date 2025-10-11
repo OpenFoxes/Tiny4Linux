@@ -1,7 +1,8 @@
 # Tiny4Linux: A GUI-Controller for the OBSBOT Tiny2
 
 With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
-The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2 \
+The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2
+
 As of [September 2025](https://web.archive.org/web/20251008100439/https://www.obsbot.com/download/obsbot-tiny-2), however, this software is only available for users on Windows and macOS.
 According to [the latest Steam Hardware Survey](https://web.archive.org/web/20251008101418/https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam), Linux users account for 2.68%, which is actually more than macOS users.
 Especially within the tech community, many users (rightly so :P) rely on Linux as their operating system.
@@ -22,14 +23,15 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 
 ## New features and improvements
 
-- Toggle for Sleep/Wake
-- Controls for the tracking speed
+- Toggle for **Sleep/Wake**
+- Controls for the **tracking speed**
 - Updated Dependencies
 
 ### Shortly planned features
 
 - Apply position-presets
-- UI-Upgrade
+- UI-Upgrade (WIP)
+- Tests & Codecov check
 
 ## Run the GUI
 
