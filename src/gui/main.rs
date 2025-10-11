@@ -152,7 +152,12 @@ impl Application for MainPanel {
                         .size(26)
                         .height(100)
                         .vertical_alignment(Vertical::Center),
-                    image("src/assets/obsbot-tiny-2.png").height(100)
+                    image(if self.awake == SleepMode::Awake {
+                        "src/assets/obsbot-tiny-2.png"
+                    } else {
+                        "src/assets/obsbot-tiny-2-side.png"
+                    })
+                    .height(100)
                 ],
                 toggler(
                     Some("Sleeping".to_string()),
