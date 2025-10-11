@@ -1,6 +1,6 @@
 use iced::alignment::{Horizontal, Vertical};
 use iced::widget::{button, column, image, row, text, text_input, toggler};
-use iced::{Alignment, Length, Subscription, executor, time, window};
+use iced::{Alignment, Length, Subscription, executor, time, window, Size};
 use iced::{Application, Command, Element, Settings, Theme};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode};
@@ -266,7 +266,7 @@ impl Application for MainPanel {
 fn main() -> iced::Result {
     MainPanel::run(Settings {
         window: window::Settings {
-            size: (300, 640),
+            size: Size::from([300, 640]),
             resizable: false,
             decorations: true,
             ..Default::default()
