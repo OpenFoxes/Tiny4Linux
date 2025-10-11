@@ -7,12 +7,13 @@ use iced::widget::{button, column, image, row, text, text_input, toggler};
 use iced::{Alignment, Length, Size, Subscription, executor, time, window};
 use iced::{Application, Command, Element, Settings, Theme};
 use std::time::Duration;
-use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode};
+use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
     ChangeSleeping(bool),
     ChangeTracking(AIMode),
+    ChangeTrackingSpeed(TrackingSpeed),
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
     ChangeDebugging(bool),
@@ -29,6 +30,7 @@ struct MainPanel {
     camera: Option<Camera>,
     awake: SleepMode,
     tracking: AIMode,
+    tracking_speed: TrackingSpeed,
     hdr_on: bool,
     debugging_on: bool,
     text_input: String,
@@ -57,6 +59,7 @@ impl Application for MainPanel {
                 camera,
                 awake: status.awake,
                 tracking: status.ai_mode,
+                tracking_speed: status.speed,
                 hdr_on: status.hdr_on,
                 debugging_on: false,
                 text_input: String::new(),
@@ -99,6 +102,11 @@ impl Application for MainPanel {
             Message::ChangeTracking(tracking_type) => {
                 self.tracking = tracking_type;
                 camera.set_ai_mode(tracking_type).unwrap();
+                Command::none()
+            }
+            Message::ChangeTrackingSpeed(new_speed) => {
+                self.tracking_speed = new_speed;
+                camera.set_tracking_speed(new_speed).unwrap();
                 Command::none()
             }
             Message::ChangeHDR(new_mode) => {
@@ -269,6 +277,25 @@ impl Application for MainPanel {
                         .style(Button::Secondary),
                 ]
                 .spacing(10),
+                row![
+                    text("Tracking Speed: "),
+                    button("Standard")
+                        .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Standard))
+                        .style(if self.tracking_speed == TrackingSpeed::Standard {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
+                    button("Sport")
+                        .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Sport))
+                        .style(if self.tracking_speed == TrackingSpeed::Sport {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
+                ]
+                .spacing(10)
+                .padding([10, 0, 10, 0]),
                 toggler(Some("HDR".to_string()), self.hdr_on, Message::ChangeHDR),
                 toggler(
                     Some("Debugging".to_string()),
@@ -334,7 +361,7 @@ impl Application for MainPanel {
 fn main() -> iced::Result {
     MainPanel::run(Settings {
         window: window::Settings {
-            size: Size::from([300, 640]),
+            size: Size::from([300, 720]),
             resizable: false,
             decorations: true,
             ..Default::default()

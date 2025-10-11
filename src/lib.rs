@@ -214,6 +214,7 @@ pub trait OBSBotWebCam {
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), Error>;
     fn get_ai_mode(&self) -> Result<AIMode, Error>;
     fn get_tracking_speed(&self) -> Result<TrackingSpeed, Error>;
+    fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), Error>;
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error>;
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error>;
 }
@@ -278,6 +279,35 @@ impl OBSBotWebCam for Camera {
 
     fn get_tracking_speed(&self) -> Result<TrackingSpeed, Error> {
         Ok(self.get_status()?.speed)
+    }
+
+    fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), Error> {
+        const FRAME_ID: [u8; 2] = [0xaa, 0x25];
+        const SEGMENT_SIZE: [u8; 2] = [0x0c, 0x00];
+        const FUNCTION_GROUP: [u8; 6] = [0x0a, 0x04, 0xc4, 0x0c, 0x01, 0x00];
+        const APPENDIX: [u8; 7] = [0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff];
+
+        let (sequence_nr, checksum, command) = match speed {
+            TrackingSpeed::Standard => ([0x20, 0x00], [0xab, 0xcb], [0xe6, 0x3f, 0x00]),
+            TrackingSpeed::Sport => ([0x21, 0x00], [0xfa, 0x0e], [0x67, 0xfe, 0x02]),
+        };
+
+        let cmd: [u8; 24] = [
+            FRAME_ID.as_slice(),
+            sequence_nr.as_slice(),
+            SEGMENT_SIZE.as_slice(),
+            checksum.as_slice(),
+            FUNCTION_GROUP.as_slice(),
+            command.as_slice(),
+            APPENDIX.as_slice(),
+        ]
+        .concat()
+        .try_into()
+        .unwrap();
+
+        self.get_status()?.speed = speed;
+
+        self.send_cmd(0x2, 0x2, &cmd)
     }
 
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error> {
