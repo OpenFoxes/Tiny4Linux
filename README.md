@@ -8,6 +8,8 @@ Especially within the tech community, many users (rightly so :P) rely on Linux a
 Unfortunately, they currently miss out on the configuration options offered by the OBSBOT Center.
 
 To partially address this issue, [OBSBOT now provides an SDK](https://www.obsbot.com/de/sdk), which allows developers to replicate certain functionalities.
+However, the availability of the SDK is still limited.
+Fortunately, the community has since managed to implement several solutions on its own through [reverse engineering](https://github.com/taxfromdk/obsbot_tiny_reversing) and a lot of dedication.
 
 This project provides a graphical interface for some basic features.
 However, to make full use of all functions, a configuration must first be performed in the OBSBOT Center using one of the supported operating systems.
@@ -17,6 +19,16 @@ A guide on how to do this quickly and easily on Linux can be found below.
 
 This repository is a fork of [Constantine Evans's "Tiny2"](https://github.com/cgevans/tiny2),
 which itself is substantially based on [samliddicott's meet4k package](https://github.com/samliddicott/meet4k).
+
+## New features and improvements
+
+- Toggle for Sleep/Wake
+- Updated Dependencies
+
+### Shortly planned features
+
+- Apply position-presets
+- UI-Upgrade
 
 ## Run the GUI
 
