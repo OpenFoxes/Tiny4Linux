@@ -140,7 +140,7 @@ impl Application for MainPanel {
         }
     }
 
-    fn view(&self) -> Element<Message> {
+    fn view(&'_ self) -> Element<'_, Message> {
         if self.camera.is_some() {
             let mut elements = column![
                 row![
