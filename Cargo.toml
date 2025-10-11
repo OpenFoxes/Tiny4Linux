@@ -13,6 +13,12 @@ readme = "README.md"
 keywords = ["obsbot", "tiny2", "camera", "webcam", "linux"]
 categories = ["hardware-support"]
 
+[package.metadata.deb]
+maintainer = "Bono Fox <tiny4linux@bono-fox.de>"
+depends = "libc6 (>= 2.27)"
+section = "utils"
+priority = "optional"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]

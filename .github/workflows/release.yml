@@ -1,0 +1,164 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (SemVer)'
+        required: true
+        default: 0.0.0
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  update-version:
+    name: Update version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Install cargo-edit
+        run: cargo install cargo-edit
+
+      - name: Update package version
+        run: cargo set-version ${{ github.event.inputs.version }}
+
+      - name: Commit hinzufügen
+        run: |
+          git config --global user.name 'Kick-Bot'
+          git config --global user.email 'kickbot@bono-fox.de'
+          git init
+          git add .
+          git commit -m "🔖 Release Tiny4Linux ${{  github.event.inputs.version }}"
+          git tag v${{  github.event.inputs.version }}
+          git push -u origin HEAD:main --tags
+
+      - name: Arbeitsverzeichnis mit Versionsstand hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: versioned-build
+          include-hidden-files: true
+          path: .
+          retention-days: 1
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [update-version]
+    steps:
+      - name: Download working directory with current version-number
+        uses: actions/download-artifact@v5
+        with:
+          name: versioned-build
+          path: .
+
+      - name: Build binary
+        run: cargo build --release
+
+      - name: Installing cargo-deb
+        run: cargo install cargo-deb
+
+      - name: Build deb
+        run: cargo deb
+
+      - name: Installing cargo-rpm
+        run: cargo install cargo-rpm | cargo rpm init
+
+      - name: Build rpm
+        run: cargo rpm build
+
+      - name: Backend bauen
+        run: npm run build:backend
+
+      #      - name: Dokumentation bauen
+      #        run: npm run generate-docs
+
+      - name: Build-Artefakte hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          include-hidden-files: true
+          path: .
+          retention-days: 1
+
+  create-github-release:
+    name: 'Create GitHub release'
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Versioniertes Build herunterladen
+        uses: actions/download-artifact@v5
+        with:
+          name: build-artifact
+          path: .
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          name: Version ${{  github.event.inputs.version }}
+          tag_name: v${{  github.event.inputs.version }}
+
+  create-youtrack-release:
+    name: 'Create YouTrack release'
+    runs-on: ubuntu-latest
+    needs: [build]
+    env:
+      YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
+    steps:
+      - name: Versioniertes Build herunterladen
+        uses: actions/download-artifact@v5
+        with:
+          name: build-artifact
+          path: .
+
+      - name: Abhängigkeiten installieren
+        run: npm ci
+
+      - name: Release auf YouTrack aktualisieren
+        run: npm run youtrack-release ${{  github.event.inputs.version }}
+
+  deploy:
+    name: Deployen
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Versioniertes Build herunterladen
+        uses: actions/download-artifact@v5
+        with:
+          name: build-artifact
+          path: .
+
+      - name: FTP-Upload (PK-Frontend)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ vars.FTP_HOST }}
+          username: ${{ vars.FTP_NAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: peter/prod/frontend/
+          local-dir: dist/apps/peter-kick/
+
+      - name: FTP-Upload (Backend)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ vars.FTP_HOST }}
+          username: ${{ vars.FTP_NAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: peter/prod/backend/
+          local-dir: dist/apps/kick-backend/
+
+  cleanup:
+    name: Aufräumen
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    steps:
+      - name: Artefakte löschen
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            versioned-build
+            build-artifact
