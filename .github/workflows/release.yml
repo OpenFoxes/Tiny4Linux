@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (SemVer)'
+        required: true
+        default: 0.0.0
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  update-version:
+    name: Update version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - name: Install cargo-edit
+        run: cargo install cargo-edit
+
+      - name: Update package version
+        run: cargo set-version ${{ github.event.inputs.version }}
+
+      - name: Add a commit
+        run: |
+          git config --global user.name 'OpenFoxes Maintenance Bot'
+          git config --global user.email 'openfoxes@bono-fox.de'
+          git init
+          git add .
+          git commit -m "🔖 Release Tiny4Linux ${{  github.event.inputs.version }}"
+          git tag v${{  github.event.inputs.version }}
+          git push -u origin HEAD:main --tags
+
+      - name: Upload working directory with current version-number
+        uses: actions/upload-artifact@v4
+        with:
+          name: versioned-build
+          include-hidden-files: true
+          path: .
+          retention-days: 1
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [update-version]
+    steps:
+      - name: Download working directory with current version-number
+        uses: actions/download-artifact@v5
+        with:
+          name: versioned-build
+          path: .
+
+      - name: Build binary
+        run: cargo build --release
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          include-hidden-files: true
+          path: .
+          retention-days: 1
+
+  create-github-release:
+    name: 'Create GitHub release'
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: build-artifact
+          path: .
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          name: Version ${{  github.event.inputs.version }}
+          tag_name: v${{  github.event.inputs.version }}
+          files: |
+            target/release/obsbot-gui
+            target/release/obsbot-osc-server
+
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [create-github-release]
+    steps:
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            versioned-build
+            build-artifact
