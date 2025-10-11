@@ -40,6 +40,7 @@ pub struct Camera {
 pub struct CameraStatus {
     pub awake: SleepMode,
     pub ai_mode: AIMode,
+    pub speed: TrackingSpeed,
     pub hdr_on: bool,
 }
 
@@ -48,6 +49,7 @@ impl CameraStatus {
         CameraStatus {
             awake: Self::decode_sleep_mode(bytes),
             ai_mode: Self::decode_ai_mode(bytes),
+            speed: Self::decode_tracking_speed(bytes),
             hdr_on: Self::decode_hdr_on(bytes),
         }
     }
@@ -79,6 +81,14 @@ impl CameraStatus {
         }
     }
 
+    fn decode_tracking_speed(bytes: &[u8]) -> TrackingSpeed {
+        match bytes[0x21] {
+            0 => TrackingSpeed::Standard,
+            2 => TrackingSpeed::Sport,
+            _ => TrackingSpeed::Standard,
+        }
+    }
+
     fn decode_hdr_on(bytes: &[u8]) -> bool {
         bytes[0x6] != 0
     }
@@ -87,6 +97,7 @@ impl CameraStatus {
         CameraStatus {
             awake: SleepMode::Unknown,
             ai_mode: AIMode::Unknown,
+            speed: TrackingSpeed::Standard,
             hdr_on: false,
         }
     }
@@ -163,6 +174,12 @@ impl TryFrom<i32> for AIMode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+pub enum TrackingSpeed {
+    Standard,
+    Sport,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ExposureMode {
     Manual,
     Global,
@@ -196,6 +213,7 @@ pub trait OBSBotWebCam {
     fn get_sleep_mode(&self) -> Result<SleepMode, Error>;
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), Error>;
     fn get_ai_mode(&self) -> Result<AIMode, Error>;
+    fn get_tracking_speed(&self) -> Result<TrackingSpeed, Error>;
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error>;
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error>;
 }
@@ -256,6 +274,10 @@ impl OBSBotWebCam for Camera {
 
     fn get_ai_mode(&self) -> Result<AIMode, Error> {
         Ok(self.get_status()?.ai_mode)
+    }
+
+    fn get_tracking_speed(&self) -> Result<TrackingSpeed, Error> {
+        Ok(self.get_status()?.speed)
     }
 
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error> {
