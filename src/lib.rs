@@ -127,7 +127,7 @@ pub enum AIMode {
 impl Display for AIMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AIMode::NoTracking => write!(f, "No Tracking"),
+            AIMode::NoTracking => write!(f, "Static"),
             AIMode::NormalTracking => write!(f, "Normal Tracking"),
             AIMode::UpperBody => write!(f, "Upper Body"),
             AIMode::CloseUp => write!(f, "Close-up"),
