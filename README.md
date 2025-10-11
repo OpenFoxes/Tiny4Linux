@@ -23,6 +23,7 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 ## New features and improvements
 
 - Toggle for Sleep/Wake
+- Controls for the tracking speed
 - Updated Dependencies
 
 ### Shortly planned features
