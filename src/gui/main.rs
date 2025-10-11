@@ -3,10 +3,11 @@ use iced::widget::{button, column, image, row, text, text_input, toggler};
 use iced::{Alignment, Length, Subscription, executor, time, window};
 use iced::{Application, Command, Element, Settings, Theme};
 use std::time::Duration;
-use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam};
+use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode};
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
+    ChangeSleeping(bool),
     ChangeTracking(AIMode),
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
@@ -22,6 +23,7 @@ enum Message {
 
 struct MainPanel {
     camera: Option<Camera>,
+    awake: SleepMode,
     tracking: AIMode,
     hdr_on: bool,
     debugging_on: bool,
@@ -49,6 +51,7 @@ impl Application for MainPanel {
         (
             MainPanel {
                 camera,
+                awake: status.awake,
                 tracking: status.ai_mode,
                 hdr_on: status.hdr_on,
                 debugging_on: false,
@@ -78,6 +81,17 @@ impl Application for MainPanel {
         let camera = self.camera.as_ref().unwrap();
 
         match message {
+            Message::ChangeSleeping(should_sleep) => {
+                if should_sleep {
+                    self.awake = SleepMode::Sleep;
+                    camera.set_sleep_mode(SleepMode::Sleep).unwrap();
+                } else {
+                    self.awake = SleepMode::Awake;
+                    camera.set_sleep_mode(SleepMode::Awake).unwrap();
+                }
+
+                Command::none()
+            }
             Message::ChangeTracking(tracking_type) => {
                 self.tracking = tracking_type;
                 camera.set_ai_mode(tracking_type).unwrap();
@@ -136,6 +150,11 @@ impl Application for MainPanel {
                         .vertical_alignment(Vertical::Center),
                     image("src/assets/obsbot-tiny-2.png").height(100)
                 ],
+                toggler(
+                    Some("Sleeping".to_string()),
+                    self.awake != SleepMode::Awake,
+                    Message::ChangeSleeping
+                ),
                 button("Static").on_press(Message::ChangeTracking(AIMode::NoTracking)),
                 button("Normal Tracking").on_press(Message::ChangeTracking(AIMode::NormalTracking)),
                 row![
@@ -192,7 +211,11 @@ impl Application for MainPanel {
                     self.debugging_on,
                     Message::ChangeDebugging
                 ),
-                text(self.tracking)
+                text(if self.awake == SleepMode::Awake {
+                    self.tracking.to_string()
+                } else {
+                    self.awake.to_string()
+                })
             ];
 
             if self.debugging_on {
