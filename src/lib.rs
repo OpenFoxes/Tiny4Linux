@@ -93,13 +93,6 @@ pub enum AIMode {
     Group,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum ExposureMode {
-    Manual,
-    Global,
-    Face,
-}
-
 impl Display for AIMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -135,6 +128,13 @@ impl TryFrom<i32> for AIMode {
             _ => Err(Error::UnsupportedIntValue("AIMode".to_string(), value)),
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ExposureMode {
+    Manual,
+    Global,
+    Face,
 }
 
 pub enum TrackingMode {
