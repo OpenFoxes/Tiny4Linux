@@ -2,8 +2,9 @@ mod styles;
 
 use crate::styles::theme::obsbot_theme;
 use iced::alignment::{Horizontal, Vertical};
+use iced::theme::Button;
 use iced::widget::{button, column, image, row, text, text_input, toggler};
-use iced::{Alignment, Length, Subscription, executor, time, window, Size};
+use iced::{Alignment, Length, Size, Subscription, executor, time, window};
 use iced::{Application, Command, Element, Settings, Theme};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode};
@@ -158,54 +159,109 @@ impl Application for MainPanel {
                     self.awake != SleepMode::Awake,
                     Message::ChangeSleeping
                 ),
-                button("Static").on_press(Message::ChangeTracking(AIMode::NoTracking)),
-                button("Normal Tracking").on_press(Message::ChangeTracking(AIMode::NormalTracking)),
+                button("Static")
+                    .on_press(Message::ChangeTracking(AIMode::NoTracking))
+                    .style(if self.tracking == AIMode::NoTracking {
+                        Button::Primary
+                    } else {
+                        Button::Secondary
+                    }),
+                button("Normal Tracking")
+                    .on_press(Message::ChangeTracking(AIMode::NormalTracking))
+                    .style(if self.tracking == AIMode::NormalTracking {
+                        Button::Primary
+                    } else {
+                        Button::Secondary
+                    }),
                 row![
                     button("Upper Body")
                         .on_press(Message::ChangeTracking(AIMode::UpperBody))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::UpperBody {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                     button("Close-up")
                         .on_press(Message::ChangeTracking(AIMode::CloseUp))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::CloseUp {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                 ]
                 .spacing(10),
                 row![
                     button("Headless")
                         .on_press(Message::ChangeTracking(AIMode::Headless))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::Headless {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                     button("Lower Body")
                         .on_press(Message::ChangeTracking(AIMode::LowerBody))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::LowerBody {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                 ]
                 .spacing(10),
                 row![
                     button("Desk")
                         .on_press(Message::ChangeTracking(AIMode::DeskMode))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::DeskMode {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                     button("Whiteboard")
                         .on_press(Message::ChangeTracking(AIMode::Whiteboard))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::Whiteboard {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                 ]
                 .spacing(10),
                 row![
                     button("Hand")
                         .on_press(Message::ChangeTracking(AIMode::Hand))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::Hand {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                     button("Group")
                         .on_press(Message::ChangeTracking(AIMode::Group))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(if self.tracking == AIMode::Group {
+                            Button::Primary
+                        } else {
+                            Button::Secondary
+                        }),
                 ]
                 .spacing(10),
                 row![
                     button("Manual")
                         .on_press(Message::ChangeExposure(ExposureMode::Manual))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(Button::Secondary),
                     button("Face")
                         .on_press(Message::ChangeExposure(ExposureMode::Face))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(Button::Secondary),
                     button("Global")
                         .on_press(Message::ChangeExposure(ExposureMode::Global))
-                        .width(Length::Fill),
+                        .width(Length::Fill)
+                        .style(Button::Secondary),
                 ]
                 .spacing(10),
                 toggler(Some("HDR".to_string()), self.hdr_on, Message::ChangeHDR),
