@@ -63,7 +63,7 @@ impl CameraStatus {
             (4, 0) => AIMode::Whiteboard,
             (6, 0) => AIMode::Hand,
             (1, 0) => AIMode::Group,
-            (_, _) => panic!(),
+            (_, _) => AIMode::Unknown,
         }
     }
 
@@ -73,7 +73,7 @@ impl CameraStatus {
 
     pub fn default() -> Self {
         CameraStatus {
-            ai_mode: AIMode::NoTracking,
+            ai_mode: AIMode::Unknown,
             hdr_on: false,
         }
     }
@@ -91,6 +91,7 @@ pub enum AIMode {
     Whiteboard,
     Hand,
     Group,
+    Unknown,
 }
 
 impl Display for AIMode {
@@ -106,6 +107,7 @@ impl Display for AIMode {
             AIMode::Whiteboard => write!(f, "Whiteboard"),
             AIMode::Hand => write!(f, "Hand"),
             AIMode::Group => write!(f, "Group"),
+            AIMode::Unknown => write!(f, "Unknown"),
         }
     }
 }
@@ -179,6 +181,7 @@ impl OBSBotWebCam for Camera {
             AIMode::CloseUp => [0x16, 0x02, 0x02, 0x02],
             AIMode::Headless => [0x16, 0x02, 0x02, 0x03],
             AIMode::LowerBody => [0x16, 0x02, 0x02, 0x04],
+            AIMode::Unknown => [0x16, 0x02, 0x00, 0x00],
         };
         self.send_cmd(0x2, 0x6, &cmd)
     }
