@@ -28,6 +28,8 @@ pub enum Error {
     OscError(#[from] rosc::OscError),
     #[error("no camera found")]
     NoCameraFound,
+    #[error("Invalid setting")]
+    InvalidSetting,
 }
 
 #[derive(Debug)]
@@ -190,6 +192,7 @@ impl TryFrom<i32> for TrackingMode {
 }
 
 pub trait OBSBotWebCam {
+    fn set_sleep_mode(&self, mode: SleepMode) -> Result<(), Error>;
     fn get_sleep_mode(&self) -> Result<SleepMode, Error>;
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), Error>;
     fn get_ai_mode(&self) -> Result<AIMode, Error>;
@@ -198,6 +201,38 @@ pub trait OBSBotWebCam {
 }
 
 impl OBSBotWebCam for Camera {
+    fn set_sleep_mode(&self, mode: SleepMode) -> Result<(), Error> {
+        if mode == SleepMode::Unknown {
+            return Err(Error::InvalidSetting);
+        }
+
+        const FRAME_ID: [u8; 2] = [0xaa, 0x25];
+        const SEGMENT_SIZE: [u8; 2] = [0x0c, 0x00];
+        const FUNCTION_GROUP: [u8; 6] = [0x0a, 0x02, 0xc2, 0xa0, 0x04, 0x00];
+
+        let (sequence_nr, checksum, command) = match mode {
+            SleepMode::Awake => ([0xa5, 0x00], [0x5f, 0xef], [0xbe, 0x07, 0x00, 0x00, 0x00]),
+            SleepMode::Sleep => ([0x42, 0x00], [0xea, 0x63], [0xbf, 0xfb, 0x01, 0x00, 0x00]),
+            SleepMode::Unknown => panic!(),
+        };
+
+        let cmd: [u8; 19] = [
+            FRAME_ID.as_slice(),
+            sequence_nr.as_slice(),
+            SEGMENT_SIZE.as_slice(),
+            checksum.as_slice(),
+            FUNCTION_GROUP.as_slice(),
+            command.as_slice(),
+        ]
+        .concat()
+        .try_into()
+        .unwrap();
+
+        self.get_status()?.awake = mode;
+
+        self.send_cmd(0x2, 0x2, &cmd)
+    }
+
     fn get_sleep_mode(&self) -> Result<SleepMode, Error> {
         Ok(self.get_status()?.awake)
     }
