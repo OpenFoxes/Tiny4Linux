@@ -308,7 +308,11 @@ impl Application for MainPanel {
                     Message::ChangeDebugging
                 ),
                 text(if self.awake == SleepMode::Awake {
-                    self.tracking.to_string()
+                    format!(
+                        "{tracking_mode} ({tracking_speed})",
+                        tracking_mode = self.tracking.to_string(),
+                        tracking_speed = self.tracking_speed.to_string()
+                    )
                 } else {
                     self.awake.to_string()
                 })
