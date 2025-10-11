@@ -1,5 +1,6 @@
 mod styles;
 
+use crate::styles::theme::obsbot_theme;
 use iced::alignment::{Horizontal, Vertical};
 use iced::widget::{button, column, image, row, text, text_input, toggler};
 use iced::{Alignment, Length, Subscription, executor, time, window, Size};
@@ -254,6 +255,10 @@ impl Application for MainPanel {
                 .height(Length::Fill)
                 .into()
         }
+    }
+
+    fn theme(&self) -> Self::Theme {
+        obsbot_theme()
     }
 
     fn subscription(&self) -> Subscription<Message> {
