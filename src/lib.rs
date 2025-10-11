@@ -36,6 +36,7 @@ pub struct Camera {
 }
 
 pub struct CameraStatus {
+    pub awake: SleepMode,
     pub ai_mode: AIMode,
     pub hdr_on: bool,
 }
@@ -43,8 +44,17 @@ pub struct CameraStatus {
 impl CameraStatus {
     pub fn decode(bytes: &[u8]) -> Self {
         CameraStatus {
+            awake: Self::decode_sleep_mode(bytes),
             ai_mode: Self::decode_ai_mode(bytes),
             hdr_on: Self::decode_hdr_on(bytes),
+        }
+    }
+
+    fn decode_sleep_mode(bytes: &[u8]) -> SleepMode {
+        match bytes[0x02] {
+            0 => SleepMode::Awake,
+            1 => SleepMode::Sleep,
+            _ => SleepMode::Unknown,
         }
     }
 
@@ -73,8 +83,26 @@ impl CameraStatus {
 
     pub fn default() -> Self {
         CameraStatus {
+            awake: SleepMode::Unknown,
             ai_mode: AIMode::Unknown,
             hdr_on: false,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum SleepMode {
+    Awake,
+    Sleep,
+    Unknown,
+}
+
+impl Display for SleepMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SleepMode::Awake => write!(f, "Awake"),
+            SleepMode::Sleep => write!(f, "Sleeping"),
+            SleepMode::Unknown => write!(f, "Unknown"),
         }
     }
 }
@@ -162,6 +190,7 @@ impl TryFrom<i32> for TrackingMode {
 }
 
 pub trait OBSBotWebCam {
+    fn get_sleep_mode(&self) -> Result<SleepMode, Error>;
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), Error>;
     fn get_ai_mode(&self) -> Result<AIMode, Error>;
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error>;
@@ -169,6 +198,10 @@ pub trait OBSBotWebCam {
 }
 
 impl OBSBotWebCam for Camera {
+    fn get_sleep_mode(&self) -> Result<SleepMode, Error> {
+        Ok(self.get_status()?.awake)
+    }
+
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), Error> {
         let cmd = match mode {
             AIMode::NoTracking => [0x16, 0x02, 0x00, 0x00],
