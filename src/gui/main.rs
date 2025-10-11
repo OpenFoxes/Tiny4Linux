@@ -262,21 +262,26 @@ impl Application for MainPanel {
                         }),
                 ]
                 .spacing(10),
-                row![
-                    button("Manual")
-                        .on_press(Message::ChangeExposure(ExposureMode::Manual))
-                        .width(Length::Fill)
-                        .style(Button::Secondary),
-                    button("Face")
-                        .on_press(Message::ChangeExposure(ExposureMode::Face))
-                        .width(Length::Fill)
-                        .style(Button::Secondary),
-                    button("Global")
-                        .on_press(Message::ChangeExposure(ExposureMode::Global))
-                        .width(Length::Fill)
-                        .style(Button::Secondary),
+                column![
+                    text("Exposure: "),
+                    row![
+                        button("Manual")
+                            .on_press(Message::ChangeExposure(ExposureMode::Manual))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                        button("Face")
+                            .on_press(Message::ChangeExposure(ExposureMode::Face))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                        button("Global")
+                            .on_press(Message::ChangeExposure(ExposureMode::Global))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                    ]
+                    .spacing(10)
                 ]
-                .spacing(10),
+                .spacing(10)
+                .padding([10, 0, 10, 0]),
                 row![
                     text("Tracking Speed: "),
                     button("Standard")
