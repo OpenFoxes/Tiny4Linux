@@ -25,11 +25,11 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 
 - Toggle for **Sleep/Wake**
 - Controls for the **tracking speed**
+- Controls for **preset positions**
 - Updated Dependencies
 
 ### Shortly planned features
 
-- Apply position-presets
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
