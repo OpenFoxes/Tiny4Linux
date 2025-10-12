@@ -1,11 +1,11 @@
 mod styles;
 
 use crate::styles::theme::obsbot_theme;
+use iced::Element;
 use iced::alignment::{Horizontal, Vertical};
-use iced::theme::Button;
+use iced::widget::button::{primary, secondary};
 use iced::widget::{button, column, image, row, text, text_input, toggler};
-use iced::{Alignment, Length, Size, Subscription, executor, time, window};
-use iced::{Application, Command, Element, Settings, Theme};
+use iced::{Alignment, Length, Padding, Size, Subscription, Task, time, window};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
 
@@ -38,16 +38,8 @@ struct MainPanel {
     text_input_02: String,
 }
 
-impl Application for MainPanel {
-    type Executor = executor::Default;
-
-    type Message = Message;
-
-    type Theme = Theme;
-
-    type Flags = ();
-
-    fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
+impl MainPanel {
+    fn init_state() -> (Self, Task<Message>) {
         let camera = Camera::new("OBSBOT Tiny 2").ok();
 
         let status = camera
@@ -66,24 +58,20 @@ impl Application for MainPanel {
                 text_input: String::new(),
                 text_input_02: String::new(),
             },
-            Command::none(),
+            Task::none(),
         )
     }
 
-    fn title(&self) -> String {
-        "Tiny4Linux".to_string()
-    }
-
-    fn update(&mut self, message: Message) -> Command<Message> {
+    fn update(&mut self, message: Message) -> Task<Message> {
         if self.camera.is_none() {
             self.camera = Camera::new("OBSBOT Tiny 2").ok();
 
             if self.camera.is_none() {
-                return Command::none();
+                return Task::none();
             }
         } else if !self.camera.as_ref().unwrap().get_status().is_ok() {
             self.camera = None;
-            return Command::none();
+            return Task::none();
         }
 
         let camera = self.camera.as_ref().unwrap();
@@ -98,64 +86,64 @@ impl Application for MainPanel {
                     camera.set_sleep_mode(SleepMode::Awake).unwrap();
                 }
 
-                Command::none()
+                Task::none()
             }
             Message::ChangeTracking(tracking_type) => {
                 self.tracking = tracking_type;
                 camera.set_ai_mode(tracking_type).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::ChangeTrackingSpeed(new_speed) => {
                 self.tracking_speed = new_speed;
                 camera.set_tracking_speed(new_speed).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::ChangePresetPosition(new_position) => {
                 self.tracking = AIMode::NoTracking;
                 camera.set_ai_mode(AIMode::NoTracking).unwrap();
                 camera.goto_preset_position(new_position).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::ChangeHDR(new_mode) => {
                 self.hdr_on = new_mode;
                 camera.set_hdr_mode(new_mode).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::ChangeExposure(mode) => {
                 camera.set_exposure_mode(mode).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::ChangeDebugging(new_mode) => {
                 self.debugging_on = new_mode;
-                Command::none()
+                Task::none()
             }
             Message::TextInput(s) => {
                 self.text_input = s;
-                Command::none()
+                Task::none()
             }
             Message::TextInput02(s) => {
                 self.text_input_02 = s;
-                Command::none()
+                Task::none()
             }
             Message::SendCommand => {
                 let c = hex::decode(&self.text_input).unwrap();
                 camera.send_cmd(0x2, 0x6, &c).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::SendCommand02 => {
                 let c = hex::decode(&self.text_input_02).unwrap();
                 camera.send_cmd(0x2, 0x2, &c).unwrap();
-                Command::none()
+                Task::none()
             }
             Message::HexDump => {
                 camera.dump().unwrap();
-                Command::none()
+                Task::none()
             }
             Message::HexDump02 => {
                 camera.dump_02().unwrap();
-                Command::none()
+                Task::none()
             }
-            Message::CheckCamera => Command::none(),
+            Message::CheckCamera => Task::none(),
         }
     }
 
@@ -166,7 +154,7 @@ impl Application for MainPanel {
                     text("Tiny4Linux")
                         .size(26)
                         .height(100)
-                        .vertical_alignment(Vertical::Center),
+                        .align_y(Vertical::Center),
                     image(if self.awake == SleepMode::Awake {
                         "src/assets/obsbot-tiny-2.png"
                     } else {
@@ -174,41 +162,39 @@ impl Application for MainPanel {
                     })
                     .height(100)
                 ],
-                toggler(
-                    Some("Sleeping".to_string()),
-                    self.awake != SleepMode::Awake,
-                    Message::ChangeSleeping
-                ),
+                toggler(self.awake != SleepMode::Awake)
+                    .label("Sleeping".to_string())
+                    .on_toggle(Message::ChangeSleeping),
                 button("Static")
                     .on_press(Message::ChangeTracking(AIMode::NoTracking))
                     .style(if self.tracking == AIMode::NoTracking {
-                        Button::Primary
+                        primary
                     } else {
-                        Button::Secondary
+                        secondary
                     }),
                 button("Normal Tracking")
                     .on_press(Message::ChangeTracking(AIMode::NormalTracking))
                     .style(if self.tracking == AIMode::NormalTracking {
-                        Button::Primary
+                        primary
                     } else {
-                        Button::Secondary
+                        secondary
                     }),
                 row![
                     button("Upper Body")
                         .on_press(Message::ChangeTracking(AIMode::UpperBody))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::UpperBody {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                     button("Close-up")
                         .on_press(Message::ChangeTracking(AIMode::CloseUp))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::CloseUp {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                 ]
                 .spacing(10),
@@ -217,17 +203,17 @@ impl Application for MainPanel {
                         .on_press(Message::ChangeTracking(AIMode::Headless))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::Headless {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                     button("Lower Body")
                         .on_press(Message::ChangeTracking(AIMode::LowerBody))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::LowerBody {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                 ]
                 .spacing(10),
@@ -236,17 +222,17 @@ impl Application for MainPanel {
                         .on_press(Message::ChangeTracking(AIMode::DeskMode))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::DeskMode {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                     button("Whiteboard")
                         .on_press(Message::ChangeTracking(AIMode::Whiteboard))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::Whiteboard {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                 ]
                 .spacing(10),
@@ -255,17 +241,17 @@ impl Application for MainPanel {
                         .on_press(Message::ChangeTracking(AIMode::Hand))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::Hand {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                     button("Group")
                         .on_press(Message::ChangeTracking(AIMode::Group))
                         .width(Length::Fill)
                         .style(if self.tracking == AIMode::Group {
-                            Button::Primary
+                            primary
                         } else {
-                            Button::Secondary
+                            secondary
                         }),
                 ]
                 .spacing(10),
@@ -275,65 +261,68 @@ impl Application for MainPanel {
                         button("Manual")
                             .on_press(Message::ChangeExposure(ExposureMode::Manual))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                         button("Face")
                             .on_press(Message::ChangeExposure(ExposureMode::Face))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                         button("Global")
                             .on_press(Message::ChangeExposure(ExposureMode::Global))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                     ]
                     .spacing(10)
                 ]
                 .spacing(10)
-                .padding([10, 0, 10, 0]),
+                .padding(Padding::from([10, 0])),
                 column![
                     text("Presets: "),
                     row![
                         button("1")
                             .on_press(Message::ChangePresetPosition(0))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                         button("2")
                             .on_press(Message::ChangePresetPosition(1))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                         button("3")
                             .on_press(Message::ChangePresetPosition(2))
                             .width(Length::Fill)
-                            .style(Button::Secondary),
+                            .style(secondary),
                     ]
                     .spacing(10)
                 ]
                 .spacing(10)
-                .padding([10, 0, 10, 0]),
-                row![
+                .padding(Padding::from([10, 0])),
+                column![
                     text("Tracking Speed: "),
-                    button("Standard")
-                        .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Standard))
-                        .style(if self.tracking_speed == TrackingSpeed::Standard {
-                            Button::Primary
-                        } else {
-                            Button::Secondary
-                        }),
-                    button("Sport")
-                        .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Sport))
-                        .style(if self.tracking_speed == TrackingSpeed::Sport {
-                            Button::Primary
-                        } else {
-                            Button::Secondary
-                        }),
+                    row![
+                        button("Standard")
+                            .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Standard))
+                            .style(if self.tracking_speed == TrackingSpeed::Standard {
+                                primary
+                            } else {
+                                secondary
+                            }),
+                        button("Sport")
+                            .on_press(Message::ChangeTrackingSpeed(TrackingSpeed::Sport))
+                            .style(if self.tracking_speed == TrackingSpeed::Sport {
+                                primary
+                            } else {
+                                secondary
+                            }),
+                    ]
+                    .spacing(10)
                 ]
                 .spacing(10)
-                .padding([10, 0, 10, 0]),
-                toggler(Some("HDR".to_string()), self.hdr_on, Message::ChangeHDR),
-                toggler(
-                    Some("Debugging".to_string()),
-                    self.debugging_on,
-                    Message::ChangeDebugging
-                ),
+                .padding(Padding::from([10, 0])),
+                toggler(self.hdr_on)
+                    .label("HDR".to_string())
+                    .on_toggle(Message::ChangeHDR),
+                toggler(self.debugging_on)
+                    .label("Debugging".to_string())
+                    .on_toggle(Message::ChangeDebugging),
                 text(if self.awake == SleepMode::Awake {
                     format!(
                         "{tracking_mode} ({tracking_speed})",
@@ -365,7 +354,7 @@ impl Application for MainPanel {
             let c = elements
                 .width(Length::Fill)
                 .height(Length::Fill)
-                .align_items(Alignment::Center)
+                .align_x(Alignment::Center)
                 .spacing(10)
                 .padding(10)
                 .into();
@@ -373,16 +362,12 @@ impl Application for MainPanel {
         } else {
             text("Camera could not be found. Please check the connection of the camera.")
                 .size(20)
-                .horizontal_alignment(Horizontal::Center)
-                .vertical_alignment(Vertical::Center)
+                .align_x(Horizontal::Center)
+                .align_y(Vertical::Center)
                 .width(Length::Fill)
                 .height(Length::Fill)
                 .into()
         }
-    }
-
-    fn theme(&self) -> Self::Theme {
-        obsbot_theme()
     }
 
     fn subscription(&self) -> Subscription<Message> {
@@ -395,13 +380,14 @@ impl Application for MainPanel {
 }
 
 fn main() -> iced::Result {
-    MainPanel::run(Settings {
-        window: window::Settings {
-            size: Size::from([300, 900]),
+    iced::application("Tiny4Linux", MainPanel::update, MainPanel::view)
+        .theme(|_| obsbot_theme())
+        .window(window::Settings {
+            size: Size::new(300.0, 900.0),
             resizable: false,
             decorations: true,
             ..Default::default()
-        },
-        ..Default::default()
-    })
+        })
+        .subscription(MainPanel::subscription)
+        .run_with(|| MainPanel::init_state())
 }
