@@ -111,6 +111,8 @@ impl Application for MainPanel {
                 Command::none()
             }
             Message::ChangePresetPosition(new_position) => {
+                self.tracking = AIMode::NoTracking;
+                camera.set_ai_mode(AIMode::NoTracking).unwrap();
                 camera.goto_preset_position(new_position).unwrap();
                 Command::none()
             }
