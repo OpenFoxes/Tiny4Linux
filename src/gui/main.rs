@@ -14,6 +14,7 @@ enum Message {
     ChangeSleeping(bool),
     ChangeTracking(AIMode),
     ChangeTrackingSpeed(TrackingSpeed),
+    ChangePresetPosition(i8),
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
     ChangeDebugging(bool),
@@ -107,6 +108,10 @@ impl Application for MainPanel {
             Message::ChangeTrackingSpeed(new_speed) => {
                 self.tracking_speed = new_speed;
                 camera.set_tracking_speed(new_speed).unwrap();
+                Command::none()
+            }
+            Message::ChangePresetPosition(new_position) => {
+                camera.goto_preset_position(new_position).unwrap();
                 Command::none()
             }
             Message::ChangeHDR(new_mode) => {
@@ -282,6 +287,26 @@ impl Application for MainPanel {
                 ]
                 .spacing(10)
                 .padding([10, 0, 10, 0]),
+                column![
+                    text("Presets: "),
+                    row![
+                        button("1")
+                            .on_press(Message::ChangePresetPosition(0))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                        button("2")
+                            .on_press(Message::ChangePresetPosition(1))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                        button("3")
+                            .on_press(Message::ChangePresetPosition(2))
+                            .width(Length::Fill)
+                            .style(Button::Secondary),
+                    ]
+                    .spacing(10)
+                ]
+                .spacing(10)
+                .padding([10, 0, 10, 0]),
                 row![
                     text("Tracking Speed: "),
                     button("Standard")
@@ -370,7 +395,7 @@ impl Application for MainPanel {
 fn main() -> iced::Result {
     MainPanel::run(Settings {
         window: window::Settings {
-            size: Size::from([300, 720]),
+            size: Size::from([300, 900]),
             resizable: false,
             decorations: true,
             ..Default::default()
