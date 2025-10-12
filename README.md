@@ -38,8 +38,6 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 To run the GUI, you have to build the project and then run the binary:
 
 ```shell
-cargo build
-
 cargo run --package tiny4linux --bin obsbot-gui
 ```
 
