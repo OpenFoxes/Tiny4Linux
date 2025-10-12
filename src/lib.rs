@@ -7,15 +7,6 @@ use std::{fmt::Display, io};
 use thiserror::Error;
 use usbio::UvcUsbIo;
 
-const AUTO_EXP_CMD: [u8; 18] = [
-    0xaa, 0x25, 0x16, 0x00, 0x0c, 0x00, 0x58, 0x91, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xb2, 0xaf,
-    0x02, 0x04,
-];
-const MANUAL_EXP_CMD: [u8; 18] = [
-    0xaa, 0x25, 0x15, 0x00, 0x0c, 0x00, 0xa8, 0x9e, 0x0a, 0x02, 0x82, 0x29, 0x05, 0x00, 0xf9, 0x27,
-    0x01, 0x32,
-];
-
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("value of {1} is not supported for {0}")]
@@ -195,6 +186,12 @@ pub enum ExposureMode {
     Face,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum ExposureModeType {
+    Auto,
+    Manual,
+}
+
 pub enum TrackingMode {
     Headroom,
     Standard,
@@ -226,6 +223,7 @@ pub trait OBSBotWebCam {
     fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), Error>;
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error>;
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error>;
+    fn set_exposure_mode_type(&self, mode: ExposureModeType) -> Result<(), Error>;
 }
 
 impl OBSBotWebCam for Camera {
@@ -234,27 +232,28 @@ impl OBSBotWebCam for Camera {
             return Err(Error::InvalidSetting);
         }
 
-        const FRAME_ID: [u8; 2] = [0xaa, 0x25];
-        const SEGMENT_SIZE: [u8; 2] = [0x0c, 0x00];
-        const FUNCTION_GROUP: [u8; 6] = [0x0a, 0x02, 0xc2, 0xa0, 0x04, 0x00];
+        const FUNCTION_GROUP_SLEEP: [u8; 6] = [0x0a, 0x02, 0xc2, 0xa0, 0x04, 0x00];
 
         let (sequence_nr, checksum, command) = match mode {
-            SleepMode::Awake => ([0xa5, 0x00], [0x5f, 0xef], [0xbe, 0x07, 0x00, 0x00, 0x00]),
-            SleepMode::Sleep => ([0x42, 0x00], [0xea, 0x63], [0xbf, 0xfb, 0x01, 0x00, 0x00]),
+            SleepMode::Awake => (
+                [0xa5, 0x00],
+                [0x5f, 0xef],
+                [0xbe, 0x07, 0x00, 0x00, 0x00, 0x00],
+            ),
+            SleepMode::Sleep => (
+                [0x42, 0x00],
+                [0xea, 0x63],
+                [0xbf, 0xfb, 0x01, 0x00, 0x00, 0x00],
+            ),
             SleepMode::Unknown => panic!(),
         };
 
-        let cmd: [u8; 19] = [
-            FRAME_ID.as_slice(),
-            sequence_nr.as_slice(),
-            SEGMENT_SIZE.as_slice(),
-            checksum.as_slice(),
-            FUNCTION_GROUP.as_slice(),
-            command.as_slice(),
-        ]
-        .concat()
-        .try_into()
-        .unwrap();
+        let cmd = Command02::new()
+            .function_group(FUNCTION_GROUP_SLEEP)
+            .sequence_nr(sequence_nr)
+            .checksum(checksum)
+            .command(command)
+            .build();
 
         self.get_status()?.awake = mode;
 
@@ -291,28 +290,34 @@ impl OBSBotWebCam for Camera {
     }
 
     fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), Error> {
-        const FRAME_ID: [u8; 2] = [0xaa, 0x25];
-        const SEGMENT_SIZE: [u8; 2] = [0x0c, 0x00];
-        const FUNCTION_GROUP: [u8; 6] = [0x0a, 0x04, 0xc4, 0x0c, 0x01, 0x00];
-        const APPENDIX: [u8; 7] = [0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff];
+        const FUNCTION_GROUP_TRACKING_SPEED: [u8; 6] = [0x0a, 0x04, 0xc4, 0x0c, 0x01, 0x00];
 
-        let (sequence_nr, checksum, command) = match speed {
-            TrackingSpeed::Standard => ([0x20, 0x00], [0xab, 0xcb], [0xe6, 0x3f, 0x00]),
-            TrackingSpeed::Sport => ([0x21, 0x00], [0xfa, 0x0e], [0x67, 0xfe, 0x02]),
+        let appendix: [u8; 16] = {
+            let mut a = [0x00; 16];
+            a[..4].fill(0x00);
+            a
         };
 
-        let cmd: [u8; 24] = [
-            FRAME_ID.as_slice(),
-            sequence_nr.as_slice(),
-            SEGMENT_SIZE.as_slice(),
-            checksum.as_slice(),
-            FUNCTION_GROUP.as_slice(),
-            command.as_slice(),
-            APPENDIX.as_slice(),
-        ]
-        .concat()
-        .try_into()
-        .unwrap();
+        let (sequence_nr, checksum, command) = match speed {
+            TrackingSpeed::Standard => (
+                [0x20, 0x00],
+                [0xab, 0xcb],
+                [0xe6, 0x3f, 0x00, 0x00, 0x00, 0x00],
+            ),
+            TrackingSpeed::Sport => (
+                [0x21, 0x00],
+                [0xfa, 0x0e],
+                [0x67, 0xfe, 0x02, 0x00, 0x00, 0x00],
+            ),
+        };
+
+        let cmd = Command02::new()
+            .function_group(FUNCTION_GROUP_TRACKING_SPEED)
+            .sequence_nr(sequence_nr)
+            .checksum(checksum)
+            .command(command)
+            .appendix(appendix)
+            .build();
 
         self.get_status()?.speed = speed;
 
@@ -331,17 +336,45 @@ impl OBSBotWebCam for Camera {
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error> {
         match mode {
             ExposureMode::Manual => {
-                self.send_cmd(0x2, 0x2, &MANUAL_EXP_CMD)?;
+                self.set_exposure_mode_type(ExposureModeType::Manual)?;
             }
             ExposureMode::Global => {
-                self.send_cmd(0x2, 0x2, &AUTO_EXP_CMD)?;
+                self.set_exposure_mode_type(ExposureModeType::Auto)?;
                 self.send_cmd(0x2, 0x6, &[0x03, 0x01, 0x00])?;
             }
             ExposureMode::Face => {
-                self.send_cmd(0x2, 0x2, &AUTO_EXP_CMD)?;
+                self.set_exposure_mode_type(ExposureModeType::Auto)?;
                 self.send_cmd(0x2, 0x6, &[0x03, 0x01, 0x01])?;
             }
         };
+        Ok(())
+    }
+
+    fn set_exposure_mode_type(&self, mode: ExposureModeType) -> Result<(), Error> {
+        const FUNCTION_GROUP_EXPOSURE_MODE_TYPE: [u8; 6] = [0x0a, 0x02, 0x82, 0x29, 0x05, 0x00];
+
+        let (sequence_nr, checksum, command) = match mode {
+            ExposureModeType::Auto => (
+                [0x16, 0x00],
+                [0x58, 0x91],
+                [0xb2, 0xaf, 0x02, 0x04, 0x00, 0x00],
+            ),
+            ExposureModeType::Manual => (
+                [0x15, 0x00],
+                [0xa8, 0x9e],
+                [0xf9, 0x27, 0x01, 0x32, 0x00, 0x00],
+            ),
+        };
+
+        let command = Command02::new()
+            .function_group(FUNCTION_GROUP_EXPOSURE_MODE_TYPE)
+            .sequence_nr(sequence_nr)
+            .checksum(checksum)
+            .command(command)
+            .build();
+
+        self.send_cmd(0x2, 0x2, &command)?;
+
         Ok(())
     }
 }
@@ -435,5 +468,72 @@ impl Camera {
 
     fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno> {
         self.handle.io(unit, selector, query, data)
+    }
+}
+
+pub struct Command02 {
+    pub function_group: Option<[u8; 6]>,
+    pub sequence_nr: Option<[u8; 2]>,
+    pub checksum: Option<[u8; 2]>,
+    pub command: Option<[u8; 6]>,
+    pub appendix: Option<[u8; 16]>,
+}
+
+impl Command02 {
+    pub fn new() -> Self {
+        Self {
+            function_group: None,
+            sequence_nr: None,
+            checksum: None,
+            command: None,
+            appendix: None,
+        }
+    }
+
+    pub fn function_group(mut self, function_group: [u8; 6]) -> Self {
+        self.function_group = Some(function_group);
+        self
+    }
+
+    pub fn sequence_nr(mut self, sequence_number: [u8; 2]) -> Self {
+        self.sequence_nr = Some(sequence_number);
+        self
+    }
+
+    pub fn checksum(mut self, checksum: [u8; 2]) -> Self {
+        self.checksum = Some(checksum);
+        self
+    }
+
+    pub fn command(mut self, cmd: [u8; 6]) -> Self {
+        self.command = Some(cmd);
+        self
+    }
+
+    pub fn appendix(mut self, app: [u8; 16]) -> Self {
+        self.appendix = Some(app);
+        self
+    }
+
+    pub fn build(self) -> [u8; 36] {
+        const FRAME_ID: [u8; 2] = [0xaa, 0x25];
+        const SEGMENT_SIZE: [u8; 2] = [0x0c, 0x00];
+
+        [
+            FRAME_ID.as_slice(),
+            self.sequence_nr
+                .expect("sequence_nr is required")
+                .as_slice(),
+            SEGMENT_SIZE.as_slice(),
+            self.checksum.expect("checksum is required").as_slice(),
+            self.function_group
+                .expect("function_group is required")
+                .as_slice(),
+            self.command.expect("command is required").as_slice(),
+            self.appendix.unwrap_or([0x00; 16]).as_slice(),
+        ]
+        .concat()
+        .try_into()
+        .unwrap()
     }
 }
