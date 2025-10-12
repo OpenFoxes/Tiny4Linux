@@ -100,6 +100,7 @@ impl MainPanel {
             }
             Message::ChangePresetPosition(new_position) => {
                 self.tracking = AIMode::NoTracking;
+                self.awake = SleepMode::Awake;
                 camera.set_ai_mode(AIMode::NoTracking).unwrap();
                 camera.goto_preset_position(new_position).unwrap();
                 Task::none()
