@@ -32,5 +32,5 @@ name = "obsbot-osc-server"
 path = "src/osc/main.rs"
 
 [[bin]]
-name = "obsbot-gui"
+name = "tiny4linux-gui"
 path = "src/gui/main.rs"
