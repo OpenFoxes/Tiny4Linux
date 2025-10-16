@@ -85,7 +85,7 @@ jobs:
           name: Version ${{  github.event.inputs.version }}
           tag_name: v${{  github.event.inputs.version }}
           files: |
-            target/release/obsbot-gui
+            target/release/tiny4linux-gui
             target/release/obsbot-osc-server
 
   cleanup:
