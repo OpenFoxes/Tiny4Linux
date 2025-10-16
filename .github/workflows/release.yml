@@ -89,13 +89,11 @@ jobs:
           chmod -R 777 .
           
           docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
-            pacman -Sy --noconfirm base-devel sudo &&
-            useradd -m builder &&
-            echo 'builder ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/builder &&
-            sudo -u builder bash -c '
-              cd /pkg &&
-              makepkg --printsrcinfo > .SRCINFO
-            '
+            pacman -Sy --noconfirm --needed base-devel shadow &&
+            useradd -m builder || true &&
+            chown -R builder:builder /pkg &&
+            cd /pkg &&
+            su - builder -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'
           "
 
       - name: Upload tarballs and metadata
@@ -174,25 +172,24 @@ jobs:
       - name: Setup SSH for AUR
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
-          echo "Host aur.archlinux.org
-          IdentityFile ~/.ssh/aur
-          User aur" > ~/.ssh/config
-          chmod 600 ~/.ssh/aur
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
 
       - name: Clone AUR repository
-        run: git clone ssh://aur@aur.archlinux.org/tiny4linux-gui.git aur-repo
+        run: |
+          git clone ssh://aur@aur.archlinux.org/tiny4linux-gui.git aur-repo
 
       - name: Download packed tarballs and metadata
         uses: actions/download-artifact@v5
         with:
           name: tarballs
-          path: .
+          path: aur-repo
 
       - name: Commit & Push to the AUR
+        working-directory: aur-repo
         run: |
-          cd deployment/gui/aur
+          cp -a deployment/gui/aur/. .
           git config user.name "OpenFoxes Maintenance Bot"
           git config user.email "openfoxes@bono-fox.de"
           git add PKGBUILD .SRCINFO LICENSE

@@ -10,7 +10,7 @@ license=('EUPL')
 categories=('Utility')
 depends=()
 makedepends=('rust' 'cargo')
-source=("$url/archive/refs/tags/v$pkgver.tar.gz")
+source=("$url/releases/download/v$pkgver/tiny4linux-$pkgver.tar.gz")
 sha256sums=('SKIP')
 
 build() {
