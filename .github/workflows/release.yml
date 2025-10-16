@@ -28,16 +28,6 @@ jobs:
       - name: Update package version
         run: cargo set-version ${{ github.event.inputs.version }}
 
-      - name: Add a commit
-        run: |
-          git config --global user.name 'OpenFoxes Maintenance Bot'
-          git config --global user.email 'openfoxes@bono-fox.de'
-          git init
-          git add .
-          git commit -m "🔖 Release Tiny4Linux ${{  github.event.inputs.version }}"
-          git tag v${{  github.event.inputs.version }}
-          git push -u origin HEAD:main --tags
-
       - name: Upload working directory with current version-number
         uses: actions/upload-artifact@v4
         with:
@@ -68,15 +58,96 @@ jobs:
           path: .
           retention-days: 1
 
+  update-metadata:
+    name: Update metadata
+    runs-on: ubuntu-latest
+    needs: [update-version]
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: versioned-build
+
+      - name: Generate tarball from current repo
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          git archive --format=tar.gz -o tiny4linux-${VERSION}.tar.gz HEAD
+          git archive --format=zip -o tiny4linux-${VERSION}.zip HEAD
+
+      - name: Update PKGBUILD & SRCINFO with new version and SHA
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
+          
+          cd deployment/gui/aur
+          
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
+          
+          docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
+            pacman -Sy --noconfirm --needed base-devel shadow &&
+            useradd -m builder || true &&
+            chown -R builder:builder /pkg &&
+            cd /pkg &&
+            su - builder -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'
+          "
+
+      - name: Upload tarballs and metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarballs
+          include-hidden-files: true
+          path: |
+            tiny4linux-${{ steps.version.outputs.version }}.tar.gz
+            tiny4linux-${{ steps.version.outputs.version }}.zip
+            deployment/gui/aur/PKGBUILD
+            deployment/gui/aur/.SRCINFO
+            deployment/gui/aur/LICENSE
+          retention-days: 1
+
+  add-version-commit:
+    name: Add version commit
+    runs-on: ubuntu-latest
+    needs: [update-version, update-metadata]
+    steps:
+      - name: Download working directory with current version-number
+        uses: actions/download-artifact@v5
+        with:
+          name: versioned-build
+          path: .
+
+      - name: Download updated metadata
+        uses: actions/download-artifact@v5
+        with:
+          name: tarballs
+          path: .
+
+      - name: Add a commit
+        run: |
+          git config --global user.name 'OpenFoxes Maintenance Bot'
+          git config --global user.email 'openfoxes@bono-fox.de'
+          git init
+          git add .
+          git commit -m "🔖 Release Tiny4Linux ${{  github.event.inputs.version }}"
+          git tag v${{  github.event.inputs.version }}
+          git push -u origin HEAD:main --tags
+
   create-github-release:
     name: 'Create GitHub release'
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build, update-metadata, add-version-commit]
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v5
         with:
           name: build-artifact
+          path: .
+
+      - name: Download metadata
+        uses: actions/download-artifact@v5
+        with:
+          name: tarballs
           path: .
 
       - uses: softprops/action-gh-release@v2
@@ -87,6 +158,40 @@ jobs:
           files: |
             target/release/tiny4linux-gui
             target/release/obsbot-osc-server
+            tiny4linux-${{ steps.version.outputs.version }}.tar.gz
+            tiny4linux-${{ steps.version.outputs.version }}.zip
+
+  deploy-aur:
+    name: 'Deployment to AUR'
+    runs-on: ubuntu-latest
+    needs: [create-github-release]
+    steps:
+      - name: Setup SSH for AUR
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR repository
+        run: |
+          git clone ssh://aur@aur.archlinux.org/tiny4linux-gui.git aur-repo
+
+      - name: Download packed tarballs and metadata
+        uses: actions/download-artifact@v5
+        with:
+          name: tarballs
+          path: aur-repo
+
+      - name: Commit & Push to the AUR
+        working-directory: aur-repo
+        run: |
+          cp -a deployment/gui/aur/. .
+          git config user.name "OpenFoxes Maintenance Bot"
+          git config user.email "openfoxes@bono-fox.de"
+          git add PKGBUILD .SRCINFO LICENSE
+          git commit -m "Update to Version ${{ github.event.inputs.version }}"
+          git push 
 
   cleanup:
     name: Cleanup
@@ -99,3 +204,4 @@ jobs:
           name: |
             versioned-build
             build-artifact
+            tarballs
