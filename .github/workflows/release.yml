@@ -160,6 +160,7 @@ jobs:
           tag_name: v${{  github.event.inputs.version }}
           files: |
             target/release/tiny4linux-gui
+            target/release/tiny4linux-cli
             tiny4linux-${{ github.event.inputs.version }}.tar.gz
             tiny4linux-${{ github.event.inputs.version }}.zip
 
