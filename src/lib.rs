@@ -15,8 +15,6 @@ pub enum Error {
     USBIOError(i32),
     #[error("IO error: {0}")]
     IOError(#[from] io::Error),
-    #[error("Osc error: {0}")]
-    OscError(#[from] rosc::OscError),
     #[error("no camera found")]
     NoCameraFound,
     #[error("Invalid setting")]
