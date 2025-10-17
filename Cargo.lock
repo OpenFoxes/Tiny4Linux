@@ -3444,7 +3444,7 @@ dependencies = [
 
 [[package]]
 name = "tiny4linux"
-version = "1.4.0"
+version = "1.4.3"
 dependencies = [
  "clap",
  "enum_dispatch",
