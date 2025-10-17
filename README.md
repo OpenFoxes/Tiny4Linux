@@ -1,5 +1,7 @@
 # Tiny4Linux: A GUI-Controller for the OBSBOT Tiny2
 
+[<img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />](#installation-on-arch-linux)
+
 With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
 The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2
 
@@ -33,15 +35,24 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
-## Run the GUI
+## Installation
 
-To run the GUI, you have to build the project and then run the binary:
+Currently, on every release the binaries are generated and can be downloaded for manual builds.
+Easier installation methods depend on the package manager of your distribution.
+Currently, the following methods are supported or planned:
 
+### Installation on Arch Linux
+
+The GUI can be installed via the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-gui/):
 ```shell
-cargo run --package tiny4linux --bin obsbot-gui
+yay -S tiny4linux-gui
 ```
 
-With *Jetbrains RustRover*, you can directly execute the corresponding Run Configuration.
+### Planned Installation Methods
+
+- [Nix User Repository](https://github.com/OpenFoxes/Tiny4Linux/issues/38)
+- [Flatpak](https://github.com/OpenFoxes/Tiny4Linux/issues/39)
+- [Debian and RPM](https://github.com/OpenFoxes/Tiny4Linux/issues/18)
 
 ## Setup OBSBOT Center on Linux
 
@@ -51,3 +62,13 @@ Therefore, using a VM — for example, via [VirtualBox](https://wiki.archlinux.o
 
 Once you’ve set the color values, gesture settings, and preset camera positions once, there’s no need to start the VM regularly anymore.
 The rest is what this program is meant to handle ;)
+
+## Run the GUI (for devs)
+
+To run the GUI, you have to build the project and then run the binary:
+
+```shell
+cargo run --package tiny4linux --bin tiny4linux-gui
+```
+
+With *Jetbrains RustRover*, you can directly execute the corresponding Run Configuration.
