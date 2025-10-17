@@ -36,6 +36,10 @@ jobs:
 
       - name: Execute tests
         run: cargo test
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
+          RUSTDOCFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort -Zpanic_abort_tests'
 
       - name: Check on unwanted file changes
         run: |
@@ -64,3 +68,11 @@ jobs:
           git commit -m "🎨 Formatted code"
           git push origin ${{ github.event.pull_request.head.ref }}
           }
+
+      - name: Extract coverage report
+        uses: actions-rs/grcov@v0.1.5
+
+      - name: Codecov
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
