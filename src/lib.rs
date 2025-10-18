@@ -307,7 +307,10 @@ impl OBSBotWebCam for Camera {
                 [0x8b, 0xc3],
                 [0xaf, 0x19, 0x02, 0x00, 0x00, 0x00],
             ),
-            _ => panic!(),
+            _ => {
+                println!("Invalid preset nr {}", preset_nr + 1);
+                return Err(Error::InvalidSetting);
+            }
         };
 
         let cmd = Command02::new()
