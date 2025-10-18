@@ -2,6 +2,8 @@
 
 [<img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />](#installation-on-arch-linux)
 
+<img src="src/assets/screenshot.png" align="right" width="20%" alt="GUI of the current version"/>
+
 Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
 Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
 
