@@ -17,6 +17,7 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - Toggle for **Sleep/Wake**
 - Controls for the **tracking speed**
 - Controls for **preset positions**
+- **CLI** for camera controls (same functions as GUI)
 - Updated Dependencies
 
 ### Shortly planned features
@@ -50,9 +51,19 @@ Currently, the following methods are supported or planned:
 
 ### Installation on Arch Linux
 
-The GUI can be installed via the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-gui/):
+You can choose between the GUI-version or the CLI-version.
+The GUI installs right into your desktop manager.
+The CLI is installed and made available in your terminal.
+Both versions are ready to use.
+
+The GUI is available in the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-gui/) via:
 ```shell
 yay -S tiny4linux-gui
+```
+
+The CLI is available in the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-cli/) via:
+```shell
+yay -S tiny4linux-cli
 ```
 
 ### Planned Installation Methods
@@ -60,6 +71,20 @@ yay -S tiny4linux-gui
 - [Nix User Repository](https://github.com/OpenFoxes/Tiny4Linux/issues/38)
 - [Flatpak](https://github.com/OpenFoxes/Tiny4Linux/issues/39)
 - [Debian and RPM](https://github.com/OpenFoxes/Tiny4Linux/issues/18)
+
+## Usage
+
+The way you use Tiny4Linux depends on the variant you chose:
+
+### GUI
+
+You can start the GUI by clicking on the icon in your desktop manager or by typing `tiny4linux-gui` in your terminal.
+You'll have full access to all available features in the window that opens.
+
+### CLI
+
+You can use the CLI by typing `t4l` or `tiny4linux-cli` in your terminal.
+To get the full list of available commands, type `t4l --help` or look into the [CLI documentation](docs/cli.md).
 
 ## Setup OBSBOT Center on Linux
 
