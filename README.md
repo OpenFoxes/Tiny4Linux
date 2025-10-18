@@ -2,21 +2,8 @@
 
 [<img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />](#installation-on-arch-linux)
 
-With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
-The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2
-
-As of [September 2025](https://web.archive.org/web/20251008100439/https://www.obsbot.com/download/obsbot-tiny-2), however, this software is only available for users on Windows and macOS.
-According to [the latest Steam Hardware Survey](https://web.archive.org/web/20251008101418/https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam), Linux users account for 2.68%, which is actually more than macOS users.
-Especially within the tech community, many users (rightly so :P) rely on Linux as their operating system.
-Unfortunately, they currently miss out on the configuration options offered by the OBSBOT Center.
-
-To partially address this issue, [OBSBOT now provides an SDK](https://www.obsbot.com/de/sdk), which allows developers to replicate certain functionalities.
-However, the availability of the SDK is still limited.
-Fortunately, the community has since managed to implement several solutions on its own through [reverse engineering](https://github.com/taxfromdk/obsbot_tiny_reversing) and a lot of dedication.
-
-This project provides a graphical interface for some basic features.
-However, to make full use of all functions, a configuration must first be performed in the OBSBOT Center using one of the supported operating systems.
-A guide on how to do this quickly and easily on Linux can be found below.
+Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
+Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
 
 ## Credit
 
@@ -34,6 +21,24 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 
 - UI-Upgrade (WIP)
 - Tests & Codecov check
+
+## Motivation
+
+With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
+The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2
+
+As of [September 2025](https://web.archive.org/web/20251008100439/https://www.obsbot.com/download/obsbot-tiny-2), however, this software is only available for users on Windows and macOS.
+According to [the latest Steam Hardware Survey](https://web.archive.org/web/20251008101418/https://store.steampowered.com/hwsurvey/Steam-Hardware-Software-Survey-Welcome-to-Steam), Linux users account for 2.68%, which is actually more than macOS users.
+Especially within the tech community, many users (rightly so :P) rely on Linux as their operating system.
+Unfortunately, they currently miss out on the configuration options offered by the OBSBOT Center.
+
+To partially address this issue, [OBSBOT now provides an SDK](https://www.obsbot.com/de/sdk), which allows developers to replicate certain functionalities.
+However, the availability of the SDK is still limited.
+Fortunately, the community has since managed to implement several solutions on its own through [reverse engineering](https://github.com/taxfromdk/obsbot_tiny_reversing) and a lot of dedication.
+
+This project provides a graphical interface for some basic features.
+However, to make full use of all functions, a configuration must first be performed in the OBSBOT Center using one of the supported operating systems.
+A guide on how to do this quickly and easily on Linux can be found below.
 
 ## Installation
 
