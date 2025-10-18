@@ -7,12 +7,12 @@
 Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
 Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
 
-## Credit
+### Credit
 
 This repository is a fork of [Constantine Evans's "Tiny2"](https://github.com/cgevans/tiny2),
 which itself is substantially based on [samliddicott's meet4k package](https://github.com/samliddicott/meet4k).
 
-## New features and improvements
+### New features and improvements
 
 - Toggle for **Sleep/Wake**
 - Controls for the **tracking speed**
@@ -20,12 +20,12 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - **CLI** for camera controls (same functions as GUI)
 - Updated Dependencies
 
-### Shortly planned features
+#### Shortly planned features
 
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
-## Motivation
+### Motivation
 
 With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
 The OBSBOT Center provides a way to fully control these devices: https://www.obsbot.com/de/download/obsbot-tiny-2
