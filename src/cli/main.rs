@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand};
+use clap_complete::generate;
 use tiny4linux::{AIMode, Camera, OBSBotWebCam};
 
 /// Simple program to greet a person
@@ -50,6 +51,8 @@ enum Command {
     Info,
     /// Displays the version of the CLI-tool
     Version,
+    /// Generates shell-completion scripts for the CLI-tool
+    Completions { shell: clap_complete::Shell },
 }
 
 #[derive(Subcommand)]
@@ -233,6 +236,11 @@ fn main() {
         }
         Command::Version => {
             println!("t4l version: {}", env!("CARGO_PKG_VERSION"));
+        }
+        Command::Completions { shell } => {
+            use clap::CommandFactory;
+            let mut cmd = Args::command();
+            generate(*shell, &mut cmd, "t4l", &mut std::io::stdout());
         }
     }
 }
