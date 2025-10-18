@@ -97,3 +97,13 @@ You can display available information about the current state of the camera with
 ```shell
 t4l info
 ```
+
+## Auto-Completion
+
+If you use the cli more often, it might be useful to enable auto-completion for the commands.
+Therefore, you can use the command `completions` to generate the shell-completion scripts for your shell.
+
+In the following example, the shell-completion scripts are generated for bash with `bash-completion`:
+```shell
+t4l completions bash > /.local/share/bash-completion/completions/t4l
+```
