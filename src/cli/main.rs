@@ -228,10 +228,10 @@ fn main() {
                 let info = info.unwrap();
 
                 println!("Camera status:");
-                println!("  Sleep Mode: {}", info.awake);
-                println!("  AI Mode: {}", info.ai_mode);
-                println!("  Tracking Speed: {}", info.speed);
-                println!("  HDR: {}", info.hdr_on);
+                println!("  💤  Sleep Mode: {}", info.awake);
+                println!("  🤖  AI Mode: {}", info.ai_mode);
+                println!("  🏃  Tracking Speed: {}", info.speed);
+                println!("  💐  HDR: {}", info.hdr_on);
             }
         }
         Command::Version => {
