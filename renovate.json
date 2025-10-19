@@ -27,6 +27,18 @@
       "matchUpdateTypes": ["rollback"],
       "commitMessagePrefix": "⬇️ ",
       "commitMessageAction": "Downgrade"
+    },
+    {
+      "matchManagers": ["cargo"],
+      "matchPackagePatterns": ["tiny4linux-assets"],
+      "schedule": ["every 2 days"]
     }
-  ]
+  ],
+  "enabledManagers": ["cargo"],
+  "cargo": {
+    "enabled": true
+  },
+  "git": {
+    "enabled": true
+  }
 }
