@@ -1,4 +1,12 @@
-# Tiny4Linux: A GUI-Controller for the OBSBOT Tiny2
+<h1 align="center">Tiny4Linux</h1>
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/OpenFoxes/Tiny4Linux-Icons/main/generated/png/title-icon/v2.0-hard-shadow.png" width="15%" alt="Icon" />
+</p>
+
+<p align="center"><b>A GUI-Controller for the OBSBOT Tiny2</b></p>
+
+---
 
 [<img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />](#installation-on-arch-linux)
 
