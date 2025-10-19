@@ -8,6 +8,7 @@ use iced::widget::{button, column, image, row, text, text_input, toggler};
 use iced::{Alignment, Length, Padding, Size, Subscription, Task, time, window};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
+use tiny4linux_assets::handle_t4l_asset;
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
@@ -157,12 +158,14 @@ impl MainPanel {
                         .height(100)
                         .align_y(Vertical::Center),
                     image(if self.awake == SleepMode::Awake {
-                        "src/assets/obsbot-tiny-2.png"
+                        handle_t4l_asset("generated/png/icons/inverted-camera.png")
                     } else {
-                        "src/assets/obsbot-tiny-2-side.png"
+                        handle_t4l_asset("generated/png/icons/inverted-camera-asleep.png")
                     })
-                    .height(100)
-                ],
+                    .height(50)
+                ]
+                .spacing(30)
+                .align_y(Vertical::Center),
                 toggler(self.awake != SleepMode::Awake)
                     .label("Sleeping".to_string())
                     .on_toggle(Message::ChangeSleeping),
