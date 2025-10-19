@@ -385,11 +385,53 @@ impl MainPanel {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum StartMode {
+    Dashboard,
+    Widget,
+    Invalid,
+}
+
+fn get_start_mode() -> StartMode {
+    let args: Vec<String> = std::env::args().collect();
+
+    if let Some(start_mode_flag_pos) = args.iter().position(|a| a == ("--start-as")) {
+        if let Some(start_mode_arg) = args.get(start_mode_flag_pos + 1) {
+            return if start_mode_arg.eq_ignore_ascii_case("dashboard") {
+                StartMode::Dashboard
+            } else if start_mode_arg.eq_ignore_ascii_case("widget") {
+                StartMode::Widget
+            } else {
+                StartMode::Invalid
+            };
+        }
+    }
+
+    StartMode::Dashboard
+}
+
 fn main() -> iced::Result {
+    let start_mode = get_start_mode();
+
+    if start_mode == StartMode::Invalid {
+        println!(
+            "Invalid start mode. Please use --start-as dashboard or --start-as widget or remove the flag."
+        );
+        panic!();
+    }
+
+    println!("Starting Tiny4Linux in {:?} mode", start_mode);
+
+    let window_size = match start_mode {
+        StartMode::Dashboard => Size::new(860.0, 720.0), // 43:36
+        StartMode::Widget => Size::new(300.0, 550.0),    // 6:11
+        StartMode::Invalid => Size::ZERO,
+    };
+
     iced::application("Tiny4Linux", MainPanel::update, MainPanel::view)
         .theme(|_| obsbot_theme())
         .window(window::Settings {
-            size: Size::new(300.0, 900.0),
+            size: window_size,
             resizable: false,
             decorations: true,
             ..Default::default()

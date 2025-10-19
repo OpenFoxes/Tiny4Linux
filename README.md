@@ -89,6 +89,14 @@ The way you use Tiny4Linux depends on the variant you chose:
 You can start the GUI by clicking on the icon in your desktop manager or by typing `tiny4linux-gui` in your terminal.
 You'll have full access to all available features in the window that opens.
 
+The UI is available in two variants:
+
+1. The **dashboard** is a full overview about the current state and all the available controlling functions.
+Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as dashboard`
+2. The **widget** is a smaller version intended for permanent viewing.
+It contains only the more important functions you might need more often.
+Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as widget`
+
 ### CLI
 
 You can use the CLI by typing `t4l` or `tiny4linux-cli` in your terminal.
