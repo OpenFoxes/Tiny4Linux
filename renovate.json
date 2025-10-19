@@ -34,11 +34,14 @@
       "schedule": ["every 2 days"]
     }
   ],
-  "enabledManagers": ["cargo"],
-  "cargo": {
-    "enabled": true
-  },
-  "git": {
-    "enabled": true
-  }
+  "regexManagers": [
+    {
+      "fileMatch": ["(^|/)Cargo\\.toml$"],
+      "matchStrings": [
+        "(?<depName>[^\\s=]+)\\s*=\\s*\\{[^}]*git\\s*=\\s*\"(?<packageName>https:\\/\\/github\\.\\/[^\"}]+)\"[^}]*rev\\s*=\\s*\"(?<currentValue>[0-9a-f]{7,40})\"[^}]*\\}"
+      ],
+      "datasourceTemplate": "git-refs",
+      "versioningTemplate": "git"
+    }
+  ]
 }
