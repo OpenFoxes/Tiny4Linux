@@ -7,6 +7,16 @@ on:
         description: 'Version (SemVer)'
         required: true
         default: 0.0.0
+      deployment-aur-gui:
+        description: 'Deployment (AUR, GUI)'
+        type: boolean
+        required: true
+        default: true
+      deployment-aur-cli:
+        description: 'Deployment (AUR, CLI)'
+        type: boolean
+        required: true
+        default: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -75,6 +85,7 @@ jobs:
           git archive --format=zip -o tiny4linux-${VERSION}.zip HEAD
 
       - name: Update PKGBUILD & SRCINFO for the GUI with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
@@ -97,6 +108,7 @@ jobs:
           "
 
       - name: Update PKGBUILD & SRCINFO for the CLI with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
@@ -192,6 +204,7 @@ jobs:
   deploy-aur-gui:
     name: 'Deploy GUI to AUR'
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Setup SSH for AUR
@@ -224,6 +237,7 @@ jobs:
   deploy-aur-cli:
     name: 'Deploy CLI to AUR'
     runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Setup SSH for AUR
