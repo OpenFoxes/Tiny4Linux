@@ -1,0 +1,42 @@
+name: Execute tests
+
+on:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  pr:
+    name: Run PR-Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v5
+
+      - name: Execute tests
+        run: cargo test
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Cinstrument-coverage'
+          LLVM_PROFILE_FILE: 'target/coverage/%p-%m.profraw'
+
+      - name: Generate coverage report
+        run: |
+          rustup component add llvm-tools-preview
+          cargo install grcov
+          grcov . \
+            --binary-path target/debug/ \
+            -s . \
+            -t lcov \
+            --branch \
+            --ignore-not-existing \
+            -o target/lcov.info
+
+      - name: Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: target/lcov.info
+          fail_ci_if_error: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
