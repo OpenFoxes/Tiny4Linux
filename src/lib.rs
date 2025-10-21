@@ -446,6 +446,11 @@ impl Camera {
         let mut data: [u8; 60] = [0u8; 60];
         self.get_cur(0x2, 0x6, &mut data)
             .map_err(|x| Error::USBIOError(x.0))?;
+
+        if self.debugging {
+            println!("Current state: {:?} {:}", data, hex::encode(&data));
+        }
+
         Ok(CameraStatus::decode(&data))
     }
 
