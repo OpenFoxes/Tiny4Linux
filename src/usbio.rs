@@ -16,7 +16,7 @@ pub trait UvcUsbIo {
 }
 
 #[derive(Debug)]
-pub struct CameraHandle(std::fs::File);
+pub struct CameraHandle(File);
 
 impl From<File> for CameraHandle {
     fn from(file: File) -> Self {
@@ -106,7 +106,7 @@ pub struct v4l2_capability {
 }
 
 impl v4l2_capability {
-    fn new(dev: &std::fs::File) -> Result<Self, errno::Errno> {
+    fn new(dev: &File) -> Result<Self, Errno> {
         let mut query = [v4l2_capability {
             ..Default::default()
         }];
