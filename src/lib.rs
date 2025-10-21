@@ -24,6 +24,7 @@ pub enum Error {
 #[derive(Debug)]
 pub struct Camera {
     handle: usbio::CameraHandle,
+    debugging: bool,
 }
 
 pub struct CameraStatus {
@@ -223,6 +224,7 @@ pub trait OBSBotWebCam {
     fn set_hdr_mode(&self, mode: bool) -> Result<(), Error>;
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), Error>;
     fn set_exposure_mode_type(&self, mode: ExposureModeType) -> Result<(), Error>;
+    fn set_debugging(&mut self, debugging: bool);
 }
 
 impl OBSBotWebCam for Camera {
@@ -422,12 +424,17 @@ impl OBSBotWebCam for Camera {
 
         Ok(())
     }
+
+    fn set_debugging(&mut self, debugging: bool) {
+        self.set_debugging(debugging);
+    }
 }
 
 impl Camera {
     pub fn new(hint: &str) -> Result<Self, Error> {
         Ok(Self {
             handle: usbio::open_camera(hint)?,
+            debugging: false,
         })
     }
 
@@ -494,7 +501,9 @@ impl Camera {
             Err(err) => return Err(err),
         };
 
-        println!("{:} {:} {:}", unit, selector, hex::encode(&data));
+        if self.debugging {
+            println!("{:} {:} {:}", unit, selector, hex::encode(&data));
+        }
 
         match self.io(unit, selector, usbio::UVC_SET_CUR, data) {
             Ok(_) => Ok(()),
@@ -513,6 +522,10 @@ impl Camera {
 
     fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno> {
         self.handle.io(unit, selector, query, data)
+    }
+
+    fn set_debugging(&mut self, debugging: bool) {
+        self.debugging = debugging
     }
 }
 
