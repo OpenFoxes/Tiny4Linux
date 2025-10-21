@@ -117,6 +117,8 @@ impl MainPanel {
             }
             Message::ChangeDebugging(new_mode) => {
                 self.debugging_on = new_mode;
+                let mutable_camera = self.camera.as_mut().unwrap();
+                mutable_camera.set_debugging(new_mode);
                 Task::none()
             }
             Message::TextInput(s) => {

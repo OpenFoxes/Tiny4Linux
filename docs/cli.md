@@ -98,6 +98,11 @@ You can display available information about the current state of the camera with
 t4l info
 ```
 
+## Verbose
+
+With the flag `--verbose` you can enable verbose logging.
+You will see the communication with the camera in the console.
+
 ## Auto-Completion
 
 If you use the cli more often, it might be useful to enable auto-completion for the commands.

@@ -9,6 +9,8 @@ use tiny4linux::{AIMode, Camera, OBSBotWebCam};
 struct Args {
     #[command(subcommand)]
     subcommand: Command,
+    #[arg(short, long, help = "Turns the debug logging on", global = true)]
+    verbose: bool,
 }
 
 #[derive(Subcommand)]
@@ -98,28 +100,30 @@ enum ExposureArg {
 fn main() {
     let args = Args::parse();
 
-    let camera = Camera::new("OBSBOT Tiny 2").ok();
+    let mut camera = Camera::new("OBSBOT Tiny 2").ok();
 
     if camera.is_none() {
         println!("Camera could not be found. Please check the connection of the camera.");
         return;
     }
 
+    if args.verbose {
+        camera.as_mut().unwrap().set_debugging(true);
+    }
+
+    let camera = camera.unwrap();
+
     match &args.subcommand {
-        Command::Turn { action } => evaluate_sleep_arg(action.clone(), camera.unwrap()),
-        Command::Sleep => evaluate_sleep_arg(Option::from(OnOffArg::Off), camera.unwrap()),
-        Command::Wake => evaluate_sleep_arg(Option::from(OnOffArg::On), camera.unwrap()),
-        Command::Tracking { tracking_mode } => {
-            evaluate_tracking_arg(tracking_mode.clone(), camera.unwrap())
-        }
-        Command::Speed { speed } => evaluate_speed_arg(speed.clone(), camera.unwrap()),
-        Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera.unwrap()),
-        Command::Hdr { hdr_mode } => evaluate_hdr_arg(hdr_mode.clone(), camera.unwrap()),
-        Command::Exposure { exposure_mode } => {
-            evaluate_exposure_arg(exposure_mode.clone(), camera.unwrap())
-        }
+        Command::Turn { action } => evaluate_sleep_arg(action.clone(), camera),
+        Command::Sleep => evaluate_sleep_arg(Option::from(OnOffArg::Off), camera),
+        Command::Wake => evaluate_sleep_arg(Option::from(OnOffArg::On), camera),
+        Command::Tracking { tracking_mode } => evaluate_tracking_arg(tracking_mode.clone(), camera),
+        Command::Speed { speed } => evaluate_speed_arg(speed.clone(), camera),
+        Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera),
+        Command::Hdr { hdr_mode } => evaluate_hdr_arg(hdr_mode.clone(), camera),
+        Command::Exposure { exposure_mode } => evaluate_exposure_arg(exposure_mode.clone(), camera),
         Command::Info => {
-            let info = camera.unwrap().get_status();
+            let info = camera.get_status();
 
             if info.is_err() {
                 println!(
