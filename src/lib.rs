@@ -464,13 +464,13 @@ impl Camera {
             .map_err(|e| Error::USBIOError(e.0))
     }
 
-    fn get_cur(&self, unit: u8, selector: u8, data: &mut [u8]) -> Result<(), errno::Errno> {
+    fn get_cur(&self, unit: u8, selector: u8, data: &mut [u8]) -> Result<(), Errno> {
         // always call get_len first
         match self.get_len(unit, selector) {
             Ok(size) => {
                 if data.len() < size {
                     println!("Got size {}", size);
-                    return Err(errno::Errno(1));
+                    return Err(Errno(1));
                 }
             }
             Err(err) => return Err(err),
@@ -483,12 +483,12 @@ impl Camera {
         }
     }
 
-    fn set_cur(&self, unit: u8, selector: u8, data: &mut [u8]) -> Result<(), errno::Errno> {
+    fn set_cur(&self, unit: u8, selector: u8, data: &mut [u8]) -> Result<(), Errno> {
         match self.get_len(unit, selector) {
             Ok(size) => {
                 if data.len() > size {
                     println!("Got size {}", size);
-                    return Err(errno::Errno(1));
+                    return Err(Errno(1));
                 }
             }
             Err(err) => return Err(err),
