@@ -8,7 +8,7 @@ env:
 
 jobs:
   pr:
-    name: Run PR-Job
+    name: Run tests with coverage
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
