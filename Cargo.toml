@@ -13,8 +13,6 @@ readme = "README.md"
 keywords = ["obsbot", "tiny2", "camera", "webcam", "linux"]
 categories = ["hardware-support"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "ba11e78" }
 iced = { version = "0.13.0", features = ["image", "tokio"] }
