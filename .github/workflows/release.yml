@@ -58,7 +58,7 @@ jobs:
           path: .
 
       - name: Build binary
-        run: cargo build --release
+        run: cargo build --release --all-features
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
