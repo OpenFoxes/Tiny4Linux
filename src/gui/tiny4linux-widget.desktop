@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Tiny4Linux (Widget)
+Comment=A graphical user interface for OBSBOT Tiny devices opened in widget mode
+Exec=tiny4linux-gui --start-as widget
+Icon=tiny4linux
+Terminal=false
+Categories=Utility;System;
+Keywords=linux;obsbot;tiny;utility;
