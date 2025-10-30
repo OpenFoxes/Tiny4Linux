@@ -1,11 +1,12 @@
 mod styles;
 
 use crate::styles::theme::obsbot_theme;
-use iced::Element;
 use iced::alignment::{Horizontal, Vertical};
 use iced::widget::button::{primary, secondary};
 use iced::widget::{button, column, image, row, text, text_input, toggler};
+use iced::window::Position;
 use iced::{Alignment, Length, Padding, Size, Subscription, Task, time, window};
+use iced::{Element, Point};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
 use tiny4linux_assets::handle_t4l_asset;
@@ -392,6 +393,38 @@ enum WindowMode {
     Invalid,
 }
 
+fn get_size_for_window_mode(window_mode: WindowMode) -> Size {
+    match window_mode {
+        WindowMode::Dashboard => Size::new(860.0, 720.0), // 43:36
+        WindowMode::Widget => Size::new(300.0, 550.0),    // 6:11
+        WindowMode::Invalid => Size::ZERO,
+    }
+}
+
+fn get_position_for_window_mode(window_mode: WindowMode) -> Position {
+    match window_mode {
+        WindowMode::Dashboard => Position::Centered,
+        WindowMode::Widget => Position::SpecificWith(|window_size, screen_size| Point {
+            x: (screen_size.width - window_size.width),
+            y: (screen_size.height - window_size.height),
+        }),
+        WindowMode::Invalid => Position::Centered,
+    }
+}
+
+fn get_window_settings_for_window_mode(window_mode: WindowMode) -> window::Settings {
+    let window_size = get_size_for_window_mode(window_mode);
+    window::Settings {
+        size: window_size,
+        resizable: false,
+        min_size: Some(window_size),
+        max_size: Some(window_size),
+        position: get_position_for_window_mode(window_mode),
+        decorations: true,
+        ..Default::default()
+    }
+}
+
 fn get_start_mode() -> WindowMode {
     let args: Vec<String> = std::env::args().collect();
 
@@ -422,20 +455,9 @@ fn main() -> iced::Result {
 
     println!("Starting Tiny4Linux in {:?} mode", start_mode);
 
-    let window_size = match start_mode {
-        WindowMode::Dashboard => Size::new(860.0, 720.0), // 43:36
-        WindowMode::Widget => Size::new(300.0, 550.0),    // 6:11
-        WindowMode::Invalid => Size::ZERO,
-    };
-
     iced::application("Tiny4Linux", MainPanel::update, MainPanel::view)
         .theme(|_| obsbot_theme())
-        .window(window::Settings {
-            size: window_size,
-            resizable: false,
-            decorations: true,
-            ..Default::default()
-        })
+        .window(get_window_settings_for_window_mode(start_mode))
         .subscription(MainPanel::subscription)
-        .run_with(|| MainPanel::init_state())
+        .run_with(move || MainPanel::init_state())
 }
