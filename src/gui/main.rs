@@ -13,6 +13,7 @@ use tiny4linux_assets::handle_t4l_asset;
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
+    ChangeMainWindowId(Option<window::Id>),
     ChangeSleeping(bool),
     ChangeTracking(AIMode),
     ChangeTrackingSpeed(TrackingSpeed),
@@ -31,6 +32,7 @@ enum Message {
 
 struct MainPanel {
     camera: Option<Camera>,
+    main_window_id: Option<window::Id>,
     awake: SleepMode,
     tracking: AIMode,
     tracking_speed: TrackingSpeed,
@@ -52,6 +54,7 @@ impl MainPanel {
         (
             MainPanel {
                 camera,
+                main_window_id: None,
                 awake: status.awake,
                 tracking: status.ai_mode,
                 tracking_speed: status.speed,
@@ -60,7 +63,7 @@ impl MainPanel {
                 text_input: String::new(),
                 text_input_02: String::new(),
             },
-            Task::none(),
+            window::get_latest().map(Message::ChangeMainWindowId),
         )
     }
 
@@ -79,6 +82,10 @@ impl MainPanel {
         let camera = self.camera.as_ref().unwrap();
 
         match message {
+            Message::ChangeMainWindowId(id) => {
+                self.main_window_id = id;
+                Task::none()
+            }
             Message::ChangeSleeping(should_sleep) => {
                 if should_sleep {
                     self.awake = SleepMode::Sleep;
