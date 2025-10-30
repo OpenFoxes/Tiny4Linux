@@ -1,11 +1,12 @@
+use crate::styles::colors::{COLOR_BACKGROUND_DARK, COLOR_PRIMARY_OBSBOT};
+use iced::Theme;
 use iced::theme::Palette;
 use iced::theme::palette::Extended;
-use iced::{Color, Theme};
 
 pub fn obsbot_theme() -> Theme {
     let palette = Palette {
-        primary: Color::from_rgb8(0xe6, 0x00, 0x33),
-        background: Color::from_rgb8(0x19, 0x1a, 0x1b),
+        primary: COLOR_PRIMARY_OBSBOT,
+        background: COLOR_BACKGROUND_DARK,
         success: Default::default(),
         text: Default::default(),
         danger: Default::default(),
