@@ -18,7 +18,7 @@ gui = ["iced", "iced_font_awesome", "tiny4linux_assets"]
 cli = ["clap", "clap_complete", "dialoguer"]
 
 [dependencies]
-tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "ba11e78", optional = true }
+tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "fe298f3c30d21326a918f3510a85669219001a01", optional = true }
 iced = { version = "0.13.0", features = ["image", "tokio"], optional = true }
 iced_font_awesome = { version = "0.2.1", optional = true }
 nix = { version = "0.30.0", features = ["ioctl"] }
@@ -33,7 +33,7 @@ clap_complete = { version = "4.5.59", optional = true }
 dialoguer = { version = "0.12.0", features = ["fuzzy-select"], optional = true }
 
 [build-dependencies]
-tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "ba11e78", optional = true }
+tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "fe298f3c30d21326a918f3510a85669219001a01", optional = true }
 
 [[bin]]
 name = "tiny4linux-gui"
