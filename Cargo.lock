@@ -3413,7 +3413,7 @@ dependencies = [
 [[package]]
 name = "tiny4linux_assets"
 version = "1.0.0"
-source = "git+https://github.com/OpenFoxes/Tiny4Linux-Icons?rev=ba11e78#ba11e780cc72c3df8f4fe82be76aaff08c8c30e2"
+source = "git+https://github.com/OpenFoxes/Tiny4Linux-Icons?rev=fe298f3c30d21326a918f3510a85669219001a01#fe298f3c30d21326a918f3510a85669219001a01"
 dependencies = [
  "iced",
  "once_cell",
