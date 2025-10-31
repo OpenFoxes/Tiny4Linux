@@ -97,7 +97,15 @@ pub fn current_stats(app: &MainPanel) -> Container<'static, Message> {
                         row![fa_icon_solid("toggle-off"), text("Off")].spacing(10)
                     }
                 ]
-                .spacing(10)
+                .spacing(10),
+                horizontal_rule(1),
+                row![
+                    text(TEXT_INDENT),
+                    fa_icon_solid("code-commit"),
+                    text("T4L-Version:"),
+                ]
+                .spacing(10),
+                row![text(TEXT_INDENT_LONG), text(env!("CARGO_PKG_VERSION"))].spacing(10)
             ]
             .spacing(10)
         ]
