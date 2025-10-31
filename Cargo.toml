@@ -3,7 +3,7 @@
 [package]
 license = "EUPL-1.2"
 name = "tiny4linux"
-version = "2.0.3"
+version = "2.1.0"
 edition = "2024"
 description = "Controls for the OBSBot Tiny2 on Linux"
 homepage = "https://github.com/OpenFoxes/Tiny4Linux"
