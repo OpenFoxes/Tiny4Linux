@@ -81,6 +81,11 @@ jobs:
       - name: Generate tarball from current repo
         run: |
           VERSION=${{ github.event.inputs.version }}
+          git config --global user.name 'OpenFoxes Maintenance Bot'
+          git config --global user.email 'openfoxes@bono-fox.de'
+          git init
+          git add .
+          git commit -m "🔖 Set version number to ${{  github.event.inputs.version }}"
           git archive --format=tar.gz -o tiny4linux-${VERSION}.tar.gz HEAD
           git archive --format=zip -o tiny4linux-${VERSION}.zip HEAD
 
