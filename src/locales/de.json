@@ -1,0 +1,21 @@
+{
+  "gui": {
+
+  },
+  "cli": {
+
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Wach",
+      "sleep": "Schlafend",
+      "unknown": "Unbekannt"
+    }
+  },
+  "logging": {
+
+  },
+  "errors": {
+    "unsupported_int_value": "value of {1} is not supported for {0}"
+  }
+}
