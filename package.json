@@ -1,0 +1,9 @@
+{
+  "name": "tiny4linux",
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}
