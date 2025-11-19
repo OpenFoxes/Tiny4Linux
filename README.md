@@ -100,9 +100,8 @@ The UI is available in two variants:
    Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as widget`
 
 | Dashboard Mode                                                             | Widget Mode                                                                    |
-|----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | <img src="src/assets/screenshot.png" height="400px" alt="Dashboard Mode"/> | <img src="src/assets/screenshot-widget.png" height="400px" alt="Widget Mode"/> |
-
 
 ### CLI
 
@@ -118,12 +117,24 @@ Therefore, using a VM — for example, via [VirtualBox](https://wiki.archlinux.o
 Once you’ve set the color values, gesture settings, and preset camera positions once, there’s no need to start the VM regularly anymore.
 The rest is what this program is meant to handle ;)
 
-## Run the GUI (for devs)
+## Run the Application (for devs)
 
-To run the GUI, you have to build the project and then run the binary:
+### GUI
+
+To run the GUI, you have to build the project and then run the corresponding binary.
+Remember to enable the `gui` feature:
 
 ```shell
-cargo run --package tiny4linux --bin tiny4linux-gui
+cargo run --package tiny4linux --bin tiny4linux-gui --features="gui"
 ```
 
-With _Jetbrains RustRover_, you can directly execute the corresponding Run Configuration.
+With _Jetbrains RustRover_, you can directly execute the Run Configuration.
+
+### CLI
+
+To run the CLI, you have to build the project and then run the corresponding binary.
+Remember to enable the `cli` feature:
+
+```shell
+cargo run --package tiny4linux --bin tiny4linux-cli  --features="cli"
+```
