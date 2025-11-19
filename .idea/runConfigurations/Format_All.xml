@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Format All" type="CompoundRunConfigurationType">
+    <toRun name="Format Rust" type="CargoCommandRunConfiguration" />
+    <toRun name="Format Others" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

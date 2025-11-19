@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Format" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+  <configuration default="false" name="Format Rust" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="fmt" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$" />
     <envs />
