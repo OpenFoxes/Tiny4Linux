@@ -65,11 +65,13 @@ The CLI is installed and made available in your terminal.
 Both versions are ready to use.
 
 The GUI is available in the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-gui/) via:
+
 ```shell
 yay -S tiny4linux-gui
 ```
 
 The CLI is available in the [Arch User Repository](https://aur.archlinux.org/packages/tiny4linux-cli/) via:
+
 ```shell
 yay -S tiny4linux-cli
 ```
@@ -92,10 +94,10 @@ You'll have full access to all available features in the window that opens.
 The UI is available in two variants:
 
 1. The **dashboard** is a full overview about the current state and all the available controlling functions.
-Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as dashboard`
+   Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as dashboard`
 2. The **widget** is a smaller version intended for permanent viewing.
-It contains only the more important functions you might need more often.
-Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as widget`
+   It contains only the more important functions you might need more often.
+   Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as widget`
 
 | Dashboard Mode                                                             | Widget Mode                                                                    |
 |----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
@@ -124,4 +126,4 @@ To run the GUI, you have to build the project and then run the binary:
 cargo run --package tiny4linux --bin tiny4linux-gui
 ```
 
-With *Jetbrains RustRover*, you can directly execute the corresponding Run Configuration.
+With _Jetbrains RustRover_, you can directly execute the corresponding Run Configuration.

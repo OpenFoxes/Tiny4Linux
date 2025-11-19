@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version (SemVer)'
+        description: "Version (SemVer)"
         required: true
         default: 0.0.0
       deployment-aur-gui:
-        description: 'Deployment (AUR, GUI)'
+        description: "Deployment (AUR, GUI)"
         type: boolean
         required: true
         default: true
       deployment-aur-cli:
-        description: 'Deployment (AUR, CLI)'
+        description: "Deployment (AUR, CLI)"
         type: boolean
         required: true
         default: true
@@ -94,16 +94,16 @@ jobs:
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
-          
+
           cd deployment/gui/aur
-          
+
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
-          
+
           # Write-Permissions for Container-User
           chmod -R 777 .
-          
+
           docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
             pacman -Sy --noconfirm --needed base-devel shadow &&
             useradd -m builder || true &&
@@ -117,16 +117,16 @@ jobs:
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
-          
+
           cd deployment/cli/aur
-          
+
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
-          
+
           # Write-Permissions for Container-User
           chmod -R 777 .
-          
+
           docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
             pacman -Sy --noconfirm --needed base-devel shadow &&
             useradd -m builder || true &&
@@ -179,7 +179,7 @@ jobs:
           git push -u origin HEAD:main --tags
 
   create-github-release:
-    name: 'Create GitHub release'
+    name: "Create GitHub release"
     runs-on: ubuntu-latest
     needs: [build, update-metadata, add-version-commit]
     steps:
@@ -207,7 +207,7 @@ jobs:
             tiny4linux-${{ github.event.inputs.version }}.zip
 
   deploy-aur-gui:
-    name: 'Deploy GUI to AUR'
+    name: "Deploy GUI to AUR"
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
     needs: [create-github-release]
@@ -237,10 +237,10 @@ jobs:
           git config user.email "openfoxes@bono-fox.de"
           git add PKGBUILD .SRCINFO LICENSE
           git commit -m "Update to Version ${{ github.event.inputs.version }}"
-          git push 
+          git push
 
   deploy-aur-cli:
-    name: 'Deploy CLI to AUR'
+    name: "Deploy CLI to AUR"
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
     needs: [create-github-release]
@@ -270,7 +270,7 @@ jobs:
           git config user.email "openfoxes@bono-fox.de"
           git add PKGBUILD .SRCINFO LICENSE
           git commit -m "Update to Version ${{ github.event.inputs.version }}"
-          git push 
+          git push
 
   cleanup:
     name: Cleanup
