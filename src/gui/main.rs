@@ -8,8 +8,11 @@ use iced::widget::{Container, text};
 use iced::window::Position;
 use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
+use rust_i18n::{i18n, set_locale};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
+
+i18n!("src/locales");
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {

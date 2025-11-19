@@ -2,6 +2,7 @@ use crate::{MainPanel, Message};
 use iced::alignment::Horizontal;
 use iced::widget::{Container, column, container, horizontal_rule, row, text};
 use iced_font_awesome::fa_icon_solid;
+use rust_i18n::t;
 use tiny4linux::{AIMode, SleepMode, TrackingSpeed};
 
 const TEXT_INDENT: &str = "   ";
@@ -21,11 +22,19 @@ pub fn current_stats(app: &MainPanel) -> Container<'static, Message> {
                 row![
                     text(TEXT_INDENT_LONG),
                     match app.awake {
-                        SleepMode::Awake => row![fa_icon_solid("eye"), text("Awake")].spacing(10),
-                        SleepMode::Sleep =>
-                            row![fa_icon_solid("eye-slash"), text("Sleeping")].spacing(10),
-                        SleepMode::Unknown =>
-                            row![fa_icon_solid("question-circle"), text("Unknown")].spacing(10),
+                        SleepMode::Awake =>
+                            row![fa_icon_solid("eye"), text(t!("display.sleep_mode.awake"))]
+                                .spacing(10),
+                        SleepMode::Sleep => row![
+                            fa_icon_solid("eye-slash"),
+                            text(t!("display.sleep_mode.sleep"))
+                        ]
+                        .spacing(10),
+                        SleepMode::Unknown => row![
+                            fa_icon_solid("question-circle"),
+                            text(t!("display.sleep_mode.unknown"))
+                        ]
+                        .spacing(10),
                     }
                 ]
                 .spacing(10),
