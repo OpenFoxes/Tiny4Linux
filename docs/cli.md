@@ -11,7 +11,7 @@ t4l turn on
 ```
 
 | Action | Description               | Command | Aliases    |
-|--------|---------------------------|---------|------------|
+| ------ | ------------------------- | ------- | ---------- |
 | Sleep  | Sets the camera to sleep. | `sleep` | `turn off` |
 | Wake   | Wakes the camera up.      | `wake`  | `turn on`  |
 
@@ -21,12 +21,13 @@ With these commands you can control the AI-tracking of the camera.
 You can either turn it completely off or set it to a specific mode.
 
 All tracking commands begin with `tracking` or `track`, e.g.:
+
 ```shell
 t4l tracking normal
 ```
 
 | Action      | Description                                                                 | Command      | Aliases          |
-|-------------|-----------------------------------------------------------------------------|--------------|------------------|
+| ----------- | --------------------------------------------------------------------------- | ------------ | ---------------- |
 | No Tracking | Turns off the AI-tracking and keeps the camera still                        | `static`     | `none`, `off`    |
 | Standard    | Turns on the standard AI-tracking, keeping the upper body and face in focus | `normal`     | `standard`, `on` |
 | Closeup     | Similar to standard tracking, zoomed closer                                 | `close-up`   | `close`          |
@@ -44,12 +45,13 @@ With these commands you can control the speed that the camera is tracking with.
 You can only use the presets ( `standard` and `sport`).
 
 All tracking-speed commands begin with `speed` or `tracking-speed`, e.g.:
+
 ```shell
 t4l speed standard
 ```
 
 | Action   | Description                                          | Command    | Aliases                            |
-|----------|------------------------------------------------------|------------|------------------------------------|
+| -------- | ---------------------------------------------------- | ---------- | ---------------------------------- |
 | Standard | Sets the speed to the default, slower tracking speed | `standard` | `normal`, `default`, `slow`, `low` |
 | Sport    | Sets the speed to the faster tracking speed          | `fast`     | `sport`, `high`                    |
 
@@ -58,6 +60,7 @@ t4l speed standard
 With these commands you can set the position of the camera to one of the 3 possible presets.
 
 The command is `preset` or `position`, e.g.:
+
 ```shell
 t4l preset 2
 ```
@@ -80,12 +83,13 @@ t4l hdr off
 With these commands you can control the exposure mode of the camera.
 
 All exposure commands begin with `exposure`, e.g.:
+
 ```shell
 t4l exposure manual
 ```
 
 | Action | Description                                       | Command  |
-|--------|---------------------------------------------------|----------|
+| ------ | ------------------------------------------------- | -------- |
 | Manual | Uses custom settings as exposure                  | `manual` |
 | Global | Uses global reference for setting the exposure    | `global` |
 | Face   | Uses a face as reference for setting the exposure | `face`   |
@@ -109,6 +113,7 @@ If you use the cli more often, it might be useful to enable auto-completion for 
 Therefore, you can use the command `completions` to generate the shell-completion scripts for your shell.
 
 In the following example, the shell-completion scripts are generated for bash with `bash-completion`:
+
 ```shell
 t4l completions bash > /.local/share/bash-completion/completions/t4l
 ```

@@ -17,9 +17,9 @@ jobs:
       - name: Execute tests
         run: cargo test --all-features
         env:
-          CARGO_INCREMENTAL: '0'
-          RUSTFLAGS: '-Cinstrument-coverage'
-          LLVM_PROFILE_FILE: 'target/coverage/%p-%m.profraw'
+          CARGO_INCREMENTAL: "0"
+          RUSTFLAGS: "-Cinstrument-coverage"
+          LLVM_PROFILE_FILE: "target/coverage/%p-%m.profraw"
 
       - name: Generate coverage report
         run: |
