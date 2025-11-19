@@ -10,7 +10,7 @@
 
 [<img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" />](#installation-on-arch-linux)
 
-<img src="src/assets/screenshot.png" align="right" width="20%" alt="GUI of the current version"/>
+<img src="src/assets/screenshot-widget.png" align="right" width="20%" alt="GUI of the current version"/>
 
 Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
 Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
@@ -96,6 +96,11 @@ Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-a
 2. The **widget** is a smaller version intended for permanent viewing.
 It contains only the more important functions you might need more often.
 Via the terminal, you can open it by setting the flag: `tiny4linux-gui --start-as widget`
+
+| Dashboard Mode                                                             | Widget Mode                                                                    |
+|----------------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| <img src="src/assets/screenshot.png" height="400px" alt="Dashboard Mode"/> | <img src="src/assets/screenshot-widget.png" height="400px" alt="Widget Mode"/> |
+
 
 ### CLI
 
