@@ -354,7 +354,7 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
     if position_id.is_none() {
         let options = [1, 2, 3];
         let selection = Select::new()
-            .with_prompt("Select the cameras tracking speed!")
+            .with_prompt("Select a predefined position preset!")
             .default(0)
             .items(options)
             .interact()
