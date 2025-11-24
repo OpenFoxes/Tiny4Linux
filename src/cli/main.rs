@@ -114,9 +114,9 @@ fn main() {
     let camera = camera.unwrap();
 
     match &args.subcommand {
-        Command::Turn { action } => evaluate_sleep_arg(action.clone(), camera),
-        Command::Sleep => evaluate_sleep_arg(Option::from(OnOffArg::Off), camera),
-        Command::Wake => evaluate_sleep_arg(Option::from(OnOffArg::On), camera),
+        Command::Turn { action } => evaluate_sleep_arg(action.clone(), &camera),
+        Command::Sleep => evaluate_sleep_arg(Option::from(OnOffArg::Off), &camera),
+        Command::Wake => evaluate_sleep_arg(Option::from(OnOffArg::On), &camera),
         Command::Tracking { tracking_mode } => evaluate_tracking_arg(tracking_mode.clone(), camera),
         Command::Speed { speed } => evaluate_speed_arg(speed.clone(), camera),
         Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera),
@@ -156,7 +156,7 @@ struct SelectionOption<'a, T> {
     option: &'a str,
 }
 
-fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: Camera) {
+fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: &impl OBSBotWebCam) {
     match state {
         Some(OnOffArg::Off) => {
             println!("Setting the camera to sleep");
@@ -461,6 +461,20 @@ fn evaluate_exposure_arg(exposure_mode: Option<ExposureArg>, camera: Camera) {
                 .unwrap();
 
             evaluate_exposure_arg(Option::from(options[selection].result.clone()), camera);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use mockall::automock;
+    use tiny4linux::{Error, ExposureModeType, SleepMode};
+
+    mod argument_evaluations {
+        mod sleep {
+            // #[test]
+            // fn
         }
     }
 }
