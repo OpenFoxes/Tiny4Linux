@@ -36,6 +36,9 @@ dialoguer = { version = "0.12.0", features = ["fuzzy-select"], optional = true }
 [build-dependencies]
 tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev = "57c10f204b75f1c61087fd9568814ee52d0ec036", optional = true }
 
+[dev-dependencies]
+mockall = "0.14.0"
+
 [[bin]]
 name = "tiny4linux-gui"
 path = "src/gui/main.rs"
