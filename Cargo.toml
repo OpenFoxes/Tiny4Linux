@@ -37,6 +37,7 @@ tiny4linux_assets = { git = "https://github.com/OpenFoxes/Tiny4Linux-Icons", rev
 
 [dev-dependencies]
 mockall = "0.14.0"
+assert_cmd = "2.1.1"
 
 [[bin]]
 name = "tiny4linux-gui"
