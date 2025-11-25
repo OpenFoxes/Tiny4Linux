@@ -3,6 +3,7 @@
 mod usbio;
 
 use errno::Errno;
+use std::fmt::Debug;
 use std::{fmt::Display, io};
 use thiserror::Error;
 use usbio::UvcUsbIo;
@@ -634,10 +635,10 @@ mod tests {
 
             #[test_case(0x00, 0x00, AIMode::NoTracking; "none")]
             #[test_case(0x02, 0x00, AIMode::NormalTracking; "normal")]
-            #[test_case(0x02, 0x01, AIMode::UpperBody; "upper_body")]
-            #[test_case(0x02, 0x02, AIMode::CloseUp; "close_up")]
+            #[test_case(0x02, 0x01, AIMode::UpperBody; "upper body")]
+            #[test_case(0x02, 0x02, AIMode::CloseUp; "close up")]
             #[test_case(0x02, 0x03, AIMode::Headless; "headless")]
-            #[test_case(0x02, 0x04, AIMode::LowerBody; "lower_body")]
+            #[test_case(0x02, 0x04, AIMode::LowerBody; "lower body")]
             #[test_case(0x05, 0x00, AIMode::DeskMode; "desk")]
             #[test_case(0x04, 0x00, AIMode::Whiteboard; "whiteboard")]
             #[test_case(0x06, 0x00, AIMode::Hand; "hand")]
@@ -655,7 +656,7 @@ mod tests {
 
             #[test_case(0x00, TrackingSpeed::Standard; "standard")]
             #[test_case(0x02, TrackingSpeed::Sport; "sport")]
-            #[test_case(0x01, TrackingSpeed::Standard; "unknown_defaults_to_standard")]
+            #[test_case(0x01, TrackingSpeed::Standard; "unknown defaults to standard")]
             fn tracking_speed(hex_value: u8, expected: TrackingSpeed) {
                 let mut test_string = RAW_TEST_STRING;
                 test_string[0x21] = hex_value;
@@ -677,23 +678,22 @@ mod tests {
                 assert_eq!(expected, status.hdr_on);
             }
 
-            mod defaults {
-                use crate::{AIMode, CameraStatus, SleepMode, TrackingSpeed};
-                use std::fmt::Debug;
-                use test_case::test_case;
+            #[test]
+            fn status_defaults() {
+                let default_status = CameraStatus::default();
 
-                #[test_case(|status: CameraStatus| status.awake, SleepMode::Unknown; "sleep is unknown")]
-                #[test_case(|status: CameraStatus| status.ai_mode, AIMode::Unknown; "tracking is unknown")]
-                #[test_case(|status: CameraStatus| status.speed, TrackingSpeed::Standard; "speed is standard")]
-                #[test_case(|status: CameraStatus| status.hdr_on, false; "hdr is off")]
-                fn status_defaults<F: PartialEq + Debug, G: Fn(CameraStatus) -> F>(
-                    expr: G,
-                    expected: F,
-                ) {
-                    let default_status = CameraStatus::default();
-
-                    assert_eq!(expr(default_status), expected);
-                }
+                assert_eq!(default_status.awake, SleepMode::Unknown, "sleep is unknown");
+                assert_eq!(
+                    default_status.ai_mode,
+                    AIMode::Unknown,
+                    "tracking is unknown"
+                );
+                assert_eq!(
+                    default_status.speed,
+                    TrackingSpeed::Standard,
+                    "speed is standard"
+                );
+                assert_eq!(default_status.hdr_on, false, "hdr is off");
             }
         }
     }
