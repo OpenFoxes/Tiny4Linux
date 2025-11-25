@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::styles::colors::{COLOR_BACKGROUND_DARK, COLOR_PRIMARY_OBSBOT};
 use iced::Theme;
 use iced::theme::Palette;

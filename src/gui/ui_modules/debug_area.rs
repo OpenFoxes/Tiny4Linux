@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::Message::{HexDump, HexDump02};
 use crate::{MainPanel, Message};
 use iced::Length;

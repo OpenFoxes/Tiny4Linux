@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::styles::colors::COLOR_BACKGROUND_SECONDARY_DARK;
 use iced::widget::container;
 

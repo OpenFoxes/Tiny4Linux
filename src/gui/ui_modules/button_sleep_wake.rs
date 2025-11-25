@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::styles::tooltip_style::tooltip_content;
 use crate::{Message, WindowMode};
 use iced::widget::tooltip::Position;

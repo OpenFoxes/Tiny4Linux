@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use iced::{Color, color};
 
 pub const COLOR_PRIMARY_OBSBOT: Color = color!(0xe6, 0x00, 0x33);
