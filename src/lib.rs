@@ -687,6 +687,29 @@ mod tests {
                     assert_eq!(&mode.to_string(), expected);
                 }
             }
+
+            mod tracking_speed {
+                use crate::{TrackingSpeed};
+                use test_case::test_case;
+
+                #[test_case(TrackingSpeed::Standard, "Standard"; "standard")]
+                #[test_case(TrackingSpeed::Sport, "Sport"; "sport")]
+                fn tracking_speed(mode: TrackingSpeed, expected: &str) {
+                    assert_eq!(&mode.to_string(), expected);
+                }
+            }
+
+            mod exposure_mode {
+                use crate::{ExposureMode};
+                use test_case::test_case;
+
+                #[test_case(ExposureMode::Manual, "Manual"; "manual")]
+                #[test_case(ExposureMode::Global, "Global"; "global")]
+                #[test_case(ExposureMode::Face, "Face"; "face")]
+                fn exposure_mode(mode: ExposureMode, expected: &str) {
+                    assert_eq!(&mode.to_string(), expected);
+                }
+            }
         }
     }
 
