@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
+use crate::libs::errors::T4lError;
 use enum_dispatch::enum_dispatch;
 use errno::Errno;
 use glob::MatchOptions;
@@ -62,7 +63,7 @@ impl UvcUsbIo for CameraHandle {
     }
 }
 
-pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, crate::Error> {
+pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, T4lError> {
     if let Ok(file) = File::open(hint) {
         return Ok(file.into());
     }
@@ -89,7 +90,7 @@ pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, crate::Error> {
             }
         }
     }
-    Err(crate::Error::NoCameraFound)
+    Err(T4lError::NoCameraFound)
 }
 
 #[repr(C)]

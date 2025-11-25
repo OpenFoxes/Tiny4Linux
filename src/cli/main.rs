@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
-use tiny4linux::{AIMode, Camera, OBSBotWebCam};
+use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera};
 
 /// Simple program to greet a person
 #[derive(Parser)]
@@ -160,11 +160,11 @@ fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: Camera) {
     match state {
         Some(OnOffArg::Off) => {
             println!("Setting the camera to sleep");
-            camera.set_sleep_mode(tiny4linux::SleepMode::Sleep).unwrap();
+            camera.set_sleep_mode(SleepMode::Sleep).unwrap();
         }
         Some(OnOffArg::On) => {
             println!("Waking up the camera");
-            camera.set_sleep_mode(tiny4linux::SleepMode::Awake).unwrap();
+            camera.set_sleep_mode(SleepMode::Awake).unwrap();
         }
         None => {
             let options = [
