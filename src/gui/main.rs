@@ -9,7 +9,7 @@ use iced::window::Position;
 use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
 use std::time::Duration;
-use tiny4linux::{AIMode, Camera, ExposureMode, OBSBotWebCam, SleepMode, TrackingSpeed};
+use tiny4linux::{AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed};
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
