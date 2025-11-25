@@ -144,26 +144,6 @@ impl Display for AIMode {
     }
 }
 
-impl TryFrom<i32> for AIMode {
-    type Error = Error;
-
-    fn try_from(value: i32) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(AIMode::NoTracking),
-            1 => Ok(AIMode::NormalTracking),
-            2 => Ok(AIMode::UpperBody),
-            3 => Ok(AIMode::CloseUp),
-            4 => Ok(AIMode::Headless),
-            5 => Ok(AIMode::LowerBody),
-            6 => Ok(AIMode::DeskMode),
-            7 => Ok(AIMode::Whiteboard),
-            8 => Ok(AIMode::Hand),
-            9 => Ok(AIMode::Group),
-            _ => Err(Error::UnsupportedIntValue("AIMode".to_string(), value)),
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TrackingSpeed {
     Standard,
@@ -200,28 +180,6 @@ impl Display for ExposureMode {
 pub enum ExposureModeType {
     Auto,
     Manual,
-}
-
-pub enum TrackingMode {
-    Headroom,
-    Standard,
-    Motion,
-}
-
-impl TryFrom<i32> for TrackingMode {
-    type Error = Error;
-
-    fn try_from(value: i32) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(TrackingMode::Headroom),
-            1 => Ok(TrackingMode::Standard),
-            2 => Ok(TrackingMode::Motion),
-            _ => Err(Error::UnsupportedIntValue(
-                "TrackingMode".to_string(),
-                value,
-            )),
-        }
-    }
 }
 
 pub trait OBSBotWebCam {
