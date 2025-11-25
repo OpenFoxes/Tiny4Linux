@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::{MainPanel, Message};
 use iced::alignment::Horizontal;
 use iced::widget::{Container, column, container, horizontal_rule, row, text};

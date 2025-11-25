@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use iced::Theme;
 use iced::widget::button::{Status, Style};
 

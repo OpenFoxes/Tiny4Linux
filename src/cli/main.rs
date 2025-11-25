@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};

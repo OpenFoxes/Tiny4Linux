@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::styles::button_non_styled::button_non_styled;
 use crate::styles::general_area_style::general_area_style;
 use crate::ui_modules::button_sleep_wake::button_sleep_wake;

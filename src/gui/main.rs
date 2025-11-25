@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 mod styles;
 mod ui_modules;
 

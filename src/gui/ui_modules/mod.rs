@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 mod button_exposure_mode;
 mod button_hdr;
 mod button_sleep_wake;

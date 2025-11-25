@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: EUPL-1.2
+
 use crate::Message;
 use crate::styles::tooltip_style::tooltip_content;
 use iced::alignment::Vertical;
