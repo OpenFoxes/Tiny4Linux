@@ -696,6 +696,40 @@ mod tests {
                 assert_eq!(default_status.hdr_on, false, "hdr is off");
             }
         }
+
+        mod display {
+            mod sleep_mode {
+                use crate::{SleepMode};
+                use test_case::test_case;
+
+                #[test_case(SleepMode::Awake, "Awake"; "Awake")]
+                #[test_case(SleepMode::Sleep, "Sleeping"; "Sleep")]
+                #[test_case(SleepMode::Unknown, "Unknown"; "Unknown")]
+                fn sleep_mode(mode: SleepMode, expected: &str) {
+                    assert_eq!(&mode.to_string(), expected);
+                }
+            }
+
+            mod ai_mode {
+                use crate::{AIMode};
+                use test_case::test_case;
+
+                #[test_case(AIMode::NoTracking, "Static"; "no tracking")]
+                #[test_case(AIMode::NormalTracking, "Normal Tracking"; "normal tracking")]
+                #[test_case(AIMode::UpperBody, "Upper Body"; "upper body")]
+                #[test_case(AIMode::CloseUp, "Close-up"; "close up")]
+                #[test_case(AIMode::Headless, "Headless"; "headless")]
+                #[test_case(AIMode::LowerBody, "Lower Body"; "lower body")]
+                #[test_case(AIMode::DeskMode, "Desk Mode"; "desk mode")]
+                #[test_case(AIMode::Whiteboard, "Whiteboard"; "whiteboard")]
+                #[test_case(AIMode::Hand, "Hand"; "hand")]
+                #[test_case(AIMode::Group, "Group"; "group")]
+                #[test_case(AIMode::Unknown, "Unknown"; "unknown")]
+                fn ai_mode(mode: AIMode, expected: &str) {
+                    assert_eq!(&mode.to_string(), expected);
+                }
+            }
+        }
     }
 
     mod integration {
