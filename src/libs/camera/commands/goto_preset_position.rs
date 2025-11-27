@@ -7,10 +7,6 @@ pub struct GotoPresetPositionCommand;
 
 impl GotoPresetPositionCommand {
     pub fn build(preset_nr: i8) -> Result<[u8; 36], T4lError> {
-        if preset_nr < 0 || preset_nr > 3 {
-            return Err(T4lError::InvalidSetting);
-        }
-
         const FUNCTION_GROUP_PRESETS: [u8; 6] = [0x0a, 0x04, 0xc4, 0x39, 0x14, 0x00];
 
         let (sequence_nr, checksum, command) = match preset_nr {
