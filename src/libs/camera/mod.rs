@@ -9,7 +9,7 @@ mod transport;
 
 pub use camera::Camera;
 pub use camera::Tiny2Camera;
-pub use command02::Command02;
+pub use command02::command02;
 pub use commands::*;
 pub use enums::*;
 pub use status::CameraStatus;

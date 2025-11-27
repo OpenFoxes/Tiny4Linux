@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::Command02;
+use crate::command02;
 use crate::libs::errors::T4lError;
 
 pub struct GotoPresetPositionCommand;
@@ -35,7 +35,7 @@ impl GotoPresetPositionCommand {
             }
         };
 
-        Ok(Command02::new()
+        Ok(command02()
             .function_group(FUNCTION_GROUP_PRESETS)
             .sequence_nr(sequence_nr)
             .checksum(checksum)

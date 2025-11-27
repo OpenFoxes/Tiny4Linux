@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::Command02;
-use crate::SleepMode;
 use crate::libs::errors::T4lError;
+use crate::{SleepMode, command02};
 
 pub struct SleepCommand;
 
@@ -28,7 +27,7 @@ impl SleepCommand {
             SleepMode::Unknown => panic!(),
         };
 
-        Ok(Command02::new()
+        Ok(command02()
             .function_group(FUNCTION_GROUP_SLEEP)
             .sequence_nr(sequence_nr)
             .checksum(checksum)

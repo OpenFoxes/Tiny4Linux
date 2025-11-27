@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::Command02;
-use crate::ExposureMode;
+use crate::{ExposureMode, command02};
 
 pub struct ExposureModeTypeCommand;
 
@@ -23,7 +22,7 @@ impl ExposureModeTypeCommand {
             )
         };
 
-        Command02::new()
+        command02()
             .function_group(FUNCTION_GROUP_EXPOSURE_MODE_TYPE)
             .sequence_nr(sequence_nr)
             .checksum(checksum)

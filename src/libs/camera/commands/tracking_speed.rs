@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::Command02;
-use crate::TrackingSpeed;
 use crate::libs::errors::T4lError;
+use crate::{TrackingSpeed, command02};
 
 pub struct TrackingSpeedCommand;
 
@@ -29,7 +28,7 @@ impl TrackingSpeedCommand {
             ),
         };
 
-        Ok(Command02::new()
+        Ok(command02()
             .function_group(FUNCTION_GROUP_TRACKING_SPEED)
             .sequence_nr(sequence_nr)
             .checksum(checksum)
