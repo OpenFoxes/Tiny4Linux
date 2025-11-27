@@ -67,3 +67,112 @@ impl CameraStatus {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    mod unit {
+        mod decode {
+            use crate::{AIMode, CameraStatus, SleepMode, TrackingSpeed};
+            use test_case::test_case;
+
+            const RAW_TEST_STRING: [u8; 57] = [0; 57];
+
+            #[test_case(0x00, SleepMode::Awake; "awake")]
+            #[test_case(0x01, SleepMode::Sleep; "sleep")]
+            #[test_case(0x02, SleepMode::Unknown; "unknown")]
+            fn sleep_mode(hex_value: u8, expected: SleepMode) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x02] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.awake);
+            }
+
+            #[test_case(0x00, 0x00, AIMode::NoTracking; "none")]
+            #[test_case(0x02, 0x00, AIMode::NormalTracking; "normal")]
+            #[test_case(0x02, 0x01, AIMode::UpperBody; "upper body")]
+            #[test_case(0x02, 0x02, AIMode::CloseUp; "close up")]
+            #[test_case(0x02, 0x03, AIMode::Headless; "headless")]
+            #[test_case(0x02, 0x04, AIMode::LowerBody; "lower body")]
+            #[test_case(0x05, 0x00, AIMode::DeskMode; "desk")]
+            #[test_case(0x04, 0x00, AIMode::Whiteboard; "whiteboard")]
+            #[test_case(0x06, 0x00, AIMode::Hand; "hand")]
+            #[test_case(0x01, 0x00, AIMode::Group; "group")]
+            #[test_case(0x17, 0x42, AIMode::Unknown; "unknown")]
+            fn ai_mode(hex_value1: u8, hex_value2: u8, expected: AIMode) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x18] = hex_value1;
+                test_string[0x1c] = hex_value2;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.ai_mode);
+            }
+
+            #[test_case(0x00, TrackingSpeed::Standard; "standard")]
+            #[test_case(0x02, TrackingSpeed::Sport; "sport")]
+            #[test_case(0x01, TrackingSpeed::Standard; "unknown defaults to standard")]
+            fn tracking_speed(hex_value: u8, expected: TrackingSpeed) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x21] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.speed);
+            }
+
+            #[test_case(0x01, true; "on")]
+            #[test_case(0x00, false; "off")]
+            #[test_case(0x02, true; "unknown defaults to on")]
+            fn hdr(hex_value: u8, expected: bool) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x06] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.hdr_on);
+            }
+
+            #[test]
+            fn status_defaults() {
+                let default_status = CameraStatus::default();
+
+                assert_eq!(default_status.awake, SleepMode::Unknown, "sleep is unknown");
+                assert_eq!(
+                    default_status.ai_mode,
+                    AIMode::Unknown,
+                    "tracking is unknown"
+                );
+                assert_eq!(
+                    default_status.speed,
+                    TrackingSpeed::Standard,
+                    "speed is standard"
+                );
+                assert_eq!(default_status.hdr_on, false, "hdr is off");
+            }
+        }
+    }
+
+    mod integration {
+        mod camera_status {
+            use crate::{AIMode, CameraStatus, SleepMode, TrackingSpeed};
+
+            #[test]
+            fn decode_status() {
+                let data = [
+                    0x27, 0x00, 0x00, 0x01, 0x42, 0x00, 0x01, 0x01, 0x01, 0x01, 0x88, 0xff, 0x00,
+                    0x00, 0x01, 0x00, 0x00, 0x03, 0x00, 0x00, 0x01, 0x00, 0x21, 0x00, 0x02, 0x01,
+                    0x03, 0x00, 0x01, 0x00, 0x00, 0x1e, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00,
+                ];
+                let status = CameraStatus::decode(&data);
+                assert_eq!(status.awake, SleepMode::Awake);
+                assert_eq!(status.hdr_on, true);
+                assert_eq!(status.ai_mode, AIMode::UpperBody);
+                assert_eq!(status.speed, TrackingSpeed::Sport);
+            }
+        }
+    }
+}
