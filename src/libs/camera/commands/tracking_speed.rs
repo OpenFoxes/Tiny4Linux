@@ -49,7 +49,10 @@ mod tests {
     fn speed_mode(mode: TrackingSpeed, sequence_nr: [u8; 2], checksum: [u8; 2], command: [u8; 6]) {
         let speed_command_option = TrackingSpeedCommand::build(mode);
 
-        assert_ok!(&speed_command_option, "tracking speed command should be built");
+        assert_ok!(
+            &speed_command_option,
+            "tracking speed command should be built"
+        );
 
         let speed_command = speed_command_option.unwrap();
         assert_eq!(
