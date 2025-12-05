@@ -2,4 +2,7 @@
 
 mod libs;
 
+#[cfg(debug_assertions)]
+pub mod mocks;
+
 pub use libs::*;
