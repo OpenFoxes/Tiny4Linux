@@ -1,13 +1,58 @@
 {
-  "gui": {},
-  "cli": {
+  "shared": {
+    "options": {
+      "hdr": {
+        "on": "HDR on",
+        "off": "HDR off"
+      }
+    },
     "info": {
       "camera_status": "Camera status",
       "sleep_mode": "Sleep Mode",
       "ai_mode": "AI Mode",
       "tracking_speed": "Tracking Speed",
-      "hdr": "HDR"
+      "hdr": "HDR",
+      "t4l_version": "T4L Version"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Set to Sleep",
+        "wake_up": "Wake Up",
+        "unknown": "Sleep state unknown"
+      },
+      "debugging": {
+        "turn_on": "Turn on debugging",
+        "turn_off": "Turn off debugging"
+      }
     },
+    "text": {
+      "debugging": {
+        "send": "Send",
+        "get_and_dump": "Get & Dump"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Request the camera to go to sleep mode",
+        "request_to_wake": "Request the camera to wake up from sleep mode",
+        "state_unknown": "The state can't be determined. Click the button to try setting the mode or check the connection to the camera."
+      },
+      "sets_tracking_mode": "Set the camera to \"%{mode}\" tracking mode",
+      "sets_tracking_speed": "Set the camera's speed to {%speed}",
+      "changes_exposure": "Changes the exposure mode to %{mode} exposure",
+      "hdr": {
+        "turns_on": "Turns on HDR on click",
+        "turns_off": "Turns off HDR on click"
+      },
+      "window_mode": {
+        "widget": "Switch to Widget-Mode",
+        "dashboard": "Switch to Dashboard-Mode"
+      }
+    }
+  },
+  "cli": {
     "sleep": {
       "response_to_sleep": "Setting the camera to sleep",
       "response_to_awake": "Waking up the camera",
@@ -74,6 +119,7 @@
     "ai_mode": {
       "static": "Static",
       "normal": "Normal Tracking",
+      "normal_short": "Normal",
       "upper_body": "Upper Body",
       "close_up": "Close-up",
       "headless": "Headless",
@@ -92,6 +138,10 @@
       "manual": "Manual",
       "global": "Global",
       "face": "Face"
+    },
+    "states": {
+      "on": "On",
+      "off": "Off"
     }
   },
   "logging": {},

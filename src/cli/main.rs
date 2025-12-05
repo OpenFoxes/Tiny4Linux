@@ -134,11 +134,11 @@ fn main() {
             } else {
                 let info = info.unwrap();
 
-                println!("{}:", t!("cli.info.camera_status"));
-                println!("  💤  {}: {}", t!("cli.info.sleep_mode"), info.awake);
-                println!("  🤖  {}: {}", t!("cli.info.ai_mode"), info.ai_mode);
-                println!("  🏃  {}: {}", t!("cli.info.tracking_speed"), info.speed);
-                println!("  💐  {}: {}", t!("cli.info.hdr"), info.hdr_on);
+                println!("{}:", t!("shared.info.camera_status"));
+                println!("  💤  {}: {}", t!("shared.info.sleep_mode"), info.awake);
+                println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
+                println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
+                println!("  💐  {}: {}", t!("shared.info.hdr"), info.hdr_on);
             }
         }
         Command::Version => {
@@ -411,8 +411,8 @@ fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {
             camera.set_hdr_mode(false).unwrap();
         }
         None => {
-            let option_on = t!("cli.hdr.option_on");
-            let option_off = t!("cli.hdr.option_off");
+            let option_on = t!("shared.options.hdr.on");
+            let option_off = t!("shared.options.hdr.off");
 
             let options = [
                 SelectionOption {

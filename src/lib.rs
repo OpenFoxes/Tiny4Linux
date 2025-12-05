@@ -132,7 +132,7 @@ impl Display for AIMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             AIMode::NoTracking => write!(f, "{}", t!("display.ai_mode.static")),
-            AIMode::NormalTracking => write!(f, "{}", t!("display.ai_mode.normal_tracking")),
+            AIMode::NormalTracking => write!(f, "{}", t!("display.ai_mode.normal")),
             AIMode::UpperBody => write!(f, "{}", t!("display.ai_mode.upper_body")),
             AIMode::CloseUp => write!(f, "{}", t!("display.ai_mode.close_up")),
             AIMode::Headless => write!(f, "{}", t!("display.ai_mode.headless")),
