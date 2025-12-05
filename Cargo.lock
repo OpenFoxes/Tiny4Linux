@@ -183,6 +183,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "assertables"
+version = "9.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59051ec02907378a67b0ba1b8631121f5388c8dbbb3cec8c749d8f93c2c3c211"
+
+[[package]]
 name = "async-broadcast"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3562,6 +3568,7 @@ dependencies = [
 name = "tiny4linux"
 version = "2.1.2"
 dependencies = [
+ "assertables",
  "bon",
  "clap",
  "clap_complete",
