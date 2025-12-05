@@ -36,6 +36,11 @@ impl CameraTransport {
     /// }
     /// ```
     pub fn new(hint: &str) -> Result<Self, T4lError> {
+        if std::env::var("T4L_MOCK").ok().as_deref() == Some("1") {
+            // In mock mode, we don't actually need a video device. Use a harmless file.
+            let file = std::fs::File::open("/dev/null").map_err(|_| T4lError::NoCameraFound)?;
+            return Ok(Self { handle: file.into() });
+        }
         Ok(Self {
             handle: open_camera(hint)?,
         })
@@ -237,6 +242,51 @@ impl CameraTransport {
     }
 
     fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno> {
-        self.handle.io(unit, selector, query, data)
+        if std::env::var("T4L_MOCK").ok().as_deref() == Some("1") {
+            // Simulate USB interactions for tests
+            match query {
+                UVC_GET_LEN => {
+                    // Report a fixed length (60 bytes) for supported selectors
+                    let len: u16 = 60;
+                    let bytes = len.to_le_bytes();
+                    if data.len() < 2 {
+                        return Err(Errno(1));
+                    }
+                    data[0] = bytes[0];
+                    data[1] = bytes[1];
+                    Ok(())
+                }
+                UVC_GET_CUR => {
+                    // Provide a canned status buffer for unit 0x2 selectors
+                    if unit == 0x2 && selector == 0x6 {
+                        // Build a 60-byte buffer initialized to 0
+                        for b in data.iter_mut() { *b = 0; }
+                        // Sleep mode at 0x02: 0 => Awake
+                        if data.len() > 0x02 { data[0x02] = 0; }
+                        // HDR at 0x06: non-zero => true
+                        if data.len() > 0x06 { data[0x06] = 1; }
+                        // AI mode m at 0x18, n at 0x1c: (2,1) => UpperBody
+                        if data.len() > 0x18 { data[0x18] = 2; }
+                        if data.len() > 0x1c { data[0x1c] = 1; }
+                        // Tracking speed at 0x21: 2 => Sport
+                        if data.len() > 0x21 { data[0x21] = 2; }
+                        Ok(())
+                    } else if unit == 0x2 && selector == 0x2 {
+                        // Another 60-byte buffer, not used by current tests
+                        for b in data.iter_mut() { *b = 0; }
+                        Ok(())
+                    } else {
+                        Err(Errno(1))
+                    }
+                }
+                UVC_SET_CUR => {
+                    // Accept any set command
+                    Ok(())
+                }
+                _ => Err(Errno(1)),
+            }
+        } else {
+            self.handle.io(unit, selector, query, data)
+        }
     }
 }
