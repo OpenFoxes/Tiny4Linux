@@ -1,5 +1,8 @@
 {
   "shared": {
+    "errors": {
+      "no_camera": "No camera found. Please check the connection of the camera."
+    },
     "options": {
       "hdr": {
         "on": "HDR on",
@@ -7,11 +10,14 @@
       }
     },
     "info": {
-      "camera_status": "Camera status",
-      "sleep_mode": "Sleep Mode",
       "ai_mode": "AI Mode",
-      "tracking_speed": "Tracking Speed",
+      "camera_status": "Camera status",
+      "exposure": "Exposure",
       "hdr": "HDR",
+      "presets": "Presets",
+      "sleep_mode": "Sleep Mode",
+      "tracking": "Tracking",
+      "tracking_speed": "Tracking Speed",
       "t4l_version": "T4L Version"
     }
   },
@@ -27,10 +33,19 @@
         "turn_off": "Turn off debugging"
       }
     },
+    "sleep": {
+      "is_awake": "The camera is awake",
+      "is_sleeping": "The camera is sleeping",
+      "unknown": "The camera state is unknown"
+    },
     "text": {
       "debugging": {
         "send": "Send",
-        "get_and_dump": "Get & Dump"
+        "get_and_dump": "Get & Dump",
+        "send_x": "Send %{to_send}",
+        "clear_x": "Clear %{to_clear}",
+        "0x02_hex_string": "0x02 hex string",
+        "0x06_hex_string": "0x06 hex string"
       }
     },
     "tooltips": {
@@ -46,6 +61,7 @@
         "turns_on": "Turns on HDR on click",
         "turns_off": "Turns off HDR on click"
       },
+      "preset": "Sets the cameras position to preset %{preset_number}",
       "window_mode": {
         "widget": "Switch to Widget-Mode",
         "dashboard": "Switch to Dashboard-Mode"
@@ -106,7 +122,6 @@
       "option_face": "Face"
     },
     "errors": {
-      "no_camera": "No camera found. Please check the connection of the camera.",
       "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera."
     }
   },

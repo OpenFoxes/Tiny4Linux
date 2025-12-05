@@ -11,6 +11,7 @@ use iced::widget::{
     tooltip,
 };
 use iced_font_awesome::fa_icon_solid;
+use rust_i18n::t;
 use tiny4linux::{AIMode, ExposureMode, TrackingSpeed};
 
 pub fn settings_area(app: &MainPanel) -> Container<'static, Message> {
@@ -30,16 +31,16 @@ pub fn settings_area(app: &MainPanel) -> Container<'static, Message> {
 
 fn presets() -> Row<'static, Message> {
     row![
-        text("Presets:"),
+        text(format!("{}:", t!("shared.info.presets"))),
         horizontal_space().width(Length::FillPortion(2)),
         (0..=2)
             .fold(row![], |r, n| {
                 let r = r.push(tooltip(
                     button(fa_icon_solid(&(n + 1).to_string()))
                         .on_press(Message::ChangePresetPosition(n)),
-                    tooltip_content(container(text(format!(
-                        "Sets the cameras position to preset {}",
-                        n + 1
+                    tooltip_content(container(text(t!(
+                        "gui.tooltips.preset",
+                        preset_number = n + 1
                     )))),
                     Position::Bottom,
                 ));
@@ -53,7 +54,7 @@ fn presets() -> Row<'static, Message> {
 fn tracking_modes(reduced: bool, current_mode: AIMode) -> Container<'static, Message> {
     container(
         column![
-            text("Tracking:"),
+            text(format!("{}:", t!("shared.info.tracking"))),
             if reduced {
                 column![
                     row![
@@ -105,7 +106,7 @@ fn tracking_modes(reduced: bool, current_mode: AIMode) -> Container<'static, Mes
 fn tracking_speed(current_speed: TrackingSpeed) -> Container<'static, Message> {
     container(
         column![
-            text("Tracking Speed:"),
+            text(format!("{}:", t!("shared.info.tracking_speed"))),
             column![
                 row![
                     button_tracking_speed(TrackingSpeed::Standard, current_speed),
@@ -123,7 +124,7 @@ fn tracking_speed(current_speed: TrackingSpeed) -> Container<'static, Message> {
 
 fn hdr(current_mode: bool) -> Container<'static, Message> {
     container(
-        column![text("HDR:"), button_hdr(current_mode)]
+        column![text(format!("{}:", t!("shared.info.hdr"))), button_hdr(current_mode)]
             .spacing(5)
             .align_x(Horizontal::Center)
             .width(Length::Fill),
@@ -133,7 +134,7 @@ fn hdr(current_mode: bool) -> Container<'static, Message> {
 fn exposure_mode() -> Container<'static, Message> {
     container(
         column![
-            text("Exposure:"),
+            text(format!("{}:", t!("shared.info.exposure"))),
             button_exposure_mode(ExposureMode::Manual),
             button_exposure_mode(ExposureMode::Global),
             button_exposure_mode(ExposureMode::Face),

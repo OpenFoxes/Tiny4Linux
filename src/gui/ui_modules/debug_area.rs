@@ -41,27 +41,33 @@ pub fn debug_area(app: &MainPanel) -> Container<'static, Message> {
                         horizontal_space(),
                         column![
                             row![
-                                text_input("0x06 hex string", &app.text_input)
-                                    .on_input(Message::TextInput)
-                                    .on_submit(Message::SendCommand)
-                                    .width(DEBUG_INPUT_WIDTH),
-                                button("Send 0x06")
+                                text_input(
+                                    t!("gui.text.debugging.0x06_hex_string").as_ref(),
+                                    &app.text_input
+                                )
+                                .on_input(Message::TextInput)
+                                .on_submit(Message::SendCommand)
+                                .width(DEBUG_INPUT_WIDTH),
+                                button(text(t!("gui.text.debugging.send_x", to_send = "0x06")))
                                     .on_press(Message::SendCommand)
                                     .width(DEBUG_BUTTON_WIDTH),
-                                button("Clear")
+                                button(text(t!("gui.text.debugging.clear_x", to_clear = "0x06")))
                                     .on_press(Message::TextInput("".parse().unwrap()))
                                     .width(DEBUG_BUTTON_WIDTH)
                             ]
                             .spacing(15),
                             row![
-                                text_input("0x02 hex string", &app.text_input_02)
-                                    .on_input(Message::TextInput02)
-                                    .on_submit(Message::SendCommand02)
-                                    .width(DEBUG_INPUT_WIDTH),
-                                button("Send 0x02")
+                                text_input(
+                                    t!("gui.text.debugging.0x02_hex_string").as_ref(),
+                                    &app.text_input_02
+                                )
+                                .on_input(Message::TextInput02)
+                                .on_submit(Message::SendCommand02)
+                                .width(DEBUG_INPUT_WIDTH),
+                                button(text(t!("gui.text.debugging.send_x", to_send = "0x02")))
                                     .on_press(Message::SendCommand02)
                                     .width(DEBUG_BUTTON_WIDTH),
-                                button("Clear")
+                                button(text(t!("gui.text.debugging.clear_x", to_clear = "0x02")))
                                     .on_press(Message::TextInput02("".parse().unwrap()))
                                     .width(DEBUG_BUTTON_WIDTH)
                             ]
