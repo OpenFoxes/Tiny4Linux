@@ -269,6 +269,7 @@ fn get_current_ui_elements(app: &MainPanel) -> Container<'static, Message> {
 }
 
 fn main() -> iced::Result {
+    set_locale("de");
     let start_mode = get_start_mode();
 
     if start_mode == WindowMode::Invalid {
