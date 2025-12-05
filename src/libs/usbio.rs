@@ -199,3 +199,63 @@ pub const UVC_GET_LEN: u8 = 0x85;
 const UVC_GET_INFO: u8 = 0x86;
 #[allow(dead_code)]
 const UVC_GET_DEF: u8 = 0x87;
+
+#[cfg(test)]
+mod tests {
+    use super::{UvcUsbIo, UVC_GET_CUR, UVC_GET_LEN, UVC_SET_CUR};
+    use errno::Errno;
+    use mockall::mock;
+    use mockall::predicate::{always, eq};
+
+    // Mock the trait without changing production code
+    mock! {
+        pub UsbIoMock {}
+        impl UvcUsbIo for UsbIoMock {
+            fn info(&self) -> Result<(), Errno>;
+            fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno>;
+        }
+    }
+
+    #[test]
+    fn uvc_constants_values() {
+        assert_eq!(UVC_SET_CUR, 0x01);
+        assert_eq!(UVC_GET_CUR, 0x81);
+        assert_eq!(UVC_GET_LEN, 0x85);
+    }
+
+    #[test]
+    fn mocked_info_succeeds() {
+        let mut mock = MockUsbIoMock::new();
+        mock.expect_info().times(1).returning(|| Ok(()));
+        assert!(mock.info().is_ok());
+    }
+
+    #[test]
+    fn mocked_io_modifies_buffer() {
+        let mut mock = MockUsbIoMock::new();
+        mock.expect_io()
+            .with(eq(2u8), eq(6u8), eq(UVC_SET_CUR), always())
+            .times(1)
+            .returning(|_, _, _, data: &mut [u8]| {
+                if !data.is_empty() { data[0] = 0xAB; }
+                Ok(())
+            });
+
+        let mut buf = [0u8; 4];
+        let res = mock.io(2, 6, UVC_SET_CUR, &mut buf);
+        assert!(res.is_ok());
+        assert_eq!(buf[0], 0xAB);
+    }
+
+    #[test]
+    fn mocked_io_returns_error() {
+        let mut mock = MockUsbIoMock::new();
+        mock.expect_io()
+            .with(eq(1u8), eq(1u8), eq(UVC_GET_CUR), always())
+            .times(1)
+            .returning(|_, _, _, _| Err(Errno(5))); // EIO
+        let mut buf = [0u8; 2];
+        let res = mock.io(1, 1, UVC_GET_CUR, &mut buf);
+        assert!(res.is_err());
+    }
+}
