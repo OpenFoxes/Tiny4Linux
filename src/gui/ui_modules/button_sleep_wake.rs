@@ -3,8 +3,9 @@
 use crate::styles::tooltip_style::tooltip_content;
 use crate::{Message, WindowMode};
 use iced::widget::tooltip::Position;
-use iced::widget::{Container, button, container, row, tooltip};
+use iced::widget::{Container, button, container, row, text, tooltip};
 use iced_font_awesome::fa_icon_solid;
+use rust_i18n::t;
 use tiny4linux::SleepMode;
 
 pub fn button_sleep_wake(
@@ -13,28 +14,28 @@ pub fn button_sleep_wake(
 ) -> Container<'static, Message> {
     let (text_element_text, icon, tooltip_text, message) = match sleep_mode {
         SleepMode::Awake => (
-            "Set to Sleep",
+            t!("gui.buttons.sleep.set_sleep"),
             fa_icon_solid("moon"),
-            "Request the camera to go to sleep mode",
+            t!("gui.tooltips.sleep.request_to_sleep"),
             Message::ChangeSleeping(true),
         ),
         SleepMode::Sleep => (
-            "Wake Up",
+            t!("gui.buttons.sleep.wake_up"),
             fa_icon_solid("sun"),
-            "Request the camera to wake up from sleep mode",
+            t!("gui.tooltips.sleep.request_to_wake"),
             Message::ChangeSleeping(false),
         ),
         SleepMode::Unknown => (
-            "Sleep state unknown",
+            t!("gui.buttons.sleep.unknown"),
             fa_icon_solid("question"),
-            "The state can't be determined. Click the button to try setting the mode or check the connection to the camera.",
+            t!("gui.tooltips.sleep.request_to_sleep"),
             Message::ChangeSleeping(true),
         ),
     };
 
     container(tooltip(
-        button(row![icon, text_element_text].spacing(5)).on_press(message),
-        tooltip_content(container(tooltip_text)),
+        button(row![icon, text(text_element_text)].spacing(5)).on_press(message),
+        tooltip_content(container(text(tooltip_text))),
         if window_mode == WindowMode::Widget {
             Position::Bottom
         } else {
