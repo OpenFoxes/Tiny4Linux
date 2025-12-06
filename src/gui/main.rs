@@ -10,8 +10,11 @@ use iced::widget::{Container, text};
 use iced::window::Position;
 use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
+use rust_i18n::i18n;
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed};
+
+i18n!("src/locales", fallback = "en");
 
 #[derive(Debug, Clone, PartialEq)]
 enum Message {
