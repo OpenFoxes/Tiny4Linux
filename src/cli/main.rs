@@ -3,7 +3,10 @@
 use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
+use rust_i18n::i18n;
 use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera};
+
+i18n!("src/locales", fallback = "en");
 
 /// Simple program to greet a person
 #[derive(Parser)]
