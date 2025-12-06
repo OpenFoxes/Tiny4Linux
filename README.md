@@ -108,6 +108,14 @@ The UI is available in two variants:
 You can use the CLI by typing `t4l` or `tiny4linux-cli` in your terminal.
 To get the full list of available commands, type `t4l --help` or look into the [CLI documentation](docs/cli.md).
 
+### Language Support
+
+The application supports multiple languages.
+Per default, the language is automatically detected based on your system settings.
+You can change the language by adding the flag `--lang <language>` to the CLI or GUI.
+Currently, it is not possible to change the language in the GUI or to persist the setting across restarts,
+but both features are planned for future releases.
+
 ## Setup OBSBOT Center on Linux
 
 From my experience, it’s a good idea to have a Windows VM ready to run on Linux.
