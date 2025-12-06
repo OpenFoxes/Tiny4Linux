@@ -1,1 +1,32 @@
-{}
+{
+  "display": {
+    "sleep_mode": {
+      "awake": "Awake",
+      "sleep": "Sleeping",
+      "unknown": "Unknown"
+    },
+    "ai_mode": {
+      "static": "Static",
+      "normal": "Normal Tracking",
+      "normal_short": "Normal",
+      "upper_body": "Upper Body",
+      "close_up": "Close-up",
+      "headless": "Headless",
+      "lower_body": "Lower Body",
+      "desk": "Desk Mode",
+      "whiteboard": "Whiteboard",
+      "hand": "Hand",
+      "group": "Group",
+      "unknown": "Unknown"
+    },
+    "tracking_speed": {
+      "standard": "Standard",
+      "sport": "Sport"
+    },
+    "exposure_mode": {
+      "manual": "Manual",
+      "global": "Global",
+      "face": "Face"
+    }
+  }
+}

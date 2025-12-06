@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
+use rust_i18n::t;
 use std::fmt::Display;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -12,9 +13,9 @@ pub enum SleepMode {
 impl Display for SleepMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SleepMode::Awake => write!(f, "Awake"),
-            SleepMode::Sleep => write!(f, "Sleeping"),
-            SleepMode::Unknown => write!(f, "Unknown"),
+            SleepMode::Awake => write!(f, "{}", t!("display.sleep_mode.awake")),
+            SleepMode::Sleep => write!(f, "{}", t!("display.sleep_mode.sleep")),
+            SleepMode::Unknown => write!(f, "{}", t!("display.sleep_mode.unknown")),
         }
     }
 }
@@ -37,17 +38,17 @@ pub enum AIMode {
 impl Display for AIMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            AIMode::NoTracking => write!(f, "Static"),
-            AIMode::NormalTracking => write!(f, "Normal Tracking"),
-            AIMode::UpperBody => write!(f, "Upper Body"),
-            AIMode::CloseUp => write!(f, "Close-up"),
-            AIMode::Headless => write!(f, "Headless"),
-            AIMode::LowerBody => write!(f, "Lower Body"),
-            AIMode::DeskMode => write!(f, "Desk Mode"),
-            AIMode::Whiteboard => write!(f, "Whiteboard"),
-            AIMode::Hand => write!(f, "Hand"),
-            AIMode::Group => write!(f, "Group"),
-            AIMode::Unknown => write!(f, "Unknown"),
+            AIMode::NoTracking => write!(f, "{}", t!("display.ai_mode.static")),
+            AIMode::NormalTracking => write!(f, "{}", t!("display.ai_mode.normal")),
+            AIMode::UpperBody => write!(f, "{}", t!("display.ai_mode.upper_body")),
+            AIMode::CloseUp => write!(f, "{}", t!("display.ai_mode.close_up")),
+            AIMode::Headless => write!(f, "{}", t!("display.ai_mode.headless")),
+            AIMode::LowerBody => write!(f, "{}", t!("display.ai_mode.lower_body")),
+            AIMode::DeskMode => write!(f, "{}", t!("display.ai_mode.desk")),
+            AIMode::Whiteboard => write!(f, "{}", t!("display.ai_mode.whiteboard")),
+            AIMode::Hand => write!(f, "{}", t!("display.ai_mode.hand")),
+            AIMode::Group => write!(f, "{}", t!("display.ai_mode.group")),
+            AIMode::Unknown => write!(f, "{}", t!("display.ai_mode.unknown")),
         }
     }
 }
@@ -61,8 +62,8 @@ pub enum TrackingSpeed {
 impl Display for TrackingSpeed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            TrackingSpeed::Standard => write!(f, "Standard"),
-            TrackingSpeed::Sport => write!(f, "Sport"),
+            TrackingSpeed::Standard => write!(f, "{}", t!("display.tracking_speed.standard")),
+            TrackingSpeed::Sport => write!(f, "{}", t!("display.tracking_speed.sport")),
         }
     }
 }
@@ -77,9 +78,9 @@ pub enum ExposureMode {
 impl Display for ExposureMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ExposureMode::Manual => write!(f, "Manual"),
-            ExposureMode::Global => write!(f, "Global"),
-            ExposureMode::Face => write!(f, "Face"),
+            ExposureMode::Manual => write!(f, "{}", t!("display.exposure_mode.manual")),
+            ExposureMode::Global => write!(f, "{}", t!("display.exposure_mode.global")),
+            ExposureMode::Face => write!(f, "{}", t!("display.exposure_mode.face")),
         }
     }
 }
