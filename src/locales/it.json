@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "Nessuna fotocamera trovata. Controllare la connessione della fotocamera."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR attivo",
+        "off": "HDR disattivato"
+      }
+    },
+    "info": {
+      "ai_mode": "Modalità IA",
+      "camera_status": "Stato della fotocamera",
+      "exposure": "Esposizione",
+      "hdr": "HDR",
+      "presets": "Preset",
+      "sleep_mode": "Modalità sospensione",
+      "tracking": "Tracking",
+      "tracking_speed": "Velocità",
+      "t4l_version": "Versione T4L"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Metti in sospensione",
+        "wake_up": "Riattiva",
+        "unknown": "Stato sospensione sconosciuto"
+      },
+      "debugging": {
+        "turn_on": "Attiva debug",
+        "turn_off": "Disattiva debug"
+      }
+    },
+    "sleep": {
+      "is_awake": "La fotocamera è attiva",
+      "is_sleeping": "La fotocamera è in sospensione",
+      "unknown": "Stato della fotocamera sconosciuto"
+    },
+    "text": {
+      "debugging": {
+        "send": "Invia",
+        "get_and_dump": "Ottieni e stampa",
+        "send_x": "Invia %{to_send}",
+        "clear_x": "Cancella %{to_clear}",
+        "0x02_hex_string": "Stringa esadecimale 0x02",
+        "0x06_hex_string": "Stringa esadecimale 0x06"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Richiedi alla fotocamera di andare in sospensione",
+        "request_to_wake": "Richiedi alla fotocamera di riattivarsi",
+        "state_unknown": "Impossibile determinare lo stato. Clicca il pulsante o controlla la connessione."
+      },
+      "sets_tracking_mode": "Imposta la fotocamera sulla modalità di tracking \"%{mode}\"",
+      "sets_tracking_speed": "Imposta la velocità di tracking su %{speed}",
+      "changes_exposure": "Cambia la modalità esposizione in %{mode}",
+      "hdr": {
+        "turns_on": "Attiva HDR al clic",
+        "turns_off": "Disattiva HDR al clic"
+      },
+      "preset": "Imposta la fotocamera sul preset %{preset_number}",
+      "window_mode": {
+        "widget": "Passa alla modalità widget",
+        "dashboard": "Passa alla modalità dashboard"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Impostazione della fotocamera in sospensione",
+      "response_to_awake": "Riattivazione della fotocamera",
+      "request_should_be": "La fotocamera dovrebbe essere",
+      "option_on1": "attiva",
+      "option_on2": "accesa",
+      "option_off1": "in sospensione",
+      "option_off2": "spenta",
+      "option_off3": "addormentata"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Impostazione della fotocamera su",
+      "request_should_be": "Quale tipo di tracking impostare?",
+      "static": "statico (nessun tracking)",
+      "normal": "tracking normale",
+      "close_up": "tracking ravvicinato",
+      "upper_body": "tracking del busto",
+      "headless": "tracking headless",
+      "lower_body": "tracking parte inferiore",
+      "desk": "tracking scrivania",
+      "whiteboard": "tracking lavagna",
+      "hand": "tracking mano",
+      "group": "tracking di gruppo"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Impostazione velocità tracking standard",
+      "response_to_fast": "Impostazione velocità tracking veloce",
+      "request_should_be": "Seleziona la velocità di tracking!",
+      "option_standard": "Standard (più lento)",
+      "option_sport": "Sport (veloce)"
+    },
+    "preset_position": {
+      "response_to_position": "Impostazione della fotocamera sul preset %{position_id}",
+      "request_position_id": "Seleziona un preset predefinito!",
+      "stopping_tracking": "Interruzione del tracking prima del preset"
+    },
+    "hdr": {
+      "response_to_hdr_on": "Attivazione HDR",
+      "response_to_hdr_off": "Disattivazione HDR",
+      "request_should_be": "Seleziona lo stato HDR!",
+      "option_on": "HDR attivo",
+      "option_off": "HDR disattivo"
+    },
+    "exposure": {
+      "response_to_manual": "Impostazione esposizione manuale",
+      "response_to_global": "Impostazione esposizione globale",
+      "response_to_face": "Impostazione esposizione volto",
+      "request_should_be": "Seleziona la modalità esposizione!",
+      "option_manual": "Manuale",
+      "option_global": "Globale",
+      "option_face": "Volto"
+    },
+    "errors": {
+      "info_error": "La fotocamera non è stata trovata o ha dato informazioni errate. Controllare la connessione."
+    },
+    "help": {
+      "sleep": "Mette la fotocamera in sospensione",
+      "wake": "Riattiva la fotocamera",
+      "turn": "Accende o spegne la fotocamera (alias di `sleep` e `wake`)",
+      "tracking": "Controlla la modalità tracking IA",
+      "speed": "Controlla la velocità di tracking",
+      "preset": "Imposta un preset definito",
+      "hdr": "Controlla la modalità HDR",
+      "exposure": "Controlla la modalità esposizione",
+      "info": "Mostra le informazioni della fotocamera",
+      "version": "Mostra la versione dello strumento CLI",
+      "completions": "Genera script di completamento"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Attiva",
+      "sleep": "In sospensione",
+      "unknown": "Sconosciuto"
+    },
+    "ai_mode": {
+      "static": "Statico",
+      "normal": "Tracking normale",
+      "normal_short": "Normale",
+      "upper_body": "Busto",
+      "close_up": "Primo piano",
+      "headless": "Headless",
+      "lower_body": "Parte inferiore",
+      "desk": "Modo scrivania",
+      "whiteboard": "Lavagna",
+      "hand": "Mano",
+      "group": "Gruppo",
+      "unknown": "Sconosciuto"
+    },
+    "tracking_speed": {
+      "standard": "Standard",
+      "sport": "Sport"
+    },
+    "exposure_mode": {
+      "manual": "Manuale",
+      "global": "Globale",
+      "face": "Volto"
+    },
+    "states": {
+      "on": "Attivo",
+      "off": "Disattivo"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "Il valore {1} non è supportato per {0}"
+  }
+}

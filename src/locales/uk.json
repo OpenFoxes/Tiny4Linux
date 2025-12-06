@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "Камеру не знайдено. Будь ласка, перевірте підключення камери."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR увімкнено",
+        "off": "HDR вимкнено"
+      }
+    },
+    "info": {
+      "ai_mode": "Режим ШІ",
+      "camera_status": "Стан камери",
+      "exposure": "Експозиція",
+      "hdr": "HDR",
+      "presets": "Пресети",
+      "sleep_mode": "Режим сну",
+      "tracking": "Трекінг",
+      "tracking_speed": "Швидкість трекінгу",
+      "t4l_version": "Версія T4L"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Перевести в сон",
+        "wake_up": "Пробудити",
+        "unknown": "Стан сну невідомий"
+      },
+      "debugging": {
+        "turn_on": "Увімкнути налагодження",
+        "turn_off": "Вимкнути налагодження"
+      }
+    },
+    "sleep": {
+      "is_awake": "Камера активна",
+      "is_sleeping": "Камера спить",
+      "unknown": "Стан камери невідомий"
+    },
+    "text": {
+      "debugging": {
+        "send": "Надіслати",
+        "get_and_dump": "Отримати й вивести",
+        "send_x": "Надіслати %{to_send}",
+        "clear_x": "Очистити %{to_clear}",
+        "0x02_hex_string": "0x02 hex-рядок",
+        "0x06_hex_string": "0x06 hex-рядок"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Запит на переведення камери в режим сну",
+        "request_to_wake": "Запит на пробудження камери",
+        "state_unknown": "Неможливо визначити стан. Натисніть кнопку або перевірте підключення."
+      },
+      "sets_tracking_mode": "Установлює режим трекінгу \"%{mode}\"",
+      "sets_tracking_speed": "Встановлює швидкість трекінгу %{speed}",
+      "changes_exposure": "Змінює режим експозиції на %{mode}",
+      "hdr": {
+        "turns_on": "Увімкнути HDR при натисканні",
+        "turns_off": "Вимкнути HDR при натисканні"
+      },
+      "preset": "Установлює позицію камери на пресет %{preset_number}",
+      "window_mode": {
+        "widget": "Переключити в режим віджета",
+        "dashboard": "Переключити в режим панелі"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Переведення камери в режим сну",
+      "response_to_awake": "Пробудження камери",
+      "request_should_be": "Камера повинна бути",
+      "option_on1": "активною",
+      "option_on2": "увімкненою",
+      "option_off1": "спати",
+      "option_off2": "вимкненою",
+      "option_off3": "у стані сну"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Встановлення камери в режим",
+      "request_should_be": "Який тип трекінгу встановити?",
+      "static": "статичний (без трекінгу)",
+      "normal": "звичайний трекінг",
+      "close_up": "трекінг крупним планом",
+      "upper_body": "трекінг верхньої частини тіла",
+      "headless": "headless-трекінг",
+      "lower_body": "трекінг нижньої частини тіла",
+      "desk": "трекінг робочого столу",
+      "whiteboard": "трекінг дошки",
+      "hand": "трекінг руки",
+      "group": "груповий трекінг"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Установлення стандартної швидкості трекінгу",
+      "response_to_fast": "Установлення швидкого трекінгу",
+      "request_should_be": "Виберіть швидкість трекінгу!",
+      "option_standard": "Стандарт (повільніший)",
+      "option_sport": "Спорт (швидкий)"
+    },
+    "preset_position": {
+      "response_to_position": "Установлення камери на пресет %{position_id}",
+      "request_position_id": "Виберіть пресет позиції!",
+      "stopping_tracking": "Зупинка трекінгу перед установленням пресету"
+    },
+    "hdr": {
+      "response_to_hdr_on": "Увімкнення HDR",
+      "response_to_hdr_off": "Вимкнення HDR",
+      "request_should_be": "Виберіть стан HDR!",
+      "option_on": "HDR увімкнено",
+      "option_off": "HDR вимкнено"
+    },
+    "exposure": {
+      "response_to_manual": "Експозиція встановлена на ручну",
+      "response_to_global": "Експозиція встановлена на глобальну",
+      "response_to_face": "Експозиція встановлена на обличчя",
+      "request_should_be": "Виберіть режим експозиції!",
+      "option_manual": "Ручний",
+      "option_global": "Глобальний",
+      "option_face": "Обличчя"
+    },
+    "errors": {
+      "info_error": "Камера не знайдена або дала некоректну інформацію. Перевірте підключення."
+    },
+    "help": {
+      "sleep": "Переводить камеру в режим сну",
+      "wake": "Пробуджує камеру",
+      "turn": "Увімкнути або вимкнути камеру (аналог `sleep` та `wake`)",
+      "tracking": "Керує режимом ШІ-трекінгу",
+      "speed": "Керує швидкістю трекінгу",
+      "preset": "Установлює камеру на пресет",
+      "hdr": "Керує режимом HDR",
+      "exposure": "Керує режимом експозиції",
+      "info": "Показує інформацію про стан камери",
+      "version": "Показує версію CLI",
+      "completions": "Генерує скрипти автодоповнення"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Активна",
+      "sleep": "Спить",
+      "unknown": "Невідомо"
+    },
+    "ai_mode": {
+      "static": "Статичний",
+      "normal": "Звичайний трекінг",
+      "normal_short": "Звичайний",
+      "upper_body": "Верхня частина",
+      "close_up": "Крупний план",
+      "headless": "Headless",
+      "lower_body": "Нижня частина",
+      "desk": "Режим столу",
+      "whiteboard": "Дошка",
+      "hand": "Рука",
+      "group": "Група",
+      "unknown": "Невідомо"
+    },
+    "tracking_speed": {
+      "standard": "Стандарт",
+      "sport": "Спорт"
+    },
+    "exposure_mode": {
+      "manual": "Ручний",
+      "global": "Глобальний",
+      "face": "Обличчя"
+    },
+    "states": {
+      "on": "Увімкнено",
+      "off": "Вимкнено"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "Значення {1} не підтримується для {0}"
+  }
+}

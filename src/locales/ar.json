@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "لم يتم العثور على كاميرا. يرجى التحقق من اتصال الكاميرا."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR تشغيل",
+        "off": "HDR إيقاف"
+      }
+    },
+    "info": {
+      "ai_mode": "وضع الذكاء الاصطناعي",
+      "camera_status": "حالة الكاميرا",
+      "exposure": "التعريض",
+      "hdr": "HDR",
+      "presets": "الإعدادات المسبقة",
+      "sleep_mode": "وضع السكون",
+      "tracking": "التتبع",
+      "tracking_speed": "سرعة التتبع",
+      "t4l_version": "إصدار T4L"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "وضع السكون",
+        "wake_up": "إيقاظ",
+        "unknown": "حالة السكون غير معروفة"
+      },
+      "debugging": {
+        "turn_on": "تشغيل وضع التصحيح",
+        "turn_off": "إيقاف وضع التصحيح"
+      }
+    },
+    "sleep": {
+      "is_awake": "الكاميرا مستيقظة",
+      "is_sleeping": "الكاميرا في وضع السكون",
+      "unknown": "حالة الكاميرا غير معروفة"
+    },
+    "text": {
+      "debugging": {
+        "send": "إرسال",
+        "get_and_dump": "جلب وعرض",
+        "send_x": "إرسال %{to_send}",
+        "clear_x": "مسح %{to_clear}",
+        "0x02_hex_string": "0x02 سلسلة hex",
+        "0x06_hex_string": "0x06 سلسلة hex"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "طلب وضع الكاميرا في وضع السكون",
+        "request_to_wake": "طلب إيقاظ الكاميرا من وضع السكون",
+        "state_unknown": "لا يمكن تحديد الحالة. انقر لمحاولة التعيين أو تحقق من الاتصال."
+      },
+      "sets_tracking_mode": "يضبط وضع التتبع إلى \"%{mode}\"",
+      "sets_tracking_speed": "يضبط سرعة التتبع إلى %{speed}",
+      "changes_exposure": "يغيّر وضع التعريض إلى %{mode}",
+      "hdr": {
+        "turns_on": "تشغيل HDR عند النقر",
+        "turns_off": "إيقاف HDR عند النقر"
+      },
+      "preset": "يضبط موضع الكاميرا على الإعداد المسبق %{preset_number}",
+      "window_mode": {
+        "widget": "التحويل إلى وضع الويدجت",
+        "dashboard": "التحويل إلى وضع لوحة التحكم"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "يتم وضع الكاميرا في وضع السكون",
+      "response_to_awake": "يتم إيقاظ الكاميرا",
+      "request_should_be": "يجب أن تكون الكاميرا",
+      "option_on1": "مستيقظة",
+      "option_on2": "قيد التشغيل",
+      "option_off1": "نائمة",
+      "option_off2": "متوقفة",
+      "option_off3": "في وضع السكون"
+    },
+    "tracking_mode": {
+      "response_setting_to": "تعيين الكاميرا إلى",
+      "request_should_be": "ما نوع التتبع المطلوب؟",
+      "static": "ثابت (بدون تتبع)",
+      "normal": "تتبع عادي",
+      "close_up": "تتبع قريب",
+      "upper_body": "تتبع الجزء العلوي",
+      "headless": "تتبع بدون رأس",
+      "lower_body": "تتبع الجزء السفلي",
+      "desk": "تتبع المكتب",
+      "whiteboard": "تتبع السبورة",
+      "hand": "تتبع اليد",
+      "group": "تتبع المجموعة"
+    },
+    "tracking_speed": {
+      "response_to_standard": "تعيين سرعة التتبع القياسية",
+      "response_to_fast": "تعيين سرعة التتبع السريعة",
+      "request_should_be": "اختر سرعة التتبع!",
+      "option_standard": "قياسي (أبطأ)",
+      "option_sport": "سريع (رياضي)"
+    },
+    "preset_position": {
+      "response_to_position": "تعيين الكاميرا إلى الإعداد المسبق %{position_id}",
+      "request_position_id": "اختر إعدادًا مسبقًا!",
+      "stopping_tracking": "إيقاف التتبع قبل تغيير الإعداد المسبق"
+    },
+    "hdr": {
+      "response_to_hdr_on": "تفعيل HDR",
+      "response_to_hdr_off": "إيقاف HDR",
+      "request_should_be": "اختر حالة HDR!",
+      "option_on": "HDR تشغيل",
+      "option_off": "HDR إيقاف"
+    },
+    "exposure": {
+      "response_to_manual": "تغيير التعريض إلى يدوي",
+      "response_to_global": "تغيير التعريض إلى شامل",
+      "response_to_face": "تغيير التعريض إلى الوجه",
+      "request_should_be": "اختر وضع التعريض!",
+      "option_manual": "يدوي",
+      "option_global": "شامل",
+      "option_face": "الوجه"
+    },
+    "errors": {
+      "info_error": "تعذر العثور على الكاميرا أو أعادت معلومات غير صحيحة. يرجى التحقق من الاتصال."
+    },
+    "help": {
+      "sleep": "يضع الكاميرا في وضع السكون",
+      "wake": "يوقظ الكاميرا",
+      "turn": "يشغّل أو يوقف الكاميرا",
+      "tracking": "يتحكم في وضع التتبع",
+      "speed": "يتحكم في سرعة التتبع",
+      "preset": "يضبط على إعداد مسبق محدد",
+      "hdr": "يتحكم في وضع HDR",
+      "exposure": "يتحكم في وضع التعريض",
+      "info": "يعرض حالة الكاميرا",
+      "version": "يعرض إصدار أداة CLI",
+      "completions": "ينشئ سكربتات الإكمال التلقائي"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "مستيقظة",
+      "sleep": "نائمة",
+      "unknown": "غير معروف"
+    },
+    "ai_mode": {
+      "static": "ثابت",
+      "normal": "تتبع عادي",
+      "normal_short": "عادي",
+      "upper_body": "الجزء العلوي",
+      "close_up": "قريب",
+      "headless": "بدون رأس",
+      "lower_body": "الجزء السفلي",
+      "desk": "وضع المكتب",
+      "whiteboard": "السبورة",
+      "hand": "اليد",
+      "group": "المجموعة",
+      "unknown": "غير معروف"
+    },
+    "tracking_speed": {
+      "standard": "قياسي",
+      "sport": "رياضي"
+    },
+    "exposure_mode": {
+      "manual": "يدوي",
+      "global": "شامل",
+      "face": "الوجه"
+    },
+    "states": {
+      "on": "تشغيل",
+      "off": "إيقاف"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "القيمة {1} غير مدعومة لـ {0}"
+  }
+}

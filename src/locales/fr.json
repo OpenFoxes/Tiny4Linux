@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "Aucune caméra trouvée. Veuillez vérifier la connexion de la caméra."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR activé",
+        "off": "HDR désactivé"
+      }
+    },
+    "info": {
+      "ai_mode": "Mode IA",
+      "camera_status": "État de la caméra",
+      "exposure": "Exposition",
+      "hdr": "HDR",
+      "presets": "Presets",
+      "sleep_mode": "Mode veille",
+      "tracking": "Suivi",
+      "tracking_speed": "Vitesse de suivi",
+      "t4l_version": "Version T4L"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Mettre en veille",
+        "wake_up": "Réveiller",
+        "unknown": "État de veille inconnu"
+      },
+      "debugging": {
+        "turn_on": "Activer le débogage",
+        "turn_off": "Désactiver le débogage"
+      }
+    },
+    "sleep": {
+      "is_awake": "La caméra est réveillée",
+      "is_sleeping": "La caméra est en veille",
+      "unknown": "L’état de la caméra est inconnu"
+    },
+    "text": {
+      "debugging": {
+        "send": "Envoyer",
+        "get_and_dump": "Obtenir & Exporter",
+        "send_x": "Envoyer %{to_send}",
+        "clear_x": "Effacer %{to_clear}",
+        "0x02_hex_string": "Chaîne hex 0x02",
+        "0x06_hex_string": "Chaîne hex 0x06"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Demander à la caméra de passer en mode veille",
+        "request_to_wake": "Demander à la caméra de sortir de veille",
+        "state_unknown": "L’état ne peut pas être déterminé. Cliquez sur le bouton pour réessayer ou vérifiez la connexion."
+      },
+      "sets_tracking_mode": "Définit le mode de suivi \"%{mode}\"",
+      "sets_tracking_speed": "Définit la vitesse de suivi de la caméra à %{speed}",
+      "changes_exposure": "Change le mode d'exposition pour %{mode}",
+      "hdr": {
+        "turns_on": "Active le HDR au clic",
+        "turns_off": "Désactive le HDR au clic"
+      },
+      "preset": "Définit la caméra sur le preset %{preset_number}",
+      "window_mode": {
+        "widget": "Basculer en mode widget",
+        "dashboard": "Basculer en mode tableau de bord"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Mise en veille de la caméra",
+      "response_to_awake": "Réveil de la caméra",
+      "request_should_be": "La caméra doit être",
+      "option_on1": "réveillée",
+      "option_on2": "allumée",
+      "option_off1": "en veille",
+      "option_off2": "éteinte",
+      "option_off3": "endormie"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Configuration de la caméra en mode",
+      "request_should_be": "Quel type de suivi doit être défini ?",
+      "static": "statique (pas de suivi)",
+      "normal": "suivi normal",
+      "close_up": "suivi en gros plan",
+      "upper_body": "suivi du haut du corps",
+      "headless": "suivi sans tête",
+      "lower_body": "suivi du bas du corps",
+      "desk": "suivi de bureau",
+      "whiteboard": "suivi tableau blanc",
+      "hand": "suivi de la main",
+      "group": "suivi de groupe"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Définition de la vitesse de suivi standard",
+      "response_to_fast": "Définition de la vitesse de suivi rapide",
+      "request_should_be": "Sélectionnez la vitesse de suivi !",
+      "option_standard": "Standard (plus lent)",
+      "option_sport": "Sport (rapide)"
+    },
+    "preset_position": {
+      "response_to_position": "Définition de la caméra sur le preset %{position_id}",
+      "request_position_id": "Sélectionnez un preset prédéfini !",
+      "stopping_tracking": "Arrêt du suivi avant d'appliquer le preset"
+    },
+    "hdr": {
+      "response_to_hdr_on": "Activation du HDR",
+      "response_to_hdr_off": "Désactivation du HDR",
+      "request_should_be": "Sélectionnez l’état du HDR !",
+      "option_on": "HDR activé",
+      "option_off": "HDR désactivé"
+    },
+    "exposure": {
+      "response_to_manual": "Réglage de l’exposition sur manuel",
+      "response_to_global": "Réglage de l’exposition sur global",
+      "response_to_face": "Réglage de l’exposition sur visage",
+      "request_should_be": "Sélectionnez le mode d’exposition !",
+      "option_manual": "Manuel",
+      "option_global": "Global",
+      "option_face": "Visage"
+    },
+    "errors": {
+      "info_error": "La caméra est introuvable ou renvoie des informations incorrectes. Vérifiez la connexion."
+    },
+    "help": {
+      "sleep": "Met la caméra en veille",
+      "wake": "Réveille la caméra",
+      "turn": "Allume ou éteint la caméra (alias de `sleep` et `wake`)",
+      "tracking": "Contrôle le mode de suivi IA",
+      "speed": "Contrôle la vitesse de suivi",
+      "preset": "Définit un preset prédéfini",
+      "hdr": "Contrôle le mode HDR",
+      "exposure": "Contrôle le mode d’exposition",
+      "info": "Affiche les informations de la caméra",
+      "version": "Affiche la version de l’outil CLI",
+      "completions": "Génère des scripts d’auto-complétion"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Réveillée",
+      "sleep": "En veille",
+      "unknown": "Inconnu"
+    },
+    "ai_mode": {
+      "static": "Statique",
+      "normal": "Suivi normal",
+      "normal_short": "Normal",
+      "upper_body": "Haut du corps",
+      "close_up": "Gros plan",
+      "headless": "Sans tête",
+      "lower_body": "Bas du corps",
+      "desk": "Mode bureau",
+      "whiteboard": "Tableau blanc",
+      "hand": "Main",
+      "group": "Groupe",
+      "unknown": "Inconnu"
+    },
+    "tracking_speed": {
+      "standard": "Standard",
+      "sport": "Sport"
+    },
+    "exposure_mode": {
+      "manual": "Manuel",
+      "global": "Global",
+      "face": "Visage"
+    },
+    "states": {
+      "on": "Activé",
+      "off": "Désactivé"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "La valeur {1} n’est pas prise en charge pour {0}"
+  }
+}
