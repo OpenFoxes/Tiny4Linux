@@ -12,7 +12,9 @@ use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
 use rust_i18n::{i18n, set_locale, t};
 use std::time::Duration;
-use tiny4linux::{AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed};
+use tiny4linux::{
+    AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed, get_language,
+};
 
 i18n!("src/locales", fallback = "en");
 
@@ -271,6 +273,9 @@ fn get_current_ui_elements(app: &MainPanel) -> Container<'static, Message> {
 }
 
 fn main() -> iced::Result {
+    let language = get_language(false);
+    set_locale(language.as_str());
+
     let start_mode = get_start_mode();
 
     if start_mode == WindowMode::Invalid {

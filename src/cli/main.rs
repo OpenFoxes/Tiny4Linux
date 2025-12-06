@@ -4,7 +4,7 @@ use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
-use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera};
+use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera, get_language};
 
 i18n!("src/locales", fallback = "en");
 
@@ -98,6 +98,9 @@ enum ExposureArg {
 }
 
 fn main() {
+    let language = get_language(false);
+    set_locale(language.as_str());
+
     let args = Args::parse();
 
     let mut camera = Camera::new("OBSBOT Tiny 2").ok();
