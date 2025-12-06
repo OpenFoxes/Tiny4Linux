@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "No se encontró ninguna cámara. Por favor, compruebe la conexión de la cámara."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR activado",
+        "off": "HDR desactivado"
+      }
+    },
+    "info": {
+      "ai_mode": "Modo IA",
+      "camera_status": "Estado de la cámara",
+      "exposure": "Exposición",
+      "hdr": "HDR",
+      "presets": "Presets",
+      "sleep_mode": "Modo de reposo",
+      "tracking": "Seguimiento",
+      "tracking_speed": "Velocidad de seguimiento",
+      "t4l_version": "Versión T4L"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Poner en reposo",
+        "wake_up": "Despertar",
+        "unknown": "Estado de reposo desconocido"
+      },
+      "debugging": {
+        "turn_on": "Activar depuración",
+        "turn_off": "Desactivar depuración"
+      }
+    },
+    "sleep": {
+      "is_awake": "La cámara está activa",
+      "is_sleeping": "La cámara está en reposo",
+      "unknown": "El estado de la cámara es desconocido"
+    },
+    "text": {
+      "debugging": {
+        "send": "Enviar",
+        "get_and_dump": "Obtener y volcar",
+        "send_x": "Enviar %{to_send}",
+        "clear_x": "Borrar %{to_clear}",
+        "0x02_hex_string": "Cadena hex 0x02",
+        "0x06_hex_string": "Cadena hex 0x06"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Solicitar que la cámara entre en modo de reposo",
+        "request_to_wake": "Solicitar que la cámara salga del modo de reposo",
+        "state_unknown": "No se puede determinar el estado. Haga clic para intentar establecer el modo o compruebe la conexión."
+      },
+      "sets_tracking_mode": "Configura la cámara al modo de seguimiento \"%{mode}\"",
+      "sets_tracking_speed": "Configura la velocidad de seguimiento a %{speed}",
+      "changes_exposure": "Cambia el modo de exposición a %{mode}",
+      "hdr": {
+        "turns_on": "Activa HDR al hacer clic",
+        "turns_off": "Desactiva HDR al hacer clic"
+      },
+      "preset": "Coloca la cámara en el preset %{preset_number}",
+      "window_mode": {
+        "widget": "Cambiar a modo widget",
+        "dashboard": "Cambiar a modo panel"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Poniendo la cámara en modo de reposo",
+      "response_to_awake": "Despertando la cámara",
+      "request_should_be": "La cámara debería estar",
+      "option_on1": "activa",
+      "option_on2": "encendida",
+      "option_off1": "durmiendo",
+      "option_off2": "apagada",
+      "option_off3": "en reposo"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Configurando la cámara a",
+      "request_should_be": "¿Qué tipo de seguimiento debe configurarse?",
+      "static": "estático (sin seguimiento)",
+      "normal": "seguimiento normal",
+      "close_up": "seguimiento de primer plano",
+      "upper_body": "seguimiento del torso superior",
+      "headless": "seguimiento sin cabeza",
+      "lower_body": "seguimiento del torso inferior",
+      "desk": "seguimiento de escritorio",
+      "whiteboard": "seguimiento de pizarra",
+      "hand": "seguimiento de mano",
+      "group": "seguimiento de grupo"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Configurando velocidad estándar de seguimiento",
+      "response_to_fast": "Configurando velocidad rápida de seguimiento",
+      "request_should_be": "Seleccione la velocidad de seguimiento",
+      "option_standard": "Estándar (más lento)",
+      "option_sport": "Deporte (rápido)"
+    },
+    "preset_position": {
+      "response_to_position": "Colocando la cámara en la posición preset %{position_id}",
+      "request_position_id": "Seleccione un preset predefinido",
+      "stopping_tracking": "Deteniendo el seguimiento antes de mover la cámara a un preset"
+    },
+    "hdr": {
+      "response_to_hdr_on": "Activando HDR",
+      "response_to_hdr_off": "Desactivando HDR",
+      "request_should_be": "Seleccione el estado HDR",
+      "option_on": "HDR activado",
+      "option_off": "HDR desactivado"
+    },
+    "exposure": {
+      "response_to_manual": "Configurando exposición manual",
+      "response_to_global": "Configurando exposición global",
+      "response_to_face": "Configurando exposición facial",
+      "request_should_be": "Seleccione el modo de exposición",
+      "option_manual": "Manual",
+      "option_global": "Global",
+      "option_face": "Rostro"
+    },
+    "errors": {
+      "info_error": "No se pudo encontrar la cámara o devolvió información incorrecta. Por favor, compruebe la conexión."
+    },
+    "help": {
+      "sleep": "Pone la cámara en modo de reposo",
+      "wake": "Despierta la cámara",
+      "turn": "Enciende o apaga la cámara",
+      "tracking": "Controla el modo de seguimiento IA",
+      "speed": "Controla la velocidad de seguimiento",
+      "preset": "Selecciona un preset definido anteriormente",
+      "hdr": "Controla el modo HDR",
+      "exposure": "Controla el modo de exposición",
+      "info": "Muestra información del estado actual",
+      "version": "Muestra la versión de la herramienta CLI",
+      "completions": "Genera scripts de autocompletado"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Activa",
+      "sleep": "Durmiendo",
+      "unknown": "Desconocido"
+    },
+    "ai_mode": {
+      "static": "Estático",
+      "normal": "Seguimiento normal",
+      "normal_short": "Normal",
+      "upper_body": "Torso superior",
+      "close_up": "Primer plano",
+      "headless": "Sin cabeza",
+      "lower_body": "Torso inferior",
+      "desk": "Modo escritorio",
+      "whiteboard": "Pizarra",
+      "hand": "Mano",
+      "group": "Grupo",
+      "unknown": "Desconocido"
+    },
+    "tracking_speed": {
+      "standard": "Estándar",
+      "sport": "Deporte"
+    },
+    "exposure_mode": {
+      "manual": "Manual",
+      "global": "Global",
+      "face": "Rostro"
+    },
+    "states": {
+      "on": "Encendido",
+      "off": "Apagado"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "El valor {1} no es compatible para {0}"
+  }
+}

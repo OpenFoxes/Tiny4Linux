@@ -1,0 +1,178 @@
+{
+  "shared": {
+    "errors": {
+      "no_camera": "Kamera bulunamadı. Lütfen kameranın bağlantısını kontrol edin."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR açık",
+        "off": "HDR kapalı"
+      }
+    },
+    "info": {
+      "ai_mode": "Yapay Zekâ Modu",
+      "camera_status": "Kamera durumu",
+      "exposure": "Pozlama",
+      "hdr": "HDR",
+      "presets": "Önayarlar",
+      "sleep_mode": "Uyku modu",
+      "tracking": "Takip",
+      "tracking_speed": "Takip Hızı",
+      "t4l_version": "T4L Sürümü"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Uykuya al",
+        "wake_up": "Uyandır",
+        "unknown": "Uyku durumu bilinmiyor"
+      },
+      "debugging": {
+        "turn_on": "Hata ayıklamayı aç",
+        "turn_off": "Hata ayıklamayı kapat"
+      }
+    },
+    "sleep": {
+      "is_awake": "Kamera uyanık",
+      "is_sleeping": "Kamera uyuyor",
+      "unknown": "Kamera durumu bilinmiyor"
+    },
+    "text": {
+      "debugging": {
+        "send": "Gönder",
+        "get_and_dump": "Al ve dök",
+        "send_x": "%{to_send} gönder",
+        "clear_x": "%{to_clear} temizle",
+        "0x02_hex_string": "0x02 hex dizesi",
+        "0x06_hex_string": "0x06 hex dizesi"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Kamerayı uyku moduna geçir",
+        "request_to_wake": "Kamerayı uyku modundan çıkar",
+        "state_unknown": "Durum belirlenemiyor. Modu ayarlamak için tıklayın veya bağlantıyı kontrol edin."
+      },
+      "sets_tracking_mode": "Kamerayı \"%{mode}\" takip moduna ayarlar",
+      "sets_tracking_speed": "Kameranın takip hızını %{speed} olarak ayarlar",
+      "changes_exposure": "Pozlama modunu %{mode} olarak değiştirir",
+      "hdr": {
+        "turns_on": "Tıklandığında HDR açılır",
+        "turns_off": "Tıklandığında HDR kapanır"
+      },
+      "preset": "Kamerayı %{preset_number} önayarına konumlandırır",
+      "window_mode": {
+        "widget": "Widget moduna geç",
+        "dashboard": "Pano moduna geç"
+      }
+    }
+  },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Kamera uyku moduna alınıyor",
+      "response_to_awake": "Kamera uyandırılıyor",
+      "request_should_be": "Kamera",
+      "option_on1": "uyanık olmalı",
+      "option_on2": "açık olmalı",
+      "option_off1": "uyuyor olmalı",
+      "option_off2": "kapalı olmalı",
+      "option_off3": "uyku modunda olmalı"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Kamera ayarlanıyor:",
+      "request_should_be": "Hangi takip modu ayarlanmalı?",
+      "static": "statik (takip yok)",
+      "normal": "normal takip",
+      "close_up": "yakın plan takip",
+      "upper_body": "üst vücut takibi",
+      "headless": "başsız takip",
+      "lower_body": "alt vücut takibi",
+      "desk": "masa takibi",
+      "whiteboard": "yazı tahtası takibi",
+      "hand": "el takibi",
+      "group": "grup takibi"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Kamera standart takip hızına ayarlanıyor",
+      "response_to_fast": "Kamera hızlı takip hızına ayarlanıyor",
+      "request_should_be": "Kameranın takip hızını seçin!",
+      "option_standard": "Standart (daha yavaş)",
+      "option_sport": "Spor (hızlı)"
+    },
+    "preset_position": {
+      "response_to_position": "Kamera %{position_id} önayarına ayarlanıyor",
+      "request_position_id": "Önceden tanımlı bir önayarı seçin!",
+      "stopping_tracking": "Kamera bir önayara ayarlanmadan önce takip durduruluyor"
+    },
+    "hdr": {
+      "response_to_hdr_on": "HDR etkinleştiriliyor",
+      "response_to_hdr_off": "HDR devre dışı bırakılıyor",
+      "request_should_be": "HDR durumunu seçin!",
+      "option_on": "HDR açık",
+      "option_off": "HDR kapalı"
+    },
+    "exposure": {
+      "response_to_manual": "Pozlama modu manuel yapılıyor",
+      "response_to_global": "Pozlama modu global yapılıyor",
+      "response_to_face": "Pozlama modu yüz olarak ayarlanıyor",
+      "request_should_be": "Pozlama modunu seçin!",
+      "option_manual": "Manuel",
+      "option_global": "Global",
+      "option_face": "Yüz"
+    },
+    "errors": {
+      "info_error": "Kamera bulunamadı veya hatalı bilgi verdi. Lütfen bağlantıyı kontrol edin."
+    },
+    "help": {
+      "sleep": "Kamerayı uyku moduna alır",
+      "wake": "Kamerayı uyandırır",
+      "turn": "Kamerayı açar veya kapatır",
+      "tracking": "Yapay zekâ takip modunu kontrol eder",
+      "speed": "Takip hızını kontrol eder",
+      "preset": "Kamerayı bir önayara ayarlar",
+      "hdr": "HDR modunu kontrol eder",
+      "exposure": "Pozlama modunu kontrol eder",
+      "info": "Kameranın mevcut durumunu gösterir",
+      "version": "CLI aracının sürümünü gösterir",
+      "completions": "CLI için kabuk tamamlama betikleri oluşturur"
+    }
+  },
+  "display": {
+    "sleep_mode": {
+      "awake": "Uyanık",
+      "sleep": "Uyuyor",
+      "unknown": "Bilinmiyor"
+    },
+    "ai_mode": {
+      "static": "Statik",
+      "normal": "Normal takip",
+      "normal_short": "Normal",
+      "upper_body": "Üst vücut",
+      "close_up": "Yakın plan",
+      "headless": "Başsız",
+      "lower_body": "Alt vücut",
+      "desk": "Masa modu",
+      "whiteboard": "Yazı tahtası",
+      "hand": "El",
+      "group": "Grup",
+      "unknown": "Bilinmiyor"
+    },
+    "tracking_speed": {
+      "standard": "Standart",
+      "sport": "Spor"
+    },
+    "exposure_mode": {
+      "manual": "Manuel",
+      "global": "Global",
+      "face": "Yüz"
+    },
+    "states": {
+      "on": "Açık",
+      "off": "Kapalı"
+    }
+  },
+  "errors": {
+    "unsupported_int_value": "{0} için {1} değeri desteklenmiyor"
+  }
+}
