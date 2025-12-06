@@ -218,7 +218,7 @@ enum WindowMode {
 
 fn get_size_for_window_mode(window_mode: WindowMode) -> Size {
     match window_mode {
-        WindowMode::Dashboard => Size::new(860.0, 720.0), // 43:36
+        WindowMode::Dashboard => Size::new(860.0, 780.0), // 43:39
         WindowMode::Widget => Size::new(300.0, 550.0),    // 6:11
         WindowMode::Invalid => Size::ZERO,
     }

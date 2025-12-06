@@ -24,7 +24,9 @@ pub fn settings_area(app: &MainPanel) -> Container<'static, Message> {
             tracking_modes(app.window_mode == WindowMode::Widget, app.tracking),
             tracking_speed(app.tracking_speed),
             horizontal_rule(8),
-            row![hdr(app.hdr_on), horizontal_space(), exposure_mode()].align_y(Vertical::Center),
+            row![hdr(app.hdr_on), exposure_mode()]
+                .spacing(10)
+                .align_y(Vertical::Center),
         ]
         .spacing(20),
     )
