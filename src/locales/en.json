@@ -68,6 +68,76 @@
       }
     }
   },
+  "cli": {
+    "sleep": {
+      "response_to_sleep": "Setting the camera to sleep",
+      "response_to_awake": "Waking up the camera",
+      "request_should_be": "The camera should be",
+      "option_on1": "awake",
+      "option_on2": "on",
+      "option_off1": "sleeping",
+      "option_off2": "off",
+      "option_off3": "asleep"
+    },
+    "tracking_mode": {
+      "response_setting_to": "Setting the camera to",
+      "request_should_be": "What tracking type should be set?",
+      "static": "static (no tracking)",
+      "normal": "normal tracking",
+      "close_up": "close up tracking",
+      "upper_body": "upper body tracking",
+      "headless": "headless tracking",
+      "lower_body": "lower body tracking",
+      "desk": "desk tracking",
+      "whiteboard": "whiteboard tracking",
+      "hand": "hand tracking",
+      "group": "group tracking"
+    },
+    "tracking_speed": {
+      "response_to_standard": "Setting the camera to standard tracking speed",
+      "response_to_fast": "Setting the camera to fast tracking speed",
+      "request_should_be": "Select the cameras tracking speed!",
+      "option_standard": "Standard (slower)",
+      "option_sport": "Sport (fast)"
+    },
+    "preset_position": {
+      "response_to_position": "Setting the camera to preset position %{position_id}",
+      "request_position_id": "Select a predefined position preset!",
+      "stopping_tracking": "Stopping tracking before setting the camera to a preset position"
+    },
+    "hdr": {
+      "response_to_hdr_on": "Enabling HDR",
+      "response_to_hdr_off": "Disabling HDR",
+      "request_should_be": "Select the HDR state!",
+      "option_on": "HDR on",
+      "option_off": "HDR off"
+    },
+    "exposure": {
+      "response_to_manual": "Setting exposure mode to manual",
+      "response_to_global": "Setting exposure mode to global",
+      "response_to_face": "Setting exposure mode to face",
+      "request_should_be": "Select the exposure mode!",
+      "option_manual": "Manual",
+      "option_global": "Global",
+      "option_face": "Face"
+    },
+    "errors": {
+      "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera."
+    },
+    "help": {
+      "sleep": "Sets the camera to sleep",
+      "wake": "Wakes the camera up",
+      "turn": "Turns the camera on or off (alias for `sleep` and `wake`)",
+      "tracking": "Controls the AI-tracking-mode of the camera",
+      "speed": "Controls the tracking speed of the camera",
+      "preset": "Sets the camera to a specific preset position previously defined in OBSBOT Center",
+      "hdr": "Controls the HDR-mode of the camera",
+      "exposure": "Controls the exposure-mode of the camera",
+      "info": "Displays information about the current state of the camera",
+      "version": "Displays the version of the CLI-tool",
+      "completions": "Generates shell-completion scripts for the CLI-tool"
+    }
+  },
   "display": {
     "sleep_mode": {
       "awake": "Awake",

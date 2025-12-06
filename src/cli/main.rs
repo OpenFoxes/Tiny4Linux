@@ -3,12 +3,11 @@
 use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
-use rust_i18n::i18n;
+use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera};
 
 i18n!("src/locales", fallback = "en");
 
-/// Simple program to greet a person
 #[derive(Parser)]
 #[command(name = "t4l", bin_name = "t4l", version, about, long_about = None, disable_version_flag = true)]
 struct Args {
@@ -20,46 +19,42 @@ struct Args {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Sets the camera to sleep
+    #[command(about = t!("cli.help.sleep"))]
     Sleep,
-    /// Wakes the camera up
+    #[command(about = t!("cli.help.wake"))]
     Wake,
-    /// Turns the camera on or off (alias for `sleep` and `wake`)
-    #[command(hide = true, subcommand_required = false)]
+    #[command(hide = true, subcommand_required = false, about = t!("cli.help.turn.command"))]
     Turn {
         #[command(subcommand)]
         action: Option<OnOffArg>,
     },
-    /// Controls the AI-tracking-mode of the camera
-    #[command(alias = "track", subcommand_required = false)]
+    #[command(alias = "track", subcommand_required = false, about = t!("cli.help.tracking"))]
     Tracking {
         #[command(subcommand)]
         tracking_mode: Option<TrackingArg>,
     },
-    /// Controls the tracking speed of the camera
-    #[command(alias = "tracking-speed", subcommand_required = false)]
+    #[command(alias = "tracking-speed", subcommand_required = false, about = t!("cli.help.speed"))]
     Speed {
         #[command(subcommand)]
         speed: Option<TrackingSpeedArg>,
     },
-    /// Sets the camera to a specific preset position previously defined in OBSBOT Center
-    #[command(alias = "position", subcommand_required = false)]
+    #[command(alias = "position", subcommand_required = false, about = t!("cli.help.preset"))]
     Preset { position_id: Option<i8> },
-    /// Controls the HDR-mode of the camera
+    #[command(about = t!("cli.help.hdr"))]
     Hdr {
         #[command(subcommand)]
         hdr_mode: Option<OnOffArg>,
     },
-    /// Controls the exposure-mode of the camera
+    #[command(about = t!("cli.help.exposure"))]
     Exposure {
         #[command(subcommand)]
         exposure_mode: Option<ExposureArg>,
     },
-    /// Displays information about the current state of the camera
+    #[command(about = t!("cli.help.info"))]
     Info,
-    /// Displays the version of the CLI-tool
+    #[command(about = t!("cli.help.version"))]
     Version,
-    /// Generates shell-completion scripts for the CLI-tool
+    #[command(about = t!("cli.help.completions"))]
     Completions { shell: clap_complete::Shell },
 }
 
@@ -108,7 +103,7 @@ fn main() {
     let mut camera = Camera::new("OBSBOT Tiny 2").ok();
 
     if camera.is_none() {
-        println!("Camera could not be found. Please check the connection of the camera.");
+        println!("{}", t!("shared.errors.no_camera"));
         return;
     }
 
@@ -131,18 +126,16 @@ fn main() {
             let info = camera.get_status();
 
             if info.is_err() {
-                println!(
-                    "Camera could not be found or gave a faulty info. Please check the connection of the camera."
-                );
+                println!("{}", t!("cli.errors.info_error"),);
                 return;
             } else {
                 let info = info.unwrap();
 
-                println!("Camera status:");
-                println!("  💤  Sleep Mode: {}", info.awake);
-                println!("  🤖  AI Mode: {}", info.ai_mode);
-                println!("  🏃  Tracking Speed: {}", info.speed);
-                println!("  💐  HDR: {}", info.hdr_on);
+                println!("{}:", t!("shared.info.camera_status"));
+                println!("  💤  {}: {}", t!("shared.info.sleep_mode"), info.awake);
+                println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
+                println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
+                println!("  💐  {}: {}", t!("shared.info.hdr"), info.hdr_on);
             }
         }
         Command::Version => {
@@ -164,38 +157,44 @@ struct SelectionOption<'a, T> {
 fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: Camera) {
     match state {
         Some(OnOffArg::Off) => {
-            println!("Setting the camera to sleep");
+            println!("{}", t!("cli.sleep.response_to_sleep"));
             camera.set_sleep_mode(SleepMode::Sleep).unwrap();
         }
         Some(OnOffArg::On) => {
-            println!("Waking up the camera");
+            println!("{}", t!("cli.sleep.response_to_awake"));
             camera.set_sleep_mode(SleepMode::Awake).unwrap();
         }
         None => {
+            let option_on1 = t!("cli.sleep.option_on1");
+            let option_off1 = t!("cli.sleep.option_off1");
+            let option_on2 = t!("cli.sleep.option_on2");
+            let option_off2 = t!("cli.sleep.option_off2");
+            let option_off3 = t!("cli.sleep.option_off3");
+
             let options = [
                 SelectionOption {
                     result: OnOffArg::On,
-                    option: "awake",
+                    option: &option_on1,
                 },
                 SelectionOption {
                     result: OnOffArg::Off,
-                    option: "sleeping",
+                    option: &option_off1,
                 },
                 SelectionOption {
                     result: OnOffArg::On,
-                    option: "on",
+                    option: &option_on2,
                 },
                 SelectionOption {
                     result: OnOffArg::Off,
-                    option: "off",
+                    option: &option_off2,
                 },
                 SelectionOption {
                     result: OnOffArg::Off,
-                    option: "asleep",
+                    option: &option_off3,
                 },
             ];
             let selection = FuzzySelect::new()
-                .with_prompt("The camera should be")
+                .with_prompt(format!("{}", t!("cli.sleep.request_should_be")))
                 .default(0)
                 .items(
                     &options
@@ -212,92 +211,104 @@ fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: Camera) {
 }
 
 fn evaluate_tracking_arg(tracking_mode: Option<TrackingArg>, camera: Camera) {
+    let response_setting_to = t!("cli.tracking_mode.response_setting_to");
+    let static_mode = t!("cli.tracking_mode.static");
+    let normal = t!("cli.tracking_mode.normal");
+    let close_up = t!("cli.tracking_mode.close_up");
+    let upper_body = t!("cli.tracking_mode.upper_body");
+    let headless = t!("cli.tracking_mode.headless");
+    let lower_body = t!("cli.tracking_mode.lower_body");
+    let desk = t!("cli.tracking_mode.desk");
+    let whiteboard = t!("cli.tracking_mode.whiteboard");
+    let hand = t!("cli.tracking_mode.hand");
+    let group = t!("cli.tracking_mode.group");
+
     match tracking_mode {
         Some(TrackingArg::Static) => {
-            println!("Setting the camera to static (no tracking)");
+            println!("{} {}", response_setting_to, static_mode);
             camera.set_ai_mode(AIMode::NoTracking).unwrap();
         }
         Some(TrackingArg::Normal) => {
-            println!("Setting the camera to normal tracking");
+            println!("{} {}", response_setting_to, normal);
             camera.set_ai_mode(AIMode::NormalTracking).unwrap();
         }
         Some(TrackingArg::CloseUp) => {
-            println!("Setting the camera to close up tracking");
+            println!("{} {}", response_setting_to, close_up);
             camera.set_ai_mode(AIMode::CloseUp).unwrap();
         }
         Some(TrackingArg::UpperBody) => {
-            println!("Setting the camera to upper body tracking");
+            println!("{} {}", response_setting_to, upper_body);
             camera.set_ai_mode(AIMode::UpperBody).unwrap();
         }
         Some(TrackingArg::Headless) => {
-            println!("Setting the camera to headless tracking");
+            println!("{} {}", response_setting_to, headless);
             camera.set_ai_mode(AIMode::Headless).unwrap();
         }
         Some(TrackingArg::LowerBody) => {
-            println!("Setting the camera to lower body tracking");
+            println!("{} {}", response_setting_to, lower_body);
             camera.set_ai_mode(AIMode::LowerBody).unwrap();
         }
         Some(TrackingArg::Desk) => {
-            println!("Setting the camera to desk tracking");
+            println!("{} {}", response_setting_to, desk);
             camera.set_ai_mode(AIMode::DeskMode).unwrap();
         }
         Some(TrackingArg::Whiteboard) => {
-            println!("Setting the camera to whiteboard tracking");
+            println!("{} {}", response_setting_to, whiteboard);
             camera.set_ai_mode(AIMode::Whiteboard).unwrap();
         }
         Some(TrackingArg::Hand) => {
-            println!("Setting the camera to hand tracking");
+            println!("{} {}", response_setting_to, hand);
             camera.set_ai_mode(AIMode::Hand).unwrap();
         }
         Some(TrackingArg::Group) => {
-            println!("Setting the camera to group tracking");
+            println!("{} {}", response_setting_to, group);
             camera.set_ai_mode(AIMode::Group).unwrap();
         }
         None => {
             let options = [
                 SelectionOption {
                     result: TrackingArg::Static,
-                    option: "static (no tracking)",
+                    option: &static_mode,
                 },
                 SelectionOption {
                     result: TrackingArg::Normal,
-                    option: "normal tracking",
+                    option: &normal,
                 },
                 SelectionOption {
                     result: TrackingArg::CloseUp,
-                    option: "close up tracking",
+                    option: &close_up,
                 },
                 SelectionOption {
                     result: TrackingArg::UpperBody,
-                    option: "upper body tracking",
+                    option: &upper_body,
                 },
                 SelectionOption {
                     result: TrackingArg::Headless,
-                    option: "headless tracking",
+                    option: &headless,
                 },
                 SelectionOption {
                     result: TrackingArg::LowerBody,
-                    option: "lower body tracking",
+                    option: &lower_body,
                 },
                 SelectionOption {
                     result: TrackingArg::Desk,
-                    option: "desk",
+                    option: &desk,
                 },
                 SelectionOption {
                     result: TrackingArg::Whiteboard,
-                    option: "whiteboard",
+                    option: &whiteboard,
                 },
                 SelectionOption {
                     result: TrackingArg::Hand,
-                    option: "hand tracking",
+                    option: &hand,
                 },
                 SelectionOption {
                     result: TrackingArg::Group,
-                    option: "group tracking",
+                    option: &group,
                 },
             ];
             let selection = FuzzySelect::new()
-                .with_prompt("What tracking type should be set?")
+                .with_prompt(t!("cli.tracking_mode.request_should_be"))
                 .default(0)
                 .items(
                     &options
@@ -316,30 +327,33 @@ fn evaluate_tracking_arg(tracking_mode: Option<TrackingArg>, camera: Camera) {
 fn evaluate_speed_arg(speed: Option<TrackingSpeedArg>, camera: Camera) {
     match speed {
         Some(TrackingSpeedArg::Standard) => {
-            println!("Setting the camera to standard tracking speed");
+            println!("{}", t!("cli.tracking_speed.response_to_standard"));
             camera
                 .set_tracking_speed(tiny4linux::TrackingSpeed::Standard)
                 .unwrap();
         }
         Some(TrackingSpeedArg::Fast) => {
-            println!("Setting the camera to fast tracking speed");
+            println!("{}", t!("cli.tracking_speed.response_to_fast"));
             camera
                 .set_tracking_speed(tiny4linux::TrackingSpeed::Sport)
                 .unwrap();
         }
         None => {
+            let option_standard = t!("cli.tracking_speed.option_standard");
+            let option_sport = t!("cli.tracking_speed.option_sport");
+
             let options = [
                 SelectionOption {
                     result: TrackingSpeedArg::Standard,
-                    option: "Standard (slower)",
+                    option: &option_standard,
                 },
                 SelectionOption {
                     result: TrackingSpeedArg::Fast,
-                    option: "Sport (fast)",
+                    option: &option_sport,
                 },
             ];
             let selection = FuzzySelect::new()
-                .with_prompt("Select the cameras tracking speed!")
+                .with_prompt(t!("cli.tracking_speed.request_should_be"))
                 .default(0)
                 .items(
                     &options
@@ -359,7 +373,7 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
     if position_id.is_none() {
         let options = [1, 2, 3];
         let selection = Select::new()
-            .with_prompt("Select a predefined position preset!")
+            .with_prompt(t!("cli.preset_position.request_position_id"))
             .default(0)
             .items(options)
             .interact()
@@ -368,12 +382,15 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
         return evaluate_preset_arg(Option::from(options[selection]), camera);
     }
 
-    println!("Stopping camera tracking");
+    println!("{}", t!("cli.preset_position.stopping_tracking"));
     camera.set_ai_mode(AIMode::NoTracking).unwrap();
 
     println!(
-        "Setting the camera to preset position {}",
-        position_id.unwrap()
+        "{}",
+        t!(
+            "cli.preset_position.response_to_position",
+            position_id = position_id.unwrap()
+        ),
     );
     camera
         .goto_preset_position(position_id.unwrap() - 1)
@@ -383,26 +400,29 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
 fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {
     match hdr_mode {
         Some(OnOffArg::On) => {
-            println!("Enabling HDR");
+            println!("{}", t!("cli.hdr.response_to_hdr_on"));
             camera.set_hdr_mode(true).unwrap();
         }
         Some(OnOffArg::Off) => {
-            println!("Disabling HDR");
+            println!("{}", t!("cli.hdr.response_to_hdr_off"));
             camera.set_hdr_mode(false).unwrap();
         }
         None => {
+            let option_on = t!("shared.options.hdr.on");
+            let option_off = t!("shared.options.hdr.off");
+
             let options = [
                 SelectionOption {
                     result: OnOffArg::On,
-                    option: "HDR on",
+                    option: &option_on,
                 },
                 SelectionOption {
                     result: OnOffArg::Off,
-                    option: "HDR off",
+                    option: &option_off,
                 },
             ];
             let selection = FuzzySelect::new()
-                .with_prompt("Select the HDR state!")
+                .with_prompt(t!("cli.hdr.request_should_be"))
                 .default(0)
                 .items(
                     &options
@@ -421,40 +441,44 @@ fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {
 fn evaluate_exposure_arg(exposure_mode: Option<ExposureArg>, camera: Camera) {
     match exposure_mode {
         Some(ExposureArg::Manual) => {
-            println!("Setting the camera to manual exposure");
+            println!("{}", t!("cli.exposure.response_to_manual"));
             camera
                 .set_exposure_mode(tiny4linux::ExposureMode::Manual)
                 .unwrap();
         }
         Some(ExposureArg::Global) => {
-            println!("Setting the camera to global exposure");
+            println!("{}", t!("cli.exposure.response_to_global"));
             camera
                 .set_exposure_mode(tiny4linux::ExposureMode::Global)
                 .unwrap();
         }
         Some(ExposureArg::Face) => {
-            println!("Setting the camera to face exposure");
+            println!("{}", t!("cli.exposure.response_to_face"));
             camera
                 .set_exposure_mode(tiny4linux::ExposureMode::Face)
                 .unwrap();
         }
         None => {
+            let option_manual = t!("cli.exposure.option_manual");
+            let option_global = t!("cli.exposure.option_global");
+            let option_face = t!("cli.exposure.option_face");
+
             let options = [
                 SelectionOption {
                     result: ExposureArg::Manual,
-                    option: "Manual",
+                    option: &option_manual,
                 },
                 SelectionOption {
                     result: ExposureArg::Global,
-                    option: "Global",
+                    option: &option_global,
                 },
                 SelectionOption {
                     result: ExposureArg::Face,
-                    option: "Face",
+                    option: &option_face,
                 },
             ];
             let selection = FuzzySelect::new()
-                .with_prompt("Choose the exposure mode")
+                .with_prompt(t!("cli.exposure.request_should_be"))
                 .default(0)
                 .items(
                     &options
