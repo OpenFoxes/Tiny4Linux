@@ -123,6 +123,19 @@
     },
     "errors": {
       "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera."
+    },
+    "help": {
+      "sleep": "Sets the camera to sleep",
+      "wake": "Wakes the camera up",
+      "turn": "Turns the camera on or off (alias for `sleep` and `wake`)",
+      "tracking": "Controls the AI-tracking-mode of the camera",
+      "speed": "Controls the tracking speed of the camera",
+      "preset": "Sets the camera to a specific preset position previously defined in OBSBOT Center",
+      "hdr": "Controls the HDR-mode of the camera",
+      "exposure": "Controls the exposure-mode of the camera",
+      "info": "Displays information about the current state of the camera",
+      "version": "Displays the version of the CLI-tool",
+      "completions": "Generates shell-completion scripts for the CLI-tool"
     }
   },
   "display": {

@@ -1,12 +1,13 @@
+mod dynamic_help;
+
 use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
-use rust_i18n::{i18n, t};
+use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{AIMode, Camera, OBSBotWebCam};
 
 i18n!("src/locales");
 
-/// Simple program to greet a person
 #[derive(Parser)]
 #[command(name = "t4l", bin_name = "t4l", version, about, long_about = None, disable_version_flag = true)]
 struct Args {
@@ -18,46 +19,42 @@ struct Args {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Sets the camera to sleep
+    #[command(about = t!("cli.help.sleep"))]
     Sleep,
-    /// Wakes the camera up
+    #[command(about = t!("cli.help.wake"))]
     Wake,
-    /// Turns the camera on or off (alias for `sleep` and `wake`)
-    #[command(hide = true, subcommand_required = false)]
+    #[command(hide = true, subcommand_required = false, about = t!("cli.help.turn.command"))]
     Turn {
         #[command(subcommand)]
         action: Option<OnOffArg>,
     },
-    /// Controls the AI-tracking-mode of the camera
-    #[command(alias = "track", subcommand_required = false)]
+    #[command(alias = "track", subcommand_required = false, about = t!("cli.help.tracking"))]
     Tracking {
         #[command(subcommand)]
         tracking_mode: Option<TrackingArg>,
     },
-    /// Controls the tracking speed of the camera
-    #[command(alias = "tracking-speed", subcommand_required = false)]
+    #[command(alias = "tracking-speed", subcommand_required = false, about = t!("cli.help.speed"))]
     Speed {
         #[command(subcommand)]
         speed: Option<TrackingSpeedArg>,
     },
-    /// Sets the camera to a specific preset position previously defined in OBSBOT Center
-    #[command(alias = "position", subcommand_required = false)]
+    #[command(alias = "position", subcommand_required = false, about = t!("cli.help.preset"))]
     Preset { position_id: Option<i8> },
-    /// Controls the HDR-mode of the camera
+    #[command(about = t!("cli.help.hdr"))]
     Hdr {
         #[command(subcommand)]
         hdr_mode: Option<OnOffArg>,
     },
-    /// Controls the exposure-mode of the camera
+    #[command(about = t!("cli.help.exposure"))]
     Exposure {
         #[command(subcommand)]
         exposure_mode: Option<ExposureArg>,
     },
-    /// Displays information about the current state of the camera
+    #[command(about = t!("cli.help.info"))]
     Info,
-    /// Displays the version of the CLI-tool
+    #[command(about = t!("cli.help.version"))]
     Version,
-    /// Generates shell-completion scripts for the CLI-tool
+    #[command(about = t!("cli.help.completions"))]
     Completions { shell: clap_complete::Shell },
 }
 
@@ -101,6 +98,7 @@ enum ExposureArg {
 }
 
 fn main() {
+    set_locale("de");
     let args = Args::parse();
 
     let mut camera = Camera::new("OBSBOT Tiny 2").ok();

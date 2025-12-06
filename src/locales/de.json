@@ -123,6 +123,19 @@
     },
     "errors": {
       "info_error": "Kamera konnte nicht gefunden werden oder gab fehlerhafte Informationen zurück. Bitte überprüfen Sie die Verbindung der Kamera."
+    },
+    "help": {
+      "sleep": "Versetzt die Kamera in den Schlafmodus",
+      "wake": "Weckt die Kamera auf",
+      "turn": "Schaltet die Kamera ein oder aus (Alias für `sleep` und `wake`)",
+      "tracking": "Steuert den KI-Tracking-Modus der Kamera",
+      "speed": "Steuert die Tracking-Geschwindigkeit der Kamera",
+      "preset": "Setzt die Kamera auf eine zuvor im OBSBOT Center definierte Preset-Position",
+      "hdr": "Steuert den HDR-Modus der Kamera",
+      "exposure": "Steuert den Belichtungsmodus der Kamera",
+      "info": "Zeigt Informationen über den aktuellen Zustand der Kamera",
+      "version": "Zeigt die Version des CLI-Tools",
+      "completions": "Erzeugt Shell-Vervollständigungs-Skripte für das CLI-Tool"
     }
   },
   "display": {
