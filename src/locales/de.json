@@ -5,7 +5,7 @@
     },
     "options": {
       "hdr": {
-        "on": "HDR an",
+        "on": "HDR ein",
         "off": "HDR aus"
       }
     },
@@ -14,17 +14,17 @@
       "camera_status": "Kamerastatus",
       "exposure": "Belichtung",
       "hdr": "HDR",
-      "presets": "Voreinstellungen",
+      "presets": "Presets",
       "sleep_mode": "Schlafmodus",
       "tracking": "Tracking",
-      "tracking_speed": "Tracking-Geschwindigkeit",
+      "tracking_speed": "Tempo",
       "t4l_version": "T4L-Version"
     }
   },
   "gui": {
     "buttons": {
       "sleep": {
-        "set_sleep": "In Schlafmodus setzen",
+        "set_sleep": "Schlafen legen",
         "wake_up": "Aufwecken",
         "unknown": "Schlafzustand unbekannt"
       },
@@ -41,52 +41,52 @@
     "text": {
       "debugging": {
         "send": "Senden",
-        "get_and_dump": "Abrufen & Dumpen",
+        "get_and_dump": "Abrufen & Ausgeben",
         "send_x": "Sende %{to_send}",
         "clear_x": "Lösche %{to_clear}",
-        "0x02_hex_string": "0x02 Hex-String",
-        "0x06_hex_string": "0x06 Hex-String"
+        "0x02_hex_string": "0x02-Hex-String",
+        "0x06_hex_string": "0x06-Hex-String"
       }
     },
     "tooltips": {
       "sleep": {
-        "request_to_sleep": "Die Kamera anweisen, in den Schlafmodus zu wechseln",
-        "request_to_wake": "Die Kamera anweisen, aus dem Schlafmodus zu erwachen",
-        "state_unknown": "Der Zustand kann nicht ermittelt werden. Klicken Sie auf die Schaltfläche, um den Modus zu versuchen oder überprüfen Sie die Verbindung zur Kamera."
+        "request_to_sleep": "Die Kamera in den Schlafmodus versetzen",
+        "request_to_wake": "Die Kamera aus dem Schlafmodus aufwecken",
+        "state_unknown": "Der Zustand kann nicht bestimmt werden. Klicken Sie den Button, um einen Modus zu setzen, oder überprüfen Sie die Verbindung zur Kamera."
       },
-      "sets_tracking_mode": "Setzt die Kamera auf den \"%{mode}\" Tracking-Modus",
-      "sets_tracking_speed": "Setzt die Geschwindigkeit der Kamera auf %{speed}",
-      "changes_exposure": "Ändert den Belichtungsmodus auf %{mode}-Belichtung",
+      "sets_tracking_mode": "Setzt die Kamera auf Tracking-Modus „%{mode}“",
+      "sets_tracking_speed": "Setzt die Tracking-Geschwindigkeit der Kamera auf %{speed}",
+      "changes_exposure": "Ändert den Belichtungsmodus auf %{mode}",
       "hdr": {
-        "turns_on": "Schaltet HDR beim Klicken ein",
-        "turns_off": "Schaltet HDR beim Klicken aus"
+        "turns_on": "Aktiviert HDR beim Klicken",
+        "turns_off": "Deaktiviert HDR beim Klicken"
       },
-      "preset": "Setzt die Kameraposition auf Voreinstellung %{preset_number}",
+      "preset": "Setzt die Kameraposition auf Preset %{preset_number}",
       "window_mode": {
-        "widget": "Wechsel zum Widget-Modus",
-        "dashboard": "Wechsel zum Dashboard-Modus"
+        "widget": "In den Widget-Modus wechseln",
+        "dashboard": "In den Dashboard-Modus wechseln"
       }
     }
   },
   "cli": {
     "sleep": {
-      "response_to_sleep": "Kamera wird in den Schlafmodus versetzt",
-      "response_to_awake": "Kamera wird aufgeweckt",
-      "request_should_be": "Die Kamera sollte sein",
-      "option_on1": "wach",
-      "option_on2": "ein",
-      "option_off1": "schlafend",
-      "option_off2": "aus",
-      "option_off3": "schläft"
+      "response_to_sleep": "Versetze die Kamera in den Schlafmodus",
+      "response_to_awake": "Wecke die Kamera auf",
+      "request_should_be": "Die Kamera sollte",
+      "option_on1": "wach sein",
+      "option_on2": "an sein",
+      "option_off1": "schlafen",
+      "option_off2": "aus sein",
+      "option_off3": "im Schlafmodus sein"
     },
     "tracking_mode": {
-      "response_setting_to": "Kamera wird auf gesetzt",
-      "request_should_be": "Welcher Tracking-Typ soll eingestellt werden?",
+      "response_setting_to": "Setze die Kamera auf",
+      "request_should_be": "Welcher Tracking-Typ soll gesetzt werden?",
       "static": "statisch (kein Tracking)",
       "normal": "normales Tracking",
       "close_up": "Nahaufnahme-Tracking",
       "upper_body": "Oberkörper-Tracking",
-      "headless": "Kopfloses Tracking",
+      "headless": "Headless-Tracking",
       "lower_body": "Unterkörper-Tracking",
       "desk": "Schreibtisch-Tracking",
       "whiteboard": "Whiteboard-Tracking",
@@ -94,35 +94,35 @@
       "group": "Gruppen-Tracking"
     },
     "tracking_speed": {
-      "response_to_standard": "Kamera wird auf Standard-Tracking-Geschwindigkeit gesetzt",
-      "response_to_fast": "Kamera wird auf schnelle Tracking-Geschwindigkeit gesetzt",
+      "response_to_standard": "Setze die Kamera auf die standard Tracking-Geschwindigkeit",
+      "response_to_fast": "Setze die Kamera auf die schnelle Tracking-Geschwindigkeit",
       "request_should_be": "Wählen Sie die Tracking-Geschwindigkeit der Kamera!",
       "option_standard": "Standard (langsamer)",
       "option_sport": "Sport (schnell)"
     },
     "preset_position": {
-      "response_to_position": "Kamera wird auf Voreinstellung %{position_id} gesetzt",
-      "request_position_id": "Wählen Sie eine vordefinierte Positionsvoreinstellung!",
-      "stopping_tracking": "Tracking wird gestoppt, bevor die Kamera auf eine Voreinstellung gesetzt wird"
+      "response_to_position": "Setze die Kamera auf die Preset-Position %{position_id}",
+      "request_position_id": "Wählen Sie eine vordefinierte Preset-Position!",
+      "stopping_tracking": "Das Tracking wird gestoppt, bevor die Kamera auf eine Preset-Position gesetzt wird"
     },
     "hdr": {
-      "response_to_hdr_on": "HDR wird aktiviert",
-      "response_to_hdr_off": "HDR wird deaktiviert",
+      "response_to_hdr_on": "Aktiviere HDR",
+      "response_to_hdr_off": "Deaktiviere HDR",
       "request_should_be": "Wählen Sie den HDR-Zustand!",
-      "option_on": "HDR an",
+      "option_on": "HDR ein",
       "option_off": "HDR aus"
     },
     "exposure": {
-      "response_to_manual": "Belichtungsmodus auf manuell gesetzt",
-      "response_to_global": "Belichtungsmodus auf global gesetzt",
-      "response_to_face": "Belichtungsmodus auf Gesicht gesetzt",
+      "response_to_manual": "Setze Belichtungsmodus auf manuell",
+      "response_to_global": "Setze Belichtungsmodus auf global",
+      "response_to_face": "Setze Belichtungsmodus auf Gesicht",
       "request_should_be": "Wählen Sie den Belichtungsmodus!",
       "option_manual": "Manuell",
       "option_global": "Global",
       "option_face": "Gesicht"
     },
     "errors": {
-      "info_error": "Kamera konnte nicht gefunden werden oder gab fehlerhafte Informationen zurück. Bitte überprüfen Sie die Verbindung der Kamera."
+      "info_error": "Die Kamera konnte nicht gefunden werden oder lieferte fehlerhafte Informationen. Bitte überprüfen Sie die Verbindung der Kamera."
     },
     "help": {
       "sleep": "Versetzt die Kamera in den Schlafmodus",
@@ -149,8 +149,8 @@
       "normal": "Normales Tracking",
       "normal_short": "Normal",
       "upper_body": "Oberkörper",
-      "close_up": "Nahaufnahme",
-      "headless": "Kopflos",
+      "close_up": "Porträt",
+      "headless": "Headless",
       "lower_body": "Unterkörper",
       "desk": "Schreibtischmodus",
       "whiteboard": "Whiteboard",
@@ -168,12 +168,12 @@
       "face": "Gesicht"
     },
     "states": {
-      "on": "Ein",
+      "on": "An",
       "off": "Aus"
     }
   },
   "logging": {},
   "errors": {
-    "unsupported_int_value": "Wert von {1} wird für {0} nicht unterstützt"
+    "unsupported_int_value": "Der Wert {1} wird für {0} nicht unterstützt"
   }
 }
