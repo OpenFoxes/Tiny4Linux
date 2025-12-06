@@ -3788,6 +3788,7 @@ dependencies = [
  "iced_font_awesome",
  "nix 0.30.1",
  "rust-i18n",
+ "sys-locale",
  "test-case",
  "thiserror 2.0.17",
  "tiny4linux_assets",
