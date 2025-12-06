@@ -10,7 +10,7 @@ use iced::widget::{Container, text};
 use iced::window::Position;
 use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
-use rust_i18n::i18n;
+use rust_i18n::{i18n, set_locale, t};
 use std::time::Duration;
 use tiny4linux::{AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed};
 
@@ -190,7 +190,7 @@ impl MainPanel {
         if self.camera.is_some() {
             get_current_ui_elements(self).into()
         } else {
-            text("Camera could not be found. Please check the connection of the camera.")
+            text(t!("shared.errors.no_camera"))
                 .size(20)
                 .align_x(Horizontal::Center)
                 .align_y(Vertical::Center)

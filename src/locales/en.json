@@ -1,4 +1,73 @@
 {
+  "shared": {
+    "errors": {
+      "no_camera": "No camera found. Please check the connection of the camera."
+    },
+    "options": {
+      "hdr": {
+        "on": "HDR on",
+        "off": "HDR off"
+      }
+    },
+    "info": {
+      "ai_mode": "AI Mode",
+      "camera_status": "Camera status",
+      "exposure": "Exposure",
+      "hdr": "HDR",
+      "presets": "Presets",
+      "sleep_mode": "Sleep Mode",
+      "tracking": "Tracking",
+      "tracking_speed": "Tracking Speed",
+      "t4l_version": "T4L Version"
+    }
+  },
+  "gui": {
+    "buttons": {
+      "sleep": {
+        "set_sleep": "Set to Sleep",
+        "wake_up": "Wake Up",
+        "unknown": "Sleep state unknown"
+      },
+      "debugging": {
+        "turn_on": "Turn on debugging",
+        "turn_off": "Turn off debugging"
+      }
+    },
+    "sleep": {
+      "is_awake": "The camera is awake",
+      "is_sleeping": "The camera is sleeping",
+      "unknown": "The camera state is unknown"
+    },
+    "text": {
+      "debugging": {
+        "send": "Send",
+        "get_and_dump": "Get & Dump",
+        "send_x": "Send %{to_send}",
+        "clear_x": "Clear %{to_clear}",
+        "0x02_hex_string": "0x02 hex string",
+        "0x06_hex_string": "0x06 hex string"
+      }
+    },
+    "tooltips": {
+      "sleep": {
+        "request_to_sleep": "Request the camera to go to sleep mode",
+        "request_to_wake": "Request the camera to wake up from sleep mode",
+        "state_unknown": "The state can't be determined. Click the button to try setting the mode or check the connection to the camera."
+      },
+      "sets_tracking_mode": "Set the camera to \"%{mode}\" tracking mode",
+      "sets_tracking_speed": "Set the camera's speed to {%speed}",
+      "changes_exposure": "Changes the exposure mode to %{mode} exposure",
+      "hdr": {
+        "turns_on": "Turns on HDR on click",
+        "turns_off": "Turns off HDR on click"
+      },
+      "preset": "Sets the cameras position to preset %{preset_number}",
+      "window_mode": {
+        "widget": "Switch to Widget-Mode",
+        "dashboard": "Switch to Dashboard-Mode"
+      }
+    }
+  },
   "display": {
     "sleep_mode": {
       "awake": "Awake",
@@ -27,6 +96,13 @@
       "manual": "Manual",
       "global": "Global",
       "face": "Face"
+    },
+    "states": {
+      "on": "On",
+      "off": "Off"
     }
+  },
+  "errors": {
+    "unsupported_int_value": "value of {1} is not supported for {0}"
   }
 }

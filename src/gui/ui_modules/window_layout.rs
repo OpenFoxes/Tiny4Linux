@@ -14,6 +14,7 @@ use iced::widget::{
     row, text,
 };
 use iced::{Alignment, FillPortion, Length};
+use rust_i18n::t;
 use tiny4linux::SleepMode;
 use tiny4linux_assets::handle_t4l_asset;
 
@@ -49,9 +50,9 @@ fn dashboard_general_area(app: &MainPanel) -> Container<'static, Message> {
             .align_y(Alignment::Center)
             .spacing(15),
             text(match app.awake {
-                SleepMode::Awake => "The camera is awake",
-                SleepMode::Sleep => "The camera is sleeping",
-                SleepMode::Unknown => "The camera state is unknown",
+                SleepMode::Awake => t!("gui.sleep.is_awake"),
+                SleepMode::Sleep => t!("gui.sleep.is_sleeping"),
+                SleepMode::Unknown => t!("gui.sleep.unknown"),
             }),
             button(image(if app.awake == SleepMode::Awake {
                 handle_t4l_asset("generated/png/icons/inverted-camera.png")
