@@ -239,6 +239,45 @@ jobs:
           git commit -m "Update to Version ${{ github.event.inputs.version }}"
           git push
 
+  deploy-aur-gui-major:
+    name: "Deploy GUI to AUR (Major-Version Repo)"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
+    needs: [create-github-release]
+    steps:
+      - name: Extract major version
+        id: vars
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "major=${VERSION%%.*}" >> $GITHUB_OUTPUT
+
+      - name: Setup SSH for AUR
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR repository
+        run: |
+          git clone ssh://aur@aur.archlinux.org/tiny4linux-gui-v${{ steps.vars.outputs.major }}.git aur-repo
+
+      - name: Download packed tarballs and metadata
+        uses: actions/download-artifact@v6
+        with:
+          name: tarballs
+          path: aur-repo
+
+      - name: Commit & Push to the AUR
+        working-directory: aur-repo
+        run: |
+          cp -a deployment/gui/aur/. .
+          git config user.name "OpenFoxes Maintenance Bot"
+          git config user.email "openfoxes@bono-fox.de"
+          git add PKGBUILD .SRCINFO LICENSE
+          git commit -m "Update V${{ steps.vars.outputs.major }}-Repo to Version ${{ github.event.inputs.version }}"
+          git push
+
   deploy-aur-cli:
     name: "Deploy CLI to AUR"
     runs-on: ubuntu-latest
@@ -272,10 +311,55 @@ jobs:
           git commit -m "Update to Version ${{ github.event.inputs.version }}"
           git push
 
+  deploy-aur-cli-major:
+    name: "Deploy CLI to AUR (Major-Version Repo)"
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
+    needs: [create-github-release]
+    steps:
+      - name: Extract major version
+        id: vars
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "major=${VERSION%%.*}" >> $GITHUB_OUTPUT
+
+      - name: Setup SSH for AUR
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR repository
+        run: |
+          git clone ssh://aur@aur.archlinux.org/tiny4linux-cli-v${{ steps.vars.outputs.major }}.git aur-repo
+
+      - name: Download packed tarballs and metadata
+        uses: actions/download-artifact@v6
+        with:
+          name: tarballs
+          path: aur-repo
+
+      - name: Commit & Push to the AUR
+        working-directory: aur-repo
+        run: |
+          cp -a deployment/cli/aur/. .
+          git config user.name "OpenFoxes Maintenance Bot"
+          git config user.email "openfoxes@bono-fox.de"
+          git add PKGBUILD .SRCINFO LICENSE
+          git commit -m "Update V${{ steps.vars.outputs.major }}-Repo to Version ${{ github.event.inputs.version }}"
+          git push
+
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [deploy-aur-gui, deploy-aur-cli]
+    needs:
+      [
+        deploy-aur-gui,
+        deploy-aur-cli,
+        deploy-aur-gui-major,
+        deploy-aur-cli-major,
+      ]
     steps:
       - name: Delete artifacts
         uses: geekyeggo/delete-artifact@v5
