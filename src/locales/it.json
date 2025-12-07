@@ -135,7 +135,11 @@
       "exposure": "Controlla la modalità esposizione",
       "info": "Mostra le informazioni della fotocamera",
       "version": "Mostra la versione dello strumento CLI",
-      "completions": "Genera script di completamento"
+      "completions": "Genera script di completamento",
+      "args": {
+        "debug_logging": "Attivare la registrazione di debug",
+        "lang": "Impostare la lingua per l’esecuzione del comando corrente"
+      }
     }
   },
   "display": {

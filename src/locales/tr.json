@@ -135,7 +135,11 @@
       "exposure": "Pozlama modunu kontrol eder",
       "info": "Kameranın mevcut durumunu gösterir",
       "version": "CLI aracının sürümünü gösterir",
-      "completions": "CLI için kabuk tamamlama betikleri oluşturur"
+      "completions": "CLI için kabuk tamamlama betikleri oluşturur",
+      "args": {
+        "debug_logging": "Hata ayıklama günlüğünü açma",
+        "lang": "Geçerli komut yürütme için dili ayarlama"
+      }
     }
   },
   "display": {

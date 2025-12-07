@@ -135,7 +135,11 @@
       "exposure": "Controls the exposure-mode of the camera",
       "info": "Displays information about the current state of the camera",
       "version": "Displays the version of the CLI-tool",
-      "completions": "Generates shell-completion scripts for the CLI-tool"
+      "completions": "Generates shell-completion scripts for the CLI-tool",
+      "args": {
+        "debug_logging": "Turning the debug logging on",
+        "lang": "Setting the language for the current command execution"
+      }
     }
   },
   "display": {
