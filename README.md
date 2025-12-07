@@ -77,6 +77,12 @@ The CLI is available in the [Arch User Repository](https://aur.archlinux.org/pac
 yay -S tiny4linux-cli
 ```
 
+#### Stable Versions without Breaking Changes
+
+You have also the possibility to install the stable versions of the GUI and CLI without breaking changes.
+Each tiny4linux-repository in the AUR is also available with the suffix of a major version,
+for example `tiny4linux-gui-v2`.
+
 ### Planned Installation Methods
 
 - [Nix User Repository](https://github.com/OpenFoxes/Tiny4Linux/issues/38)
