@@ -135,7 +135,11 @@
       "exposure": "Contrôle le mode d’exposition",
       "info": "Affiche les informations de la caméra",
       "version": "Affiche la version de l’outil CLI",
-      "completions": "Génère des scripts d’auto-complétion"
+      "completions": "Génère des scripts d’auto-complétion",
+      "args": {
+        "debug_logging": "Activer la journalisation de débogage",
+        "lang": "Définir la langue pour l’exécution de la commande en cours"
+      }
     }
   },
   "display": {

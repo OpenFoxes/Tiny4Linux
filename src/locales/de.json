@@ -135,7 +135,11 @@
       "exposure": "Steuert den Belichtungsmodus der Kamera",
       "info": "Zeigt Informationen über den aktuellen Zustand der Kamera",
       "version": "Zeigt die Version des CLI-Tools",
-      "completions": "Erzeugt Shell-Vervollständigungs-Skripte für das CLI-Tool"
+      "completions": "Erzeugt Shell-Vervollständigungs-Skripte für das CLI-Tool",
+      "args": {
+        "debug_logging": "Das Debug-Logging einschalten",
+        "lang": "Die Sprache für die aktuelle Kommandoausführung festlegen"
+      }
     }
   },
   "display": {

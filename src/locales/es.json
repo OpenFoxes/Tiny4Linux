@@ -135,7 +135,11 @@
       "exposure": "Controla el modo de exposición",
       "info": "Muestra información del estado actual",
       "version": "Muestra la versión de la herramienta CLI",
-      "completions": "Genera scripts de autocompletado"
+      "completions": "Genera scripts de autocompletado",
+      "args": {
+        "debug_logging": "Activar el registro de depuración",
+        "lang": "Configurar el idioma para la ejecución del comando actual"
+      }
     }
   },
   "display": {

@@ -13,10 +13,10 @@ i18n!("src/locales", fallback = "en");
 struct Args {
     #[command(subcommand)]
     subcommand: Command,
-    #[arg(short, long, help = "Turns the debug logging on", global = true)]
+    #[arg(short, long, help = t!("cli.help.args.debug_logging"), global = true)]
     verbose: bool,
     // lang is being evaluated manually (without clap)
-    #[arg(long, help = "Setting the language for the current command execution", global = true)]
+    #[arg(long, help = t!("cli.help.args.lang"), global = true)]
     lang: Option<String>,
 }
 
