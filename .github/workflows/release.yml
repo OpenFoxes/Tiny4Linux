@@ -111,7 +111,7 @@ jobs:
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
-          cd deployment/gui/aur-major
+          cd deployment/gui/aur
 
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
@@ -135,7 +135,7 @@ jobs:
           MAJOR=${{ steps.vars.outputs.major }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
-          cd deployment/gui/aur
+          cd deployment/gui/aur-major
 
           sed -i "s/^pkgname=.*/pkgname=tiny4linux-gui-v${MAJOR}/" PKGBUILD
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
@@ -215,6 +215,12 @@ jobs:
             deployment/cli/aur/PKGBUILD
             deployment/cli/aur/.SRCINFO
             deployment/cli/aur/LICENSE
+            deployment/gui/aur-major/PKGBUILD
+            deployment/gui/aur-major/.SRCINFO
+            deployment/gui/aur-major/LICENSE
+            deployment/cli/aur-major/PKGBUILD
+            deployment/cli/aur-major/.SRCINFO
+            deployment/cli/aur-major/LICENSE
           retention-days: 1
 
   add-version-commit:
@@ -337,7 +343,7 @@ jobs:
       - name: Commit & Push to the AUR
         working-directory: aur-repo
         run: |
-          cp -a deployment/gui/aur/. .
+          cp -a deployment/gui/aur-major/. .
           git config user.name "OpenFoxes Maintenance Bot"
           git config user.email "openfoxes@bono-fox.de"
           git add PKGBUILD .SRCINFO LICENSE
@@ -409,7 +415,7 @@ jobs:
       - name: Commit & Push to the AUR
         working-directory: aur-repo
         run: |
-          cp -a deployment/cli/aur/. .
+          cp -a deployment/cli/aur-major/. .
           git config user.name "OpenFoxes Maintenance Bot"
           git config user.email "openfoxes@bono-fox.de"
           git add PKGBUILD .SRCINFO LICENSE
