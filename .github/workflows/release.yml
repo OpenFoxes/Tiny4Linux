@@ -17,6 +17,16 @@ on:
         type: boolean
         required: true
         default: true
+      deploy-latest-version:
+        description: "Deploy to Latest-Version-Repo"
+        type: boolean
+        required: true
+        default: true
+      deploy-major-version:
+        description: "Deploy to Major-Version-Repo"
+        type: boolean
+        required: true
+        default: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -209,7 +219,7 @@ jobs:
   deploy-aur-gui:
     name: "Deploy GUI to AUR"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
+    if: ${{ github.event.inputs.deployment-aur-gui == 'true' && github.event.inputs.deploy-latest-version == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Setup SSH for AUR
@@ -242,7 +252,7 @@ jobs:
   deploy-aur-gui-major:
     name: "Deploy GUI to AUR (Major-Version Repo)"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
+    if: ${{ github.event.inputs.deployment-aur-gui == 'true' && github.event.inputs.deploy-major-version == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Extract major version
@@ -281,7 +291,7 @@ jobs:
   deploy-aur-cli:
     name: "Deploy CLI to AUR"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
+    if: ${{ github.event.inputs.deployment-aur-cli == 'true' && github.event.inputs.deploy-latest-version == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Setup SSH for AUR
@@ -314,7 +324,7 @@ jobs:
   deploy-aur-cli-major:
     name: "Deploy CLI to AUR (Major-Version Repo)"
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
+    if: ${{ github.event.inputs.deployment-aur-cli == 'true' && github.event.inputs.deploy-major-version == 'true' }}
     needs: [create-github-release]
     steps:
       - name: Extract major version
