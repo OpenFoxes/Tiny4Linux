@@ -15,6 +15,9 @@ struct Args {
     subcommand: Command,
     #[arg(short, long, help = "Turns the debug logging on", global = true)]
     verbose: bool,
+    // lang is being evaluated manually (without clap)
+    #[arg(long, help = "Setting the language for the current command execution", global = true)]
+    lang: Option<String>,
 }
 
 #[derive(Subcommand)]
