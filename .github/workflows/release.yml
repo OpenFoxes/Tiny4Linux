@@ -99,13 +99,19 @@ jobs:
           git archive --format=tar.gz -o tiny4linux-${VERSION}.tar.gz HEAD
           git archive --format=zip -o tiny4linux-${VERSION}.zip HEAD
 
-      - name: Update PKGBUILD & SRCINFO for the GUI with new version and SHA
-        if: ${{ github.event.inputs.deployment-aur-gui == 'true' }}
+      - name: Extract major version
+        id: vars
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          echo "major=${VERSION%%.*}" >> $GITHUB_OUTPUT
+
+      - name: Update PKGBUILD & SRCINFO for the GUI (Latest-Repo) with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-gui == 'true' && github.event.inputs.deploy-latest-version == 'true' }}
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
-          cd deployment/gui/aur
+          cd deployment/gui/aur-major
 
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
@@ -122,14 +128,64 @@ jobs:
             su - builder -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'
           "
 
-      - name: Update PKGBUILD & SRCINFO for the CLI with new version and SHA
-        if: ${{ github.event.inputs.deployment-aur-cli == 'true' }}
+      - name: Update PKGBUILD & SRCINFO for the GUI (Major-Repo) with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-gui == 'true' && github.event.inputs.deploy-major-version == 'true' }}
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          MAJOR=${{ steps.vars.outputs.major }}
+          sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
+
+          cd deployment/gui/aur
+
+          sed -i "s/^pkgname=.*/pkgname=tiny4linux-gui-v${MAJOR}/" PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
+
+          # Write-Permissions for Container-User
+          chmod -R 777 .
+
+          docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
+            pacman -Sy --noconfirm --needed base-devel shadow &&
+            useradd -m builder || true &&
+            chown -R builder:builder /pkg &&
+            cd /pkg &&
+            su - builder -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'
+          "
+
+      - name: Update PKGBUILD & SRCINFO for the CLI (Latest-Repo) with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-cli == 'true' && github.event.inputs.deploy-latest-version == 'true' }}
         run: |
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
           cd deployment/cli/aur
 
+          sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
+
+          # Write-Permissions for Container-User
+          chmod -R 777 .
+
+          docker run --rm -v $PWD:/pkg archlinux:latest bash -c "
+            pacman -Sy --noconfirm --needed base-devel shadow &&
+            useradd -m builder || true &&
+            chown -R builder:builder /pkg &&
+            cd /pkg &&
+            su - builder -c 'cd /pkg && makepkg --printsrcinfo > .SRCINFO'
+          "
+
+      - name: Update PKGBUILD & SRCINFO for the CLI (Major-Repo) with new version and SHA
+        if: ${{ github.event.inputs.deployment-aur-cli == 'true' && github.event.inputs.deploy-major-version == 'true' }}
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          MAJOR=${{ steps.vars.outputs.major }}
+          sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
+
+          cd deployment/cli/aur-major
+
+          sed -i "s/^pkgname=.*/pkgname=tiny4linux-cli-v${MAJOR}/" PKGBUILD
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
           sed -i "s/^sha256sums=.*/sha256sums=('${sha}')/" PKGBUILD
