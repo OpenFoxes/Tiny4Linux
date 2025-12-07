@@ -111,7 +111,7 @@ jobs:
           VERSION=${{ github.event.inputs.version }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
-          cd deployment/gui/aur-major
+          cd deployment/gui/aur
 
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
           sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
@@ -135,7 +135,7 @@ jobs:
           MAJOR=${{ steps.vars.outputs.major }}
           sha=$(sha256sum tiny4linux-${VERSION}.tar.gz | cut -d' ' -f1)
 
-          cd deployment/gui/aur
+          cd deployment/gui/aur-major
 
           sed -i "s/^pkgname=.*/pkgname=tiny4linux-gui-v${MAJOR}/" PKGBUILD
           sed -i "s/^pkgver=.*/pkgver=${VERSION}/" PKGBUILD
