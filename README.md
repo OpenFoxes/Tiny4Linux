@@ -4,6 +4,7 @@
     <img src="https://raw.githubusercontent.com/OpenFoxes/Tiny4Linux-Icons/main/generated/png/title-icon/v2.0-hard-shadow.png" width="15%" alt="Icon" />
 </p>
 
+<p align="center">🇩🇪 🇬🇧 🇪🇸 🇫🇷 🇮🇹 🇹🇷 🇺🇦</p>
 <p align="center"><b>A GUI-Controller for the OBSBOT Tiny2</b></p>
 
 ---
