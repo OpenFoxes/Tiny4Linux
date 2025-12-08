@@ -27,6 +27,11 @@ on:
         type: boolean
         required: true
         default: true
+      is-preprelease:
+        description: "Is a Pre-Release"
+        type: boolean
+        required: true
+        default: false
 
 env:
   CARGO_TERM_COLOR: always
@@ -272,6 +277,7 @@ jobs:
           token: ${{ secrets.BOT_TOKEN }}
           name: Version ${{  github.event.inputs.version }}
           tag_name: v${{  github.event.inputs.version }}
+          prerelease: ${{ github.event.inputs.is-preprelease }}
           files: |
             target/release/tiny4linux-gui
             target/release/tiny4linux-cli
