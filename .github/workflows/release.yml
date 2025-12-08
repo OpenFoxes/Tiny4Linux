@@ -282,6 +282,7 @@ jobs:
           token: ${{ secrets.BOT_TOKEN }}
           name: Version ${{  github.event.inputs.version }}
           tag_name: v${{  github.event.inputs.version }}
+          body_path: ${{ github.workspace }}/changelogs/${{  github.event.inputs.version }}.md
           prerelease: ${{ github.event.inputs.is-preprelease }}
           make_latest: ${{ github.event.inputs.is-latest && !github.event.inputs.is-preprelease }}
           files: |
