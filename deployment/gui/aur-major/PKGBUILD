@@ -1,7 +1,7 @@
 # Maintainer: Bono Fox <tiny4linux@bono-fox.de>
 
 pkgname=tiny4linux-gui-v2
-pkgver=2.2.1
+pkgver=2.2.2
 pkgrel=1
 pkgdesc="A graphical interface for controlling the OBSBOT Tiny series."
 arch=('x86_64')
@@ -11,7 +11,7 @@ categories=('Utility')
 depends=()
 makedepends=('rust' 'cargo')
 source=("$url/releases/download/v$pkgver/tiny4linux-$pkgver.tar.gz")
-sha256sums=('82e2935583068aa0586cf100c8650ea6078644d39fee8bb343a9dda8677fa198')
+sha256sums=('fae30997e1ba74ea2c22cc620b72b1220df944977948e4a7b52b71b43e17f3b1')
 
 build() {
   cargo build --release --features gui --locked
