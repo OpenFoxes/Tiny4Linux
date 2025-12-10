@@ -215,7 +215,7 @@ impl MainPanel {
                         .spawn();
                 }
                 Task::none()
-            }
+            },
             Message::CaptureVideoFrame => {
                 // Capture frame if video is enabled
                 if self.show_video {
