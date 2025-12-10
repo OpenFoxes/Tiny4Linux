@@ -2,11 +2,13 @@
 
 mod styles;
 mod ui_modules;
+mod video_capture;
 
 use crate::styles::theme::obsbot_theme;
 use crate::ui_modules::window_layout::window_layout;
+use crate::video_capture::VideoCaptureHandle;
 use iced::alignment::{Horizontal, Vertical};
-use iced::widget::{Container, text};
+use iced::widget::{Container, container, image, Space, text};
 use iced::window::Position;
 use iced::{Element, Point};
 use iced::{Length, Size, Subscription, Task, time, window};
@@ -30,6 +32,8 @@ enum Message {
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
     ChangeDebugging(bool),
+    ChangeShowVideo(bool),
+    OpenVideoWindow,
     TextInput(String),
     TextInput02(String),
     CheckCamera,
@@ -37,6 +41,9 @@ enum Message {
     SendCommand02,
     HexDump,
     HexDump02,
+    CaptureVideoFrame,
+    #[allow(dead_code)]
+    FrameCaptured(Option<iced::widget::image::Handle>),
 }
 
 struct MainPanel {
@@ -48,6 +55,9 @@ struct MainPanel {
     tracking_speed: TrackingSpeed,
     hdr_on: bool,
     debugging_on: bool,
+    show_video: bool,
+    current_frame: Option<iced::widget::image::Handle>,
+    video_capture: VideoCaptureHandle,
     text_input: String,
     text_input_02: String,
 }
@@ -71,6 +81,9 @@ impl MainPanel {
                 tracking_speed: status.speed,
                 hdr_on: status.hdr_on,
                 debugging_on: false,
+                show_video: window_mode == WindowMode::Video,
+                current_frame: None,
+                video_capture: VideoCaptureHandle::new(),
                 text_input: String::new(),
                 text_input_02: String::new(),
             },
@@ -109,6 +122,11 @@ impl MainPanel {
             }
             Message::ApplyWindowMode(new_mode) => {
                 self.window_mode = new_mode;
+                if new_mode == WindowMode::Video {
+                    self.show_video = true;
+                } else {
+                    self.show_video = false;
+                }
                 Task::none()
             }
             Message::ChangeMainWindowId(id) => {
@@ -185,12 +203,53 @@ impl MainPanel {
                 Task::none()
             }
             Message::CheckCamera => Task::none(),
+            Message::ChangeShowVideo(new_mode) => {
+                self.show_video = new_mode;
+                Task::none()
+            }
+            Message::OpenVideoWindow => {
+                if let Ok(exe) = std::env::current_exe() {
+                    let _ = std::process::Command::new(exe)
+                        .arg("--start-as")
+                        .arg("video")
+                        .spawn();
+                }
+                Task::none()
+            }
+            Message::CaptureVideoFrame => {
+                // Capture frame if video is enabled
+                if self.show_video {
+                    if let Err(e) = self.video_capture.capture_frame() {
+                        println!("Video: Failed to capture frame: {:?}", e);
+                    }
+                    // Update current_frame from video_capture
+                    self.current_frame = self.video_capture.current_frame.clone();
+                } else {
+                    // If video is disabled, clear the frame
+                    self.current_frame = None;
+                    self.video_capture.current_frame = None;
+                }
+                Task::none()
+            }
+            Message::FrameCaptured(frame) => {
+                self.current_frame = frame;
+                Task::none()
+            }
         }
     }
 
-    fn view(&'_ self) -> Element<'_, Message> {
+    fn view(&self) -> Element<Message> {
         if self.camera.is_some() {
-            get_current_ui_elements(self).into()
+            if self.window_mode == WindowMode::Video {
+                container(
+                    match &self.current_frame {
+                        Some(frame) => container(image(frame.clone()).width(Length::Fill).height(Length::Fill)),
+                        None => container(Space::new(0, 0)),
+                    }
+                ).into()
+            } else {
+                get_current_ui_elements(self).into()
+            }
         } else {
             text(t!("shared.errors.no_camera"))
                 .size(20)
@@ -203,11 +262,19 @@ impl MainPanel {
     }
 
     fn subscription(&self) -> Subscription<Message> {
-        if self.camera.is_none() {
+        let camera_check = if self.camera.is_none() {
             time::every(Duration::from_secs(4)).map(|_| Message::CheckCamera)
         } else {
             time::every(Duration::from_secs(20)).map(|_| Message::CheckCamera)
-        }
+        };
+
+        let video_capture = if self.show_video && self.window_mode == WindowMode::Video {
+            time::every(Duration::from_millis(100)).map(|_| Message::CaptureVideoFrame)
+        } else {
+            Subscription::none()
+        };
+
+        Subscription::batch([camera_check, video_capture])
     }
 }
 
@@ -215,6 +282,7 @@ impl MainPanel {
 enum WindowMode {
     Dashboard,
     Widget,
+    Video,
     Invalid,
 }
 
@@ -222,6 +290,7 @@ fn get_size_for_window_mode(window_mode: WindowMode) -> Size {
     match window_mode {
         WindowMode::Dashboard => Size::new(860.0, 780.0), // 43:39
         WindowMode::Widget => Size::new(300.0, 550.0),    // 6:11
+        WindowMode::Video => Size::new(640.0, 480.0),     // 4:3
         WindowMode::Invalid => Size::ZERO,
     }
 }
@@ -233,6 +302,7 @@ fn get_position_for_window_mode(window_mode: WindowMode) -> Position {
             x: (screen_size.width - window_size.width),
             y: (screen_size.height - window_size.height),
         }),
+        WindowMode::Video => Position::Centered,
         WindowMode::Invalid => Position::Centered,
     }
 }
@@ -259,6 +329,8 @@ fn get_start_mode() -> WindowMode {
                 WindowMode::Dashboard
             } else if start_mode_arg.eq_ignore_ascii_case("widget") {
                 WindowMode::Widget
+            } else if start_mode_arg.eq_ignore_ascii_case("video") {
+                WindowMode::Video
             } else {
                 WindowMode::Invalid
             };
