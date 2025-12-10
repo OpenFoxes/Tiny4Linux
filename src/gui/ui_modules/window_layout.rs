@@ -30,6 +30,17 @@ pub fn window_layout(app: &MainPanel) -> Container<'static, Message> {
             widget_head_area(app).height(Length::FillPortion(1)),
             widget_body_area(app).height(Length::FillPortion(9))
         ]),
+        WindowMode::Video => container(row![
+            dashboard_general_area(app).width(Length::FillPortion(1)),
+            container(
+                match &app.current_frame {
+                    Some(frame) => container(image(frame.clone()).width(Length::Fill).height(Length::Fill)),
+                    None => container(Space::new(0, 0)),
+                }
+            )
+            .width(Length::FillPortion(1))
+            .height(Length::Fill)
+        ]),
         WindowMode::Invalid => container(Space::new(0, 0)),
     }
 }
