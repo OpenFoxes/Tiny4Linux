@@ -21,6 +21,12 @@ pub fn button_window_mode_change(window_mode: WindowMode) -> Container<'static, 
             tooltip_content(container(text(t!("gui.tooltips.window_mode.dashboard")))),
             Position::Bottom,
         )),
+        WindowMode::Video => container(tooltip(
+            button(fa_icon_solid("up-right-and-down-left-from-center"))
+                .on_press(Message::RequestWindowModeChange(WindowMode::Dashboard)),
+            tooltip_content(container(text(t!("gui.tooltips.window_mode.dashboard")))),
+            Position::Bottom,
+        )),
         WindowMode::Invalid => container(Space::new(0, 0)),
     }
 }
