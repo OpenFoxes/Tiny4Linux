@@ -59,7 +59,7 @@ jobs:
         run: cargo set-version ${{ github.event.inputs.version }}
 
       - name: Upload working directory with current version-number
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: versioned-build
           include-hidden-files: true
@@ -72,7 +72,7 @@ jobs:
     needs: [update-version]
     steps:
       - name: Download working directory with current version-number
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: versioned-build
           path: .
@@ -81,7 +81,7 @@ jobs:
         run: cargo build --release --all-features
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: build-artifact
           include-hidden-files: true
@@ -94,7 +94,7 @@ jobs:
     needs: [update-version]
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: versioned-build
 
@@ -212,7 +212,7 @@ jobs:
           "
 
       - name: Upload tarballs and metadata
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: tarballs
           include-hidden-files: true
@@ -239,13 +239,13 @@ jobs:
     needs: [update-version, update-metadata]
     steps:
       - name: Download working directory with current version-number
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: versioned-build
           path: .
 
       - name: Download updated metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: .
@@ -266,13 +266,13 @@ jobs:
     needs: [build, update-metadata, add-version-commit]
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build-artifact
           path: .
 
       - name: Download metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: .
@@ -309,7 +309,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/tiny4linux-gui.git aur-repo
 
       - name: Download packed tarballs and metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: aur-repo
@@ -348,7 +348,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/tiny4linux-gui-v${{ steps.vars.outputs.major }}.git aur-repo
 
       - name: Download packed tarballs and metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: aur-repo
@@ -381,7 +381,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/tiny4linux-cli.git aur-repo
 
       - name: Download packed tarballs and metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: aur-repo
@@ -420,7 +420,7 @@ jobs:
           git clone ssh://aur@aur.archlinux.org/tiny4linux-cli-v${{ steps.vars.outputs.major }}.git aur-repo
 
       - name: Download packed tarballs and metadata
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: tarballs
           path: aur-repo
