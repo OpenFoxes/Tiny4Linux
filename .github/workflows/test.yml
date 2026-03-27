@@ -34,7 +34,7 @@ jobs:
             -o target/lcov.info
 
       - name: Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: target/lcov.info
           fail_ci_if_error: true
