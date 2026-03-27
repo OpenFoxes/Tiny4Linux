@@ -34,6 +34,15 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
+### Info on PTZ-/Gimbal-Controls
+
+The main focus of the [original project](https://github.com/cgevans/tiny2) was the implementation of OBSBOT-specific functionalities on Linux.
+General controls, such as **color settings, exposure, or movement control**, are already implemented via the standard video interface **V4L2**.
+Therefore, the use of a corresponding V4L2 tool, such as **[Camset](https://github.com/azeam/camset)** (GUI), is currently recommended for controlling these properties.
+
+An integration in Tiny4Linux is planned eventually.
+Progress on that topic will be tracked in the corresponding [issue](https://github.com/OpenFoxes/Tiny4Linux/issues/86).
+
 ### Motivation
 
 With the Tiny series, OBSBOT offers an affordable PTZ camera option for everyone.
