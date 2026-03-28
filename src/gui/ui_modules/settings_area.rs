@@ -17,20 +17,30 @@ use rust_i18n::t;
 use tiny4linux::{AIMode, ExposureMode, TrackingSpeed};
 
 pub fn settings_area(app: &MainPanel) -> Container<'static, Message> {
-    container(
-        column![
-            presets(),
-            horizontal_rule(8),
-            tracking_modes(app.window_mode == WindowMode::Widget, app.tracking),
-            tracking_speed(app.tracking_speed),
-            horizontal_rule(8),
-            row![hdr(app.hdr_on), exposure_mode()]
-                .spacing(10)
-                .align_y(Vertical::Center),
-        ]
-        .spacing(20),
-    )
-    .padding(10)
+    let mut settings_column = column![
+        presets(),
+    ];
+
+    if app.window_mode == WindowMode::Dashboard || app.window_mode == WindowMode::Widget {
+        settings_column = settings_column.push(
+            button(text("Video"))
+                .on_press(Message::OpenVideoWindow)
+                .padding(5)
+        );
+    }
+
+    settings_column = settings_column.push(horizontal_rule(8));
+    settings_column = settings_column.push(tracking_modes(app.window_mode == WindowMode::Widget, app.tracking));
+    settings_column = settings_column.push(tracking_speed(app.tracking_speed));
+    settings_column = settings_column.push(horizontal_rule(8));
+    settings_column = settings_column.push(
+        row![hdr(app.hdr_on), exposure_mode()]
+            .spacing(10)
+            .align_y(Vertical::Center)
+    );
+
+    container(settings_column.spacing(20))
+        .padding(10)
 }
 
 fn presets() -> Row<'static, Message> {
