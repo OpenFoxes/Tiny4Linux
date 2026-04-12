@@ -277,7 +277,7 @@ jobs:
           name: tarballs
           path: .
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.BOT_TOKEN }}
           name: Version ${{  github.event.inputs.version }}
