@@ -199,9 +199,13 @@ dependencies = [
 
 [[package]]
 name = "assertables"
-version = "9.8.3"
+version = "9.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbada39b42413d4db3d9460f6e791702490c40f72924378a1b6fc1a4181188fd"
+checksum = "627b0b35c347252505ec6c078827dfcecc4e9dcfa931c54c54066f9245ac752b"
+dependencies = [
+ "regex",
+ "walkdir",
+]
 
 [[package]]
 name = "async-broadcast"
