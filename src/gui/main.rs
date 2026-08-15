@@ -13,7 +13,8 @@ use iced::{Length, Size, Subscription, Task, time, window};
 use rust_i18n::{i18n, set_locale, t};
 use std::time::Duration;
 use tiny4linux::{
-    AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed, get_language,
+    AIMode, Camera, ExposureMode, SUPPORTED_CAMERAS, SleepMode, Tiny2Camera, TrackingSpeed,
+    get_language,
 };
 
 i18n!("src/locales", fallback = "en");
@@ -54,7 +55,7 @@ struct MainPanel {
 
 impl MainPanel {
     fn init_state(window_mode: WindowMode) -> (Self, Task<Message>) {
-        let camera = Camera::new("OBSBOT Tiny 2").ok();
+        let camera = Camera::new(SUPPORTED_CAMERAS).ok();
 
         let status = camera
             .as_ref()
@@ -80,7 +81,7 @@ impl MainPanel {
 
     fn update(&mut self, message: Message) -> Task<Message> {
         if self.camera.is_none() {
-            self.camera = Camera::new("OBSBOT Tiny 2").ok();
+            self.camera = Camera::new(SUPPORTED_CAMERAS).ok();
 
             if self.camera.is_none() {
                 return Task::none();

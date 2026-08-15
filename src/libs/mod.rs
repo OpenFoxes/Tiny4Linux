@@ -10,3 +10,4 @@ mod usbio;
 
 pub use camera::*;
 pub use i18n::*;
+pub use usbio::SUPPORTED_CAMERAS;

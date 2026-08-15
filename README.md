@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">🇩🇪 🇬🇧 🇪🇸 🇫🇷 🇮🇹 🇹🇷 🇺🇦</p>
-<p align="center"><b>A GUI-Controller for the OBSBOT Tiny2</b></p>
+<p align="center"><b>A GUI-Controller for the OBSBOT Tiny2 and Tiny3</b></p>
 
 ---
 
@@ -13,7 +13,7 @@
 
 <img src="src/assets/screenshot-widget.png" align="right" width="20%" alt="GUI of the current version"/>
 
-Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
+Control your OBSBOT Tiny2 or Tiny3 camera from your Linux desktop or terminal.
 Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
 
 ### Credit

@@ -63,13 +63,17 @@ impl UvcUsbIo for CameraHandle {
     }
 }
 
-pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, T4lError> {
-    if let Ok(file) = File::open(hint) {
-        return Ok(file.into());
-    }
+pub const SUPPORTED_CAMERAS: &[&str] = &["OBSBOT Tiny 2", "OBSBOT Tiny 3"];
 
-    if let Ok(file) = File::open("/dev/".to_owned() + hint) {
-        return Ok(file.into());
+pub(crate) fn open_camera(hints: &[&str]) -> Result<CameraHandle, T4lError> {
+    for hint in hints {
+        if let Ok(file) = File::open(hint) {
+            return Ok(file.into());
+        }
+
+        if let Ok(file) = File::open("/dev/".to_owned() + hint) {
+            return Ok(file.into());
+        }
     }
 
     // enumerate all cameras and check for match
@@ -81,9 +85,10 @@ pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, T4lError> {
     for path in glob_with("/dev/video*", options).unwrap().flatten() {
         if let Ok(device) = File::open(&path) {
             if let Ok(video_info) = v4l2_capability::new(&device) {
-                if (str::from_utf8(&video_info.card).unwrap().contains(hint)
-                    || str::from_utf8(&video_info.bus_info).unwrap().contains(hint))
-                    && (video_info.device_caps & 0x800000 == 0)
+                if hints.iter().any(|hint| {
+                    str::from_utf8(&video_info.card).unwrap().contains(hint)
+                        || str::from_utf8(&video_info.bus_info).unwrap().contains(hint)
+                }) && (video_info.device_caps & 0x800000 == 0)
                 {
                     return Ok(device.into());
                 }

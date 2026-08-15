@@ -16,9 +16,9 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(hint: &str) -> Result<Self, T4lError> {
+    pub fn new(hints: &[&str]) -> Result<Self, T4lError> {
         Ok(Self {
-            transport: CameraTransport::new(hint)?,
+            transport: CameraTransport::new(hints)?,
             debugging: false,
         })
     }

@@ -17,11 +17,11 @@ impl CameraTransport {
     /// Creates a new instance of the CameraTransport struct.
     ///
     /// This function initializes a new instance by attempting to open a camera
-    /// using the provided `hint`. If the camera cannot be opened, it returns an
+    /// using the provided `hints`. If the camera cannot be opened, it returns an
     /// error of type `T4lError`.
     ///
     /// # Parameters
-    /// - `hint`: A string slice that serves as a hint to identify the camera to open.
+    /// - `hints`: A slice of string slices that serves as hints to identify the camera to open.
     ///
     /// # Returns
     /// - `Ok(Self)`: A new instance of the struct if the camera is successfully opened.
@@ -29,15 +29,15 @@ impl CameraTransport {
     ///
     /// # Examples
     /// ```rust,ignore
-    /// let instance = CameraTransport::new("OBSBOT Tiny 2");
+    /// let instance = CameraTransport::new(&["OBSBOT Tiny 2", "OBSBOT Tiny 3"]);
     /// match instance {
     ///     Ok(camera) => println!("Camera opened successfully."),
     ///     Err(e) => println!("Failed to open camera: {:?}", e),
     /// }
     /// ```
-    pub fn new(hint: &str) -> Result<Self, T4lError> {
+    pub fn new(hints: &[&str]) -> Result<Self, T4lError> {
         Ok(Self {
-            handle: open_camera(hint)?,
+            handle: open_camera(hints)?,
         })
     }
 
