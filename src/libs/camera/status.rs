@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::libs::camera::enums::{AIMode, SleepMode, TrackingSpeed};
+use crate::libs::camera::enums::{AIMode, CameraModel, SleepMode, TrackingSpeed};
 
 pub struct CameraStatus {
     pub awake: SleepMode,
@@ -11,8 +11,20 @@ pub struct CameraStatus {
 
 impl CameraStatus {
     pub fn decode(bytes: &[u8]) -> Self {
+        Self::decode_for(CameraModel::Tiny2, bytes)
+    }
+
+    /// Decodes the status buffer for a specific model.
+    ///
+    /// Only the sleep state differs so far: the Tiny 4K reports its device run
+    /// status in byte `0x09`, while byte `0x02` — where the Tiny 2 keeps its sleep
+    /// flag — is a reserved field that is always zero on the 4K (#72).
+    pub fn decode_for(model: CameraModel, bytes: &[u8]) -> Self {
         CameraStatus {
-            awake: Self::decode_sleep_mode(bytes),
+            awake: match model {
+                CameraModel::Tiny2 => Self::decode_sleep_mode(bytes),
+                CameraModel::Tiny4K => Self::decode_sleep_mode_tiny_4k(bytes),
+            },
             ai_mode: Self::decode_ai_mode(bytes),
             speed: Self::decode_tracking_speed(bytes),
             hdr_on: Self::decode_hdr_on(bytes),
@@ -23,6 +35,17 @@ impl CameraStatus {
         match bytes[0x02] {
             0 => SleepMode::Awake,
             1 => SleepMode::Sleep,
+            _ => SleepMode::Unknown,
+        }
+    }
+
+    /// Device run status of the Tiny 4K: `1` running, `3` asleep, `4` privacy mode.
+    ///
+    /// Both `3` and `4` stop the video stream, so both are reported as asleep.
+    fn decode_sleep_mode_tiny_4k(bytes: &[u8]) -> SleepMode {
+        match bytes[0x09] {
+            1 => SleepMode::Awake,
+            3 | 4 => SleepMode::Sleep,
             _ => SleepMode::Unknown,
         }
     }

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::CameraStatus;
+use crate::libs::camera::enums::CameraModel;
 use crate::libs::errors::T4lError;
 use crate::libs::usbio::{
     CameraHandle, UVC_GET_CUR, UVC_GET_LEN, UVC_SET_CUR, UvcUsbIo, open_camera,
@@ -134,7 +135,11 @@ impl CameraTransport {
     ///     Err(e) => eprintln!("Failed to get camera status: {:?}", e),
     /// }
     /// ```
-    pub fn get_status(&self, debugging: bool) -> Result<CameraStatus, T4lError> {
+    pub fn get_status(
+        &self,
+        debugging: bool,
+        model: CameraModel,
+    ) -> Result<CameraStatus, T4lError> {
         let mut data: [u8; 60] = [0u8; 60];
         self.get_cur(0x2, 0x6, &mut data)
             .map_err(|x| T4lError::USBIOError(x.0))?;
@@ -143,7 +148,7 @@ impl CameraTransport {
             println!("Current state: {:?} {:}", data, hex::encode(&data));
         }
 
-        Ok(CameraStatus::decode(&data))
+        Ok(CameraStatus::decode_for(model, &data))
     }
 
     /// Dumps the current state of the 0x2, 0x6 data to the console in hexadecimal format.

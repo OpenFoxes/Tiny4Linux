@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::libs::camera::enums::{AIMode, ExposureMode, SleepMode, TrackingSpeed};
+use crate::libs::camera::enums::{AIMode, CameraModel, ExposureMode, SleepMode, TrackingSpeed};
 use crate::libs::camera::status::CameraStatus;
 use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
     AIModeCommand, ExposureModeCommand, ExposureModeTypeCommand, GotoPresetPositionCommand,
-    HdrModeCommand, SleepCommand, TrackingSpeedCommand,
+    HdrModeCommand, LegacySleepCommand, SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
 
@@ -19,6 +19,7 @@ const DEFAULT_CAMERA_HINTS: [&str; 2] = ["OBSBOT Tiny 2", "OBSBOT Tiny 4K"];
 
 pub struct Camera {
     transport: CameraTransport,
+    model: CameraModel,
     debugging: bool,
 }
 
@@ -26,6 +27,7 @@ impl Camera {
     pub fn new(hint: &str) -> Result<Self, T4lError> {
         Ok(Self {
             transport: CameraTransport::new(hint)?,
+            model: CameraModel::from_hint(hint),
             debugging: false,
         })
     }
@@ -47,7 +49,12 @@ impl Camera {
     }
 
     pub fn get_status(&self) -> Result<CameraStatus, T4lError> {
-        self.transport.get_status(self.debugging)
+        self.transport.get_status(self.debugging, self.model)
+    }
+
+    /// The model this camera was detected as, see [`CameraModel`].
+    pub fn model(&self) -> CameraModel {
+        self.model
     }
 
     pub fn dump(&self) -> Result<(), Errno> {
@@ -77,10 +84,16 @@ pub trait Tiny2Camera {
 }
 
 impl Tiny2Camera for Camera {
+    /// Sends the sleep command matching the detected model.
+    ///
+    /// The Tiny 4K accepts the Tiny 2 frame on USB but ignores it, so it gets the
+    /// legacy frame instead (#72). Both models take the command on unit 2,
+    /// selector 2.
     fn set_sleep_mode(&self, mode: SleepMode) -> Result<(), T4lError> {
-        let cmd = SleepCommand::build(mode)?;
-
-        self.send_cmd(0x2, 0x2, &cmd)
+        match self.model {
+            CameraModel::Tiny2 => self.send_cmd(0x2, 0x2, &SleepCommand::build(mode)?),
+            CameraModel::Tiny4K => self.send_cmd(0x2, 0x2, &LegacySleepCommand::build(mode)?),
+        }
     }
 
     fn get_sleep_mode(&self) -> Result<SleepMode, T4lError> {
