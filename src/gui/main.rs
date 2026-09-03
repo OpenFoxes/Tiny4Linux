@@ -54,7 +54,7 @@ struct MainPanel {
 
 impl MainPanel {
     fn init_state(window_mode: WindowMode) -> (Self, Task<Message>) {
-        let camera = Camera::new("OBSBOT Tiny 2").ok();
+        let camera = Camera::detect().ok();
 
         let status = camera
             .as_ref()
@@ -80,7 +80,7 @@ impl MainPanel {
 
     fn update(&mut self, message: Message) -> Task<Message> {
         if self.camera.is_none() {
-            self.camera = Camera::new("OBSBOT Tiny 2").ok();
+            self.camera = Camera::detect().ok();
 
             if self.camera.is_none() {
                 return Task::none();

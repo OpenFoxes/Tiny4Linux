@@ -106,7 +106,7 @@ fn main() {
 
     let args = Args::parse();
 
-    let mut camera = Camera::new("OBSBOT Tiny 2").ok();
+    let mut camera = Camera::detect().ok();
 
     if camera.is_none() {
         println!("{}", t!("shared.errors.no_camera"));

@@ -34,6 +34,14 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
+### Supported Cameras
+
+Tiny4Linux is developed and tested with the **OBSBOT Tiny 2**.
+If no Tiny 2 is connected, an **OBSBOT Tiny 4K** is used instead ([#72](https://github.com/OpenFoxes/Tiny4Linux/issues/72)).
+
+The Tiny 4K ignores settings while it is in standby (about two minutes without a video stream).
+Start a video stream first, then the settings are applied immediately.
+
 ### Info on PTZ-/Gimbal-Controls
 
 The main focus of the [original project](https://github.com/cgevans/tiny2) was the implementation of OBSBOT-specific functionalities on Linux.

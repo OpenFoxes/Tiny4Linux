@@ -10,6 +10,13 @@ use crate::{
 };
 use errno::Errno;
 
+/// Device hints tried in this order by [`Camera::detect`].
+///
+/// A hint has to be part of the V4L2 card name of the camera.
+/// The Tiny 2 is the primarily supported model and therefore preferred,
+/// the Tiny 4K is only found if no Tiny 2 is connected (#72).
+const DEFAULT_CAMERA_HINTS: [&str; 2] = ["OBSBOT Tiny 2", "OBSBOT Tiny 4K"];
+
 pub struct Camera {
     transport: CameraTransport,
     debugging: bool,
@@ -21,6 +28,14 @@ impl Camera {
             transport: CameraTransport::new(hint)?,
             debugging: false,
         })
+    }
+
+    /// Opens the first camera matching one of the default hints, see [`DEFAULT_CAMERA_HINTS`].
+    pub fn detect() -> Result<Self, T4lError> {
+        DEFAULT_CAMERA_HINTS
+            .iter()
+            .find_map(|hint| Self::new(hint).ok())
+            .ok_or(T4lError::NoCameraFound)
     }
 
     pub fn info(&self) -> Result<(), Errno> {
