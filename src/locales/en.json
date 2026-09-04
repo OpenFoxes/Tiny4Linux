@@ -1,7 +1,10 @@
 {
   "shared": {
     "errors": {
-      "no_camera": "No camera found. Please check the connection of the camera."
+      "no_camera": "No camera found. Please check the connection of the camera.",
+      "unsupported_tracking_mode": "This tracking mode is not supported by the connected camera.",
+      "unsupported_tracking_speed": "The connected camera has no tracking speed setting.",
+      "unsupported_manual_exposure": "The connected camera does not support the manual exposure mode."
     },
     "options": {
       "hdr": {
@@ -18,7 +21,8 @@
       "sleep_mode": "Sleep Mode",
       "tracking": "Tracking",
       "tracking_speed": "Tracking Speed",
-      "t4l_version": "T4L Version"
+      "t4l_version": "T4L Version",
+      "not_available": "not available for this camera"
     }
   },
   "gui": {

@@ -38,18 +38,20 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 
 Tiny4Linux is developed and tested with the **OBSBOT Tiny 2**.
 If no Tiny 2 is connected, an **OBSBOT Tiny 4K** is used instead ([#72](https://github.com/OpenFoxes/Tiny4Linux/issues/72)).
-The Tiny 4K only understands a part of the Tiny 2 commands:
+The Tiny 4K speaks an older protocol than the Tiny 2, so it understands a part of the commands
+directly, a part only through its own commands, and some not at all:
 
-| Feature                         | OBSBOT Tiny 4K                                               |
-| ------------------------------- | ------------------------------------------------------------ |
-| HDR on/off                      | ✅ works                                                     |
-| Exposure mode `face` / `global` | ✅ works                                                     |
-| Sleep / wake                    | ✅ works, using the older protocol of the Tiny 4K            |
-| Status (`info`)                 | ⚠️ HDR and sleep state are reported, the rest shows defaults |
-| Tracking modes                  | ❌ no effect, the Tiny 4K uses different commands            |
-| Tracking speed                  | ❌ the Tiny 4K has no tracking speed setting                 |
-| Preset positions                | ❌ no effect, the Tiny 4K has no single recall command       |
-| Exposure mode `manual`          | ❌ no effect                                                 |
+| Feature                                   | OBSBOT Tiny 4K                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| HDR on/off                                | ✅ works                                                              |
+| Exposure mode `face` / `global`           | ✅ works                                                              |
+| Sleep / wake                              | ✅ works, using the older protocol of the Tiny 4K                     |
+| Tracking `static`, `normal`, `upper-body` | ✅ works, using the older protocol of the Tiny 4K                     |
+| Status (`info`)                           | ⚠️ sleep state and HDR are reported, the tracking mode cannot be read |
+| Other tracking modes                      | ❌ the Tiny 4K does not have them, this is reported                   |
+| Tracking speed                            | ❌ the Tiny 4K has no such setting, this is reported                  |
+| Preset positions                          | ❌ the Tiny 4K has no recall command                                  |
+| Exposure mode `manual`                    | ❌ use the V4L2 exposure controls instead                             |
 
 The Tiny 4K ignores settings while it is in standby (about two minutes without a video stream).
 Start a video stream first, then the settings are applied immediately.

@@ -6,9 +6,18 @@ use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
     AIModeCommand, ExposureModeCommand, ExposureModeTypeCommand, GotoPresetPositionCommand,
-    HdrModeCommand, LegacySleepCommand, SleepCommand, TrackingSpeedCommand,
+    HdrModeCommand, LegacyAiModeCommand, LegacySleepCommand, SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
+use std::thread::sleep;
+use std::time::Duration;
+
+/// Pause between two legacy frames sent in one sequence.
+///
+/// The Tiny 4K drops frames that arrive back to back. In captures of the vendor
+/// app no two legacy frames are ever closer than about 50 ms, with a median of
+/// roughly 95 ms, so the sequence is paced accordingly (#72).
+const LEGACY_FRAME_GAP: Duration = Duration::from_millis(100);
 
 /// Device hints tried in this order by [`Camera::detect`].
 ///
@@ -57,6 +66,31 @@ impl Camera {
         self.model
     }
 
+    /// Whether this camera has the given AI tracking mode.
+    ///
+    /// The Tiny 4K only knows a part of the Tiny 2 modes (#72).
+    pub fn supports_ai_mode(&self, mode: AIMode) -> bool {
+        match self.model {
+            CameraModel::Tiny2 => true,
+            CameraModel::Tiny4K => LegacyAiModeCommand::supports(mode),
+        }
+    }
+
+    /// Whether this camera has a tracking speed setting.
+    ///
+    /// The Tiny 4K has none: the setting does not exist in its protocol.
+    pub fn supports_tracking_speed(&self) -> bool {
+        self.model == CameraModel::Tiny2
+    }
+
+    /// Whether this camera takes the manual exposure mode over this interface.
+    ///
+    /// The Tiny 4K drives manual exposure through the standard UVC camera
+    /// terminal instead, which is reachable via V4L2.
+    pub fn supports_manual_exposure(&self) -> bool {
+        self.model == CameraModel::Tiny2
+    }
+
     pub fn dump(&self) -> Result<(), Errno> {
         self.transport.dump()
     }
@@ -100,10 +134,25 @@ impl Tiny2Camera for Camera {
         Ok(self.get_status()?.awake)
     }
 
+    /// Sends the AI tracking command matching the detected model.
+    ///
+    /// The Tiny 2 takes a single setting on selector 6. The Tiny 4K needs a
+    /// sequence of legacy frames on selector 2 instead (#72).
     fn set_ai_mode(&self, mode: AIMode) -> Result<(), T4lError> {
-        let cmd = AIModeCommand::build(mode)?;
+        match self.model {
+            CameraModel::Tiny2 => self.send_cmd(0x2, 0x6, &AIModeCommand::build(mode)?),
+            CameraModel::Tiny4K => {
+                for (index, frame) in LegacyAiModeCommand::build(mode)?.iter().enumerate() {
+                    if index > 0 {
+                        sleep(LEGACY_FRAME_GAP);
+                    }
 
-        self.send_cmd(0x2, 0x6, &cmd)
+                    self.send_cmd(0x2, 0x2, frame)?;
+                }
+
+                Ok(())
+            }
+        }
     }
 
     fn get_ai_mode(&self) -> Result<AIMode, T4lError> {

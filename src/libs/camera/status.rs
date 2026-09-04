@@ -25,7 +25,12 @@ impl CameraStatus {
                 CameraModel::Tiny2 => Self::decode_sleep_mode(bytes),
                 CameraModel::Tiny4K => Self::decode_sleep_mode_tiny_4k(bytes),
             },
-            ai_mode: Self::decode_ai_mode(bytes),
+            ai_mode: match model {
+                CameraModel::Tiny2 => Self::decode_ai_mode(bytes),
+                // the Tiny 4K leaves the Tiny 2 AI fields at zero, which would
+                // decode to a confident "no tracking" regardless of the truth
+                CameraModel::Tiny4K => AIMode::Unknown,
+            },
             speed: Self::decode_tracking_speed(bytes),
             hdr_on: Self::decode_hdr_on(bytes),
         }

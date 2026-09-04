@@ -127,11 +127,21 @@ impl MainPanel {
                 Task::none()
             }
             Message::ChangeTracking(tracking_type) => {
+                if !camera.supports_ai_mode(tracking_type) {
+                    eprintln!("{}", t!("shared.errors.unsupported_tracking_mode"));
+                    return Task::none();
+                }
+
                 self.tracking = tracking_type;
                 camera.set_ai_mode(tracking_type).unwrap();
                 Task::none()
             }
             Message::ChangeTrackingSpeed(new_speed) => {
+                if !camera.supports_tracking_speed() {
+                    eprintln!("{}", t!("shared.errors.unsupported_tracking_speed"));
+                    return Task::none();
+                }
+
                 self.tracking_speed = new_speed;
                 camera.set_tracking_speed(new_speed).unwrap();
                 Task::none()
@@ -149,6 +159,11 @@ impl MainPanel {
                 Task::none()
             }
             Message::ChangeExposure(mode) => {
+                if mode == ExposureMode::Manual && !camera.supports_manual_exposure() {
+                    eprintln!("{}", t!("shared.errors.unsupported_manual_exposure"));
+                    return Task::none();
+                }
+
                 camera.set_exposure_mode(mode).unwrap();
                 Task::none()
             }
