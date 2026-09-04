@@ -5,7 +5,9 @@
       "unsupported_tracking_mode": "Dieser Tracking-Modus wird von der angeschlossenen Kamera nicht unterstützt.",
       "unsupported_tracking_speed": "Die angeschlossene Kamera hat keine Einstellung für die Tracking-Geschwindigkeit.",
       "unsupported_manual_exposure": "Die angeschlossene Kamera unterstützt den manuellen Belichtungsmodus nicht.",
-      "unknown_preset_position": "Diese Preset-Position gibt es auf der angeschlossenen Kamera nicht."
+      "unknown_preset_position": "Diese Preset-Position gibt es auf der angeschlossenen Kamera nicht.",
+      "debug_request_failed": "Die Kamera hat die Anfrage abgelehnt.",
+      "debug_input_invalid": "Der eingegebene Wert ist kein gültiges Hexadezimal."
     },
     "options": {
       "hdr": {

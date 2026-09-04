@@ -184,21 +184,29 @@ impl MainPanel {
                 Task::none()
             }
             Message::SendCommand => {
-                let c = hex::decode(&self.text_input).unwrap();
-                camera.send_cmd(0x2, 0x6, &c).unwrap();
+                report_debug_result(
+                    hex::decode(&self.text_input)
+                        .ok()
+                        .map(|c| camera.send_cmd(0x2, 0x6, &c).is_ok()),
+                );
                 Task::none()
             }
             Message::SendCommand02 => {
-                let c = hex::decode(&self.text_input_02).unwrap();
-                camera.send_cmd(0x2, 0x2, &c).unwrap();
+                report_debug_result(
+                    hex::decode(&self.text_input_02)
+                        .ok()
+                        .map(|c| camera.send_cmd(0x2, 0x2, &c).is_ok()),
+                );
                 Task::none()
             }
             Message::HexDump => {
-                camera.dump().unwrap();
+                report_debug_result(Some(camera.dump().is_ok()));
                 Task::none()
             }
             Message::HexDump02 => {
-                camera.dump_02().unwrap();
+                // the Tiny 4K stalls a cold GET_CUR on selector 2, which used to take
+                // the whole window down through unwrap (#72)
+                report_debug_result(Some(camera.dump_02().is_ok()));
                 Task::none()
             }
             Message::CheckCamera => Task::none(),
@@ -309,4 +317,16 @@ fn main() -> iced::Result {
         .window(get_window_settings_for_window_mode(start_mode))
         .subscription(MainPanel::subscription)
         .run_with(move || MainPanel::init_state(start_mode))
+}
+
+/// Reports the outcome of a debug-area action instead of taking the window down.
+///
+/// `None` means the entered hex could not be parsed, `Some(false)` that the camera
+/// rejected the request. Neither is a reason to panic in a GUI.
+fn report_debug_result(outcome: Option<bool>) {
+    match outcome {
+        Some(true) => {}
+        Some(false) => eprintln!("{}", t!("shared.errors.debug_request_failed")),
+        None => eprintln!("{}", t!("shared.errors.debug_input_invalid")),
+    }
 }
