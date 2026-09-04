@@ -54,12 +54,19 @@ struct MainPanel {
 
 impl MainPanel {
     fn init_state(window_mode: WindowMode) -> (Self, Task<Message>) {
-        let camera = Camera::new("OBSBOT Tiny 2").ok();
+        let camera = Camera::detect().ok();
 
         let status = camera
             .as_ref()
             .and_then(|c| c.get_status().ok())
             .unwrap_or_else(|| tiny4linux::CameraStatus::default());
+
+        // the Tiny 4K keeps its tracking mode outside the status buffer, so it has to
+        // be asked for separately to start with the right button selected (#72)
+        let tracking = camera
+            .as_ref()
+            .and_then(|c| c.get_ai_mode().ok())
+            .unwrap_or(status.ai_mode);
 
         (
             MainPanel {
@@ -67,7 +74,7 @@ impl MainPanel {
                 main_window_id: None,
                 window_mode,
                 awake: status.awake,
-                tracking: status.ai_mode,
+                tracking,
                 tracking_speed: status.speed,
                 hdr_on: status.hdr_on,
                 debugging_on: false,
@@ -80,7 +87,7 @@ impl MainPanel {
 
     fn update(&mut self, message: Message) -> Task<Message> {
         if self.camera.is_none() {
-            self.camera = Camera::new("OBSBOT Tiny 2").ok();
+            self.camera = Camera::detect().ok();
 
             if self.camera.is_none() {
                 return Task::none();
@@ -127,11 +134,21 @@ impl MainPanel {
                 Task::none()
             }
             Message::ChangeTracking(tracking_type) => {
+                if !camera.supports_ai_mode(tracking_type) {
+                    eprintln!("{}", t!("shared.errors.unsupported_tracking_mode"));
+                    return Task::none();
+                }
+
                 self.tracking = tracking_type;
                 camera.set_ai_mode(tracking_type).unwrap();
                 Task::none()
             }
             Message::ChangeTrackingSpeed(new_speed) => {
+                if !camera.supports_tracking_speed() {
+                    eprintln!("{}", t!("shared.errors.unsupported_tracking_speed"));
+                    return Task::none();
+                }
+
                 self.tracking_speed = new_speed;
                 camera.set_tracking_speed(new_speed).unwrap();
                 Task::none()
@@ -140,7 +157,9 @@ impl MainPanel {
                 self.tracking = AIMode::NoTracking;
                 self.awake = SleepMode::Awake;
                 camera.set_ai_mode(AIMode::NoTracking).unwrap();
-                camera.goto_preset_position(new_position).unwrap();
+                if camera.goto_preset_position(new_position).is_err() {
+                    eprintln!("{}", t!("shared.errors.unknown_preset_position"));
+                }
                 Task::none()
             }
             Message::ChangeHDR(new_mode) => {
@@ -149,6 +168,11 @@ impl MainPanel {
                 Task::none()
             }
             Message::ChangeExposure(mode) => {
+                if mode == ExposureMode::Manual && !camera.supports_manual_exposure() {
+                    eprintln!("{}", t!("shared.errors.unsupported_manual_exposure"));
+                    return Task::none();
+                }
+
                 camera.set_exposure_mode(mode).unwrap();
                 Task::none()
             }
@@ -167,21 +191,29 @@ impl MainPanel {
                 Task::none()
             }
             Message::SendCommand => {
-                let c = hex::decode(&self.text_input).unwrap();
-                camera.send_cmd(0x2, 0x6, &c).unwrap();
+                report_debug_result(
+                    hex::decode(&self.text_input)
+                        .ok()
+                        .map(|c| camera.send_cmd(0x2, 0x6, &c).is_ok()),
+                );
                 Task::none()
             }
             Message::SendCommand02 => {
-                let c = hex::decode(&self.text_input_02).unwrap();
-                camera.send_cmd(0x2, 0x2, &c).unwrap();
+                report_debug_result(
+                    hex::decode(&self.text_input_02)
+                        .ok()
+                        .map(|c| camera.send_cmd(0x2, 0x2, &c).is_ok()),
+                );
                 Task::none()
             }
             Message::HexDump => {
-                camera.dump().unwrap();
+                report_debug_result(Some(camera.dump().is_ok()));
                 Task::none()
             }
             Message::HexDump02 => {
-                camera.dump_02().unwrap();
+                // the Tiny 4K stalls a cold GET_CUR on selector 2, which used to take
+                // the whole window down through unwrap (#72)
+                report_debug_result(Some(camera.dump_02().is_ok()));
                 Task::none()
             }
             Message::CheckCamera => Task::none(),
@@ -292,4 +324,16 @@ fn main() -> iced::Result {
         .window(get_window_settings_for_window_mode(start_mode))
         .subscription(MainPanel::subscription)
         .run_with(move || MainPanel::init_state(start_mode))
+}
+
+/// Reports the outcome of a debug-area action instead of taking the window down.
+///
+/// `None` means the entered hex could not be parsed, `Some(false)` that the camera
+/// rejected the request. Neither is a reason to panic in a GUI.
+fn report_debug_result(outcome: Option<bool>) {
+    match outcome {
+        Some(true) => {}
+        Some(false) => eprintln!("{}", t!("shared.errors.debug_request_failed")),
+        None => eprintln!("{}", t!("shared.errors.debug_input_invalid")),
+    }
 }

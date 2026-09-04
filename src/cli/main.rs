@@ -106,7 +106,7 @@ fn main() {
 
     let args = Args::parse();
 
-    let mut camera = Camera::new("OBSBOT Tiny 2").ok();
+    let mut camera = Camera::detect().ok();
 
     if camera.is_none() {
         println!("{}", t!("shared.errors.no_camera"));
@@ -139,8 +139,20 @@ fn main() {
 
                 println!("{}:", t!("shared.info.camera_status"));
                 println!("  💤  {}: {}", t!("shared.info.sleep_mode"), info.awake);
-                println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
-                println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
+                println!(
+                    "  🤖  {}: {}",
+                    t!("shared.info.ai_mode"),
+                    camera.get_ai_mode().unwrap_or(AIMode::Unknown)
+                );
+                if camera.supports_tracking_speed() {
+                    println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
+                } else {
+                    println!(
+                        "  🏃  {}: {}",
+                        t!("shared.info.tracking_speed"),
+                        t!("shared.info.not_available")
+                    );
+                }
                 println!("  💐  {}: {}", t!("shared.info.hdr"), info.hdr_on);
             }
         }
@@ -216,6 +228,26 @@ fn evaluate_sleep_arg(state: Option<OnOffArg>, camera: Camera) {
     }
 }
 
+/// Applies an AI tracking mode, or reports that the connected camera does not have it.
+///
+/// The Tiny 4K only knows a part of the Tiny 2 modes, and silently ignoring the
+/// rest is what this whole change is trying to get rid of (#72).
+fn apply_ai_mode(camera: &Camera, mode: AIMode, message: &str) {
+    if !camera.supports_ai_mode(mode) {
+        eprintln!("{}", t!("shared.errors.unsupported_tracking_mode"));
+        std::process::exit(1);
+    }
+
+    println!("{message}");
+    camera.set_ai_mode(mode).unwrap();
+}
+
+/// Reports that the connected camera does not have a feature, and exits.
+fn unsupported(message: &str) -> ! {
+    eprintln!("{message}");
+    std::process::exit(1);
+}
+
 fn evaluate_tracking_arg(tracking_mode: Option<TrackingArg>, camera: Camera) {
     let response_setting_to = t!("cli.tracking_mode.response_setting_to");
     let static_mode = t!("cli.tracking_mode.static");
@@ -231,44 +263,74 @@ fn evaluate_tracking_arg(tracking_mode: Option<TrackingArg>, camera: Camera) {
 
     match tracking_mode {
         Some(TrackingArg::Static) => {
-            println!("{} {}", response_setting_to, static_mode);
-            camera.set_ai_mode(AIMode::NoTracking).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::NoTracking,
+                &format!("{} {}", response_setting_to, static_mode),
+            );
         }
         Some(TrackingArg::Normal) => {
-            println!("{} {}", response_setting_to, normal);
-            camera.set_ai_mode(AIMode::NormalTracking).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::NormalTracking,
+                &format!("{} {}", response_setting_to, normal),
+            );
         }
         Some(TrackingArg::CloseUp) => {
-            println!("{} {}", response_setting_to, close_up);
-            camera.set_ai_mode(AIMode::CloseUp).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::CloseUp,
+                &format!("{} {}", response_setting_to, close_up),
+            );
         }
         Some(TrackingArg::UpperBody) => {
-            println!("{} {}", response_setting_to, upper_body);
-            camera.set_ai_mode(AIMode::UpperBody).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::UpperBody,
+                &format!("{} {}", response_setting_to, upper_body),
+            );
         }
         Some(TrackingArg::Headless) => {
-            println!("{} {}", response_setting_to, headless);
-            camera.set_ai_mode(AIMode::Headless).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::Headless,
+                &format!("{} {}", response_setting_to, headless),
+            );
         }
         Some(TrackingArg::LowerBody) => {
-            println!("{} {}", response_setting_to, lower_body);
-            camera.set_ai_mode(AIMode::LowerBody).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::LowerBody,
+                &format!("{} {}", response_setting_to, lower_body),
+            );
         }
         Some(TrackingArg::Desk) => {
-            println!("{} {}", response_setting_to, desk);
-            camera.set_ai_mode(AIMode::DeskMode).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::DeskMode,
+                &format!("{} {}", response_setting_to, desk),
+            );
         }
         Some(TrackingArg::Whiteboard) => {
-            println!("{} {}", response_setting_to, whiteboard);
-            camera.set_ai_mode(AIMode::Whiteboard).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::Whiteboard,
+                &format!("{} {}", response_setting_to, whiteboard),
+            );
         }
         Some(TrackingArg::Hand) => {
-            println!("{} {}", response_setting_to, hand);
-            camera.set_ai_mode(AIMode::Hand).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::Hand,
+                &format!("{} {}", response_setting_to, hand),
+            );
         }
         Some(TrackingArg::Group) => {
-            println!("{} {}", response_setting_to, group);
-            camera.set_ai_mode(AIMode::Group).unwrap();
+            apply_ai_mode(
+                &camera,
+                AIMode::Group,
+                &format!("{} {}", response_setting_to, group),
+            );
         }
         None => {
             let options = [
@@ -331,6 +393,10 @@ fn evaluate_tracking_arg(tracking_mode: Option<TrackingArg>, camera: Camera) {
 }
 
 fn evaluate_speed_arg(speed: Option<TrackingSpeedArg>, camera: Camera) {
+    if !camera.supports_tracking_speed() {
+        unsupported(&t!("shared.errors.unsupported_tracking_speed"));
+    }
+
     match speed {
         Some(TrackingSpeedArg::Standard) => {
             println!("{}", t!("cli.tracking_speed.response_to_standard"));
@@ -398,9 +464,12 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
             position_id = position_id.unwrap()
         ),
     );
-    camera
+    if camera
         .goto_preset_position(position_id.unwrap() - 1)
-        .unwrap();
+        .is_err()
+    {
+        unsupported(&t!("shared.errors.unknown_preset_position"));
+    }
 }
 
 fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {
@@ -447,6 +516,10 @@ fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {
 fn evaluate_exposure_arg(exposure_mode: Option<ExposureArg>, camera: Camera) {
     match exposure_mode {
         Some(ExposureArg::Manual) => {
+            if !camera.supports_manual_exposure() {
+                unsupported(&t!("shared.errors.unsupported_manual_exposure"));
+            }
+
             println!("{}", t!("cli.exposure.response_to_manual"));
             camera
                 .set_exposure_mode(tiny4linux::ExposureMode::Manual)

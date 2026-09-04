@@ -34,6 +34,28 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - UI-Upgrade (WIP)
 - Tests & Codecov check
 
+### Supported Cameras
+
+Tiny4Linux is developed and tested with the **OBSBOT Tiny 2**.
+If no Tiny 2 is connected, an **OBSBOT Tiny 4K** is used instead ([#72](https://github.com/OpenFoxes/Tiny4Linux/issues/72)).
+The Tiny 4K speaks an older protocol than the Tiny 2, so it understands a part of the commands
+directly, a part only through its own commands, and some not at all:
+
+| Feature                                   | OBSBOT Tiny 4K                                          |
+| ----------------------------------------- | ------------------------------------------------------- |
+| HDR on/off                                | ✅ works                                                |
+| Exposure mode `face` / `global`           | ✅ works                                                |
+| Sleep / wake                              | ✅ works, using the older protocol of the Tiny 4K       |
+| Tracking `static`, `normal`, `upper-body` | ✅ works, using the older protocol of the Tiny 4K       |
+| Preset positions                          | ✅ works, recalls the positions stored by OBSBOT Center |
+| Status (`info`)                           | ✅ sleep state, tracking mode and HDR are reported      |
+| Other tracking modes                      | ❌ the Tiny 4K does not have them, this is reported     |
+| Tracking speed                            | ❌ the Tiny 4K has no such setting, this is reported    |
+| Exposure mode `manual`                    | ❌ use the V4L2 exposure controls instead               |
+
+The Tiny 4K ignores settings while it is in standby (about two minutes without a video stream).
+Start a video stream first, then the settings are applied immediately.
+
 ### Info on PTZ-/Gimbal-Controls
 
 The main focus of the [original project](https://github.com/cgevans/tiny2) was the implementation of OBSBOT-specific functionalities on Linux.

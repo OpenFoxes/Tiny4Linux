@@ -20,6 +20,53 @@ impl Display for SleepMode {
     }
 }
 
+/// The camera model a [`crate::Camera`] is talking to.
+///
+/// The Tiny 4K speaks an older protocol than the Tiny 2 and needs different
+/// commands for some functions (#72). Unknown hints are treated as a Tiny 2,
+/// which keeps the behaviour of every previously supported camera unchanged.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum CameraModel {
+    Tiny2,
+    Tiny4K,
+}
+
+impl CameraModel {
+    /// Whether this model has the given AI tracking mode.
+    ///
+    /// The Tiny 4K only knows a part of the Tiny 2 modes (#72).
+    pub fn supports_ai_mode(self, mode: AIMode) -> bool {
+        match self {
+            CameraModel::Tiny2 => true,
+            CameraModel::Tiny4K => crate::LegacyAiModeCommand::supports(mode),
+        }
+    }
+
+    /// Whether this model has a tracking speed setting.
+    ///
+    /// The Tiny 4K has none: the setting does not exist in its protocol.
+    pub fn supports_tracking_speed(self) -> bool {
+        self == CameraModel::Tiny2
+    }
+
+    /// Whether this model takes the manual exposure mode over this interface.
+    ///
+    /// The Tiny 4K drives manual exposure through the standard UVC camera terminal
+    /// instead, which is reachable via V4L2.
+    pub fn supports_manual_exposure(self) -> bool {
+        self == CameraModel::Tiny2
+    }
+
+    /// Derives the model from the V4L2 card name hint the camera was opened with.
+    pub fn from_hint(hint: &str) -> Self {
+        if hint.contains("Tiny 4K") {
+            CameraModel::Tiny4K
+        } else {
+            CameraModel::Tiny2
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum AIMode {
     NoTracking,
@@ -94,6 +141,19 @@ pub enum ExposureModeType {
 #[cfg(test)]
 mod tests {
     mod unit {
+        mod camera_model {
+            use crate::CameraModel;
+            use test_case::test_case;
+
+            #[test_case("OBSBOT Tiny 4K", CameraModel::Tiny4K; "tiny 4k")]
+            #[test_case("OBSBOT Tiny 2", CameraModel::Tiny2; "tiny 2")]
+            #[test_case("OBSBOT Tiny 2 Lite", CameraModel::Tiny2; "tiny 2 lite")]
+            #[test_case("Something else", CameraModel::Tiny2; "unknown hints default to tiny 2")]
+            fn model_from_hint(hint: &str, expected: CameraModel) {
+                assert_eq!(CameraModel::from_hint(hint), expected);
+            }
+        }
+
         mod display {
             mod sleep_mode {
                 use crate::SleepMode;

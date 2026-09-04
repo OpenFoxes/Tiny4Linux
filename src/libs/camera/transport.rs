@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::CameraStatus;
+use crate::libs::camera::enums::CameraModel;
 use crate::libs::errors::T4lError;
 use crate::libs::usbio::{
     CameraHandle, UVC_GET_CUR, UVC_GET_LEN, UVC_SET_CUR, UvcUsbIo, open_camera,
@@ -134,7 +135,11 @@ impl CameraTransport {
     ///     Err(e) => eprintln!("Failed to get camera status: {:?}", e),
     /// }
     /// ```
-    pub fn get_status(&self, debugging: bool) -> Result<CameraStatus, T4lError> {
+    pub fn get_status(
+        &self,
+        debugging: bool,
+        model: CameraModel,
+    ) -> Result<CameraStatus, T4lError> {
         let mut data: [u8; 60] = [0u8; 60];
         self.get_cur(0x2, 0x6, &mut data)
             .map_err(|x| T4lError::USBIOError(x.0))?;
@@ -143,7 +148,36 @@ impl CameraTransport {
             println!("Current state: {:?} {:}", data, hex::encode(&data));
         }
 
-        Ok(CameraStatus::decode(&data))
+        Ok(CameraStatus::decode_for(model, &data))
+    }
+
+    /// Reads the answer an OBSBOT Tiny 4K left on its command channel.
+    ///
+    /// The camera keeps the previous answer there until the new one is ready, and a
+    /// read before any request stalls, so callers have to retry and check the
+    /// sequence number of what they get back (#72).
+    pub fn get_reply(&self) -> Result<[u8; 60], T4lError> {
+        let mut data: [u8; 60] = [0u8; 60];
+        self.get_cur(0x2, 0x2, &mut data)
+            .map_err(|x| T4lError::USBIOError(x.0))?;
+
+        Ok(data)
+    }
+
+    /// Reads the preset position table of an OBSBOT Tiny 4K.
+    ///
+    /// The camera returns the whole table in one go on extension unit 2,
+    /// selector 7, see [`crate::LegacyPresetPositionCommand`] (#72).
+    pub fn get_preset_positions(&self, debugging: bool) -> Result<[u8; 60], T4lError> {
+        let mut data: [u8; 60] = [0u8; 60];
+        self.get_cur(0x2, 0x7, &mut data)
+            .map_err(|x| T4lError::USBIOError(x.0))?;
+
+        if debugging {
+            println!("Preset positions: {:}", hex::encode(data));
+        }
+
+        Ok(data)
     }
 
     /// Dumps the current state of the 0x2, 0x6 data to the console in hexadecimal format.

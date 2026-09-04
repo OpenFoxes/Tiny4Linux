@@ -1,17 +1,23 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 mod ai_mode;
+mod ai_mode_legacy;
 mod exposure_mode;
 mod exposure_mode_type;
 mod goto_preset_position;
 mod hdr_mode;
+mod preset_position_legacy;
 mod sleep;
+mod sleep_legacy;
 mod tracking_speed;
 
 pub use ai_mode::*;
+pub use ai_mode_legacy::*;
 pub use exposure_mode::*;
 pub use exposure_mode_type::*;
 pub use goto_preset_position::*;
 pub use hdr_mode::*;
+pub use preset_position_legacy::*;
 pub use sleep::*;
+pub use sleep_legacy::*;
 pub use tracking_speed::*;
