@@ -460,9 +460,12 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
             position_id = position_id.unwrap()
         ),
     );
-    camera
+    if camera
         .goto_preset_position(position_id.unwrap() - 1)
-        .unwrap();
+        .is_err()
+    {
+        unsupported(&t!("shared.errors.unknown_preset_position"));
+    }
 }
 
 fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {

@@ -47,10 +47,10 @@ directly, a part only through its own commands, and some not at all:
 | Exposure mode `face` / `global`           | ✅ works                                                              |
 | Sleep / wake                              | ✅ works, using the older protocol of the Tiny 4K                     |
 | Tracking `static`, `normal`, `upper-body` | ✅ works, using the older protocol of the Tiny 4K                     |
+| Preset positions                          | ✅ works, recalls the positions stored by OBSBOT Center               |
 | Status (`info`)                           | ⚠️ sleep state and HDR are reported, the tracking mode cannot be read |
 | Other tracking modes                      | ❌ the Tiny 4K does not have them, this is reported                   |
 | Tracking speed                            | ❌ the Tiny 4K has no such setting, this is reported                  |
-| Preset positions                          | ❌ the Tiny 4K has no recall command                                  |
 | Exposure mode `manual`                    | ❌ use the V4L2 exposure controls instead                             |
 
 The Tiny 4K ignores settings while it is in standby (about two minutes without a video stream).

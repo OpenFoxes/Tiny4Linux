@@ -4,7 +4,8 @@
       "no_camera": "No camera found. Please check the connection of the camera.",
       "unsupported_tracking_mode": "This tracking mode is not supported by the connected camera.",
       "unsupported_tracking_speed": "The connected camera has no tracking speed setting.",
-      "unsupported_manual_exposure": "The connected camera does not support the manual exposure mode."
+      "unsupported_manual_exposure": "The connected camera does not support the manual exposure mode.",
+      "unknown_preset_position": "This preset position does not exist on the connected camera."
     },
     "options": {
       "hdr": {

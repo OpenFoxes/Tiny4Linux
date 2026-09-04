@@ -6,7 +6,8 @@ use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
     AIModeCommand, ExposureModeCommand, ExposureModeTypeCommand, GotoPresetPositionCommand,
-    HdrModeCommand, LegacyAiModeCommand, LegacySleepCommand, SleepCommand, TrackingSpeedCommand,
+    HdrModeCommand, LegacyAiModeCommand, LegacyPresetPositionCommand, LegacySleepCommand,
+    SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
 use std::thread::sleep;
@@ -159,10 +160,37 @@ impl Tiny2Camera for Camera {
         Ok(self.get_status()?.ai_mode)
     }
 
+    /// Moves the camera to a stored preset position.
+    ///
+    /// The Tiny 2 has a recall command. The Tiny 4K has not: it stores the positions
+    /// and hands them out on request, so the recall is a read followed by an absolute
+    /// move (#72). Presets are stored by the vendor app; this only recalls them.
     fn goto_preset_position(&self, preset_nr: i8) -> Result<(), T4lError> {
-        let cmd = GotoPresetPositionCommand::build(preset_nr)?;
+        match self.model {
+            CameraModel::Tiny2 => {
+                self.send_cmd(0x2, 0x2, &GotoPresetPositionCommand::build(preset_nr)?)
+            }
+            CameraModel::Tiny4K => {
+                let slot = u8::try_from(preset_nr).map_err(|_| {
+                    T4lError::UnsupportedIntValue("preset position".to_string(), preset_nr as i32)
+                })?;
+                let table = self.transport.get_preset_positions(self.debugging)?;
+                let preset = LegacyPresetPositionCommand::find(&table, slot)?;
 
-        self.send_cmd(0x2, 0x2, &cmd)
+                for (index, frame) in LegacyPresetPositionCommand::build(&preset)
+                    .iter()
+                    .enumerate()
+                {
+                    if index > 0 {
+                        sleep(LEGACY_FRAME_GAP);
+                    }
+
+                    self.send_cmd(0x2, 0x2, frame)?;
+                }
+
+                Ok(())
+            }
+        }
     }
 
     fn get_tracking_speed(&self) -> Result<TrackingSpeed, T4lError> {

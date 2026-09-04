@@ -150,7 +150,9 @@ impl MainPanel {
                 self.tracking = AIMode::NoTracking;
                 self.awake = SleepMode::Awake;
                 camera.set_ai_mode(AIMode::NoTracking).unwrap();
-                camera.goto_preset_position(new_position).unwrap();
+                if camera.goto_preset_position(new_position).is_err() {
+                    eprintln!("{}", t!("shared.errors.unknown_preset_position"));
+                }
                 Task::none()
             }
             Message::ChangeHDR(new_mode) => {

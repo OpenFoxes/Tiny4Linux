@@ -151,6 +151,22 @@ impl CameraTransport {
         Ok(CameraStatus::decode_for(model, &data))
     }
 
+    /// Reads the preset position table of an OBSBOT Tiny 4K.
+    ///
+    /// The camera returns the whole table in one go on extension unit 2,
+    /// selector 7, see [`crate::LegacyPresetPositionCommand`] (#72).
+    pub fn get_preset_positions(&self, debugging: bool) -> Result<[u8; 60], T4lError> {
+        let mut data: [u8; 60] = [0u8; 60];
+        self.get_cur(0x2, 0x7, &mut data)
+            .map_err(|x| T4lError::USBIOError(x.0))?;
+
+        if debugging {
+            println!("Preset positions: {:}", hex::encode(data));
+        }
+
+        Ok(data)
+    }
+
     /// Dumps the current state of the 0x2, 0x6 data to the console in hexadecimal format.
     ///
     /// # Returns
