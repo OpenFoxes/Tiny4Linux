@@ -71,17 +71,14 @@ impl Camera {
     ///
     /// The Tiny 4K only knows a part of the Tiny 2 modes (#72).
     pub fn supports_ai_mode(&self, mode: AIMode) -> bool {
-        match self.model {
-            CameraModel::Tiny2 => true,
-            CameraModel::Tiny4K => LegacyAiModeCommand::supports(mode),
-        }
+        self.model.supports_ai_mode(mode)
     }
 
     /// Whether this camera has a tracking speed setting.
     ///
     /// The Tiny 4K has none: the setting does not exist in its protocol.
     pub fn supports_tracking_speed(&self) -> bool {
-        self.model == CameraModel::Tiny2
+        self.model.supports_tracking_speed()
     }
 
     /// Whether this camera takes the manual exposure mode over this interface.
@@ -89,7 +86,7 @@ impl Camera {
     /// The Tiny 4K drives manual exposure through the standard UVC camera
     /// terminal instead, which is reachable via V4L2.
     pub fn supports_manual_exposure(&self) -> bool {
-        self.model == CameraModel::Tiny2
+        self.model.supports_manual_exposure()
     }
 
     pub fn dump(&self) -> Result<(), Errno> {

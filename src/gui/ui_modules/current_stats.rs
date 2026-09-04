@@ -130,17 +130,27 @@ pub fn current_stats(app: &MainPanel) -> Container<'static, Message> {
                 .spacing(10),
                 row![
                     text(TEXT_INDENT_LONG),
-                    match app.tracking_speed {
-                        TrackingSpeed::Standard => row![
-                            fa_icon_solid("gauge-simple"),
-                            text(t!("display.tracking_speed.standard"))
-                        ]
-                        .spacing(10),
-                        TrackingSpeed::Sport => row![
-                            fa_icon_solid("gauge-simple-high"),
-                            text(t!("display.tracking_speed.sport"))
-                        ]
-                        .spacing(10),
+                    // a camera without a tracking speed setting must not be shown one
+                    if app
+                        .camera
+                        .as_ref()
+                        .is_some_and(|camera| !camera.supports_tracking_speed())
+                    {
+                        row![fa_icon_solid("ban"), text(t!("shared.info.not_available"))]
+                            .spacing(10)
+                    } else {
+                        match app.tracking_speed {
+                            TrackingSpeed::Standard => row![
+                                fa_icon_solid("gauge-simple"),
+                                text(t!("display.tracking_speed.standard"))
+                            ]
+                            .spacing(10),
+                            TrackingSpeed::Sport => row![
+                                fa_icon_solid("gauge-simple-high"),
+                                text(t!("display.tracking_speed.sport"))
+                            ]
+                            .spacing(10),
+                        }
                     }
                 ]
                 .spacing(10),

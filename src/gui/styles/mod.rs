@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 pub mod button_non_styled;
+pub mod button_unsupported;
 pub mod colors;
 pub mod general_area_style;
 pub mod theme;
