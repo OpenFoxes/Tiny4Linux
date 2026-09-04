@@ -139,7 +139,11 @@ fn main() {
 
                 println!("{}:", t!("shared.info.camera_status"));
                 println!("  💤  {}: {}", t!("shared.info.sleep_mode"), info.awake);
-                println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
+                println!(
+                    "  🤖  {}: {}",
+                    t!("shared.info.ai_mode"),
+                    camera.get_ai_mode().unwrap_or(AIMode::Unknown)
+                );
                 if camera.supports_tracking_speed() {
                     println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
                 } else {

@@ -61,13 +61,20 @@ impl MainPanel {
             .and_then(|c| c.get_status().ok())
             .unwrap_or_else(|| tiny4linux::CameraStatus::default());
 
+        // the Tiny 4K keeps its tracking mode outside the status buffer, so it has to
+        // be asked for separately to start with the right button selected (#72)
+        let tracking = camera
+            .as_ref()
+            .and_then(|c| c.get_ai_mode().ok())
+            .unwrap_or(status.ai_mode);
+
         (
             MainPanel {
                 camera,
                 main_window_id: None,
                 window_mode,
                 awake: status.awake,
-                tracking: status.ai_mode,
+                tracking,
                 tracking_speed: status.speed,
                 hdr_on: status.hdr_on,
                 debugging_on: false,

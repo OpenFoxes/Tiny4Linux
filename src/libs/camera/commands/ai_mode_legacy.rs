@@ -29,8 +29,15 @@ impl LegacyAiModeCommand {
     /// The `0x3067` payload is a fixed byte, not a boolean.
     const TARGET_SELECT_PAYLOAD: u8 = 0x00;
 
+    const COMMAND_AI_STATUS: [u8; 2] = [0x30, 0x92];
+    const FRAME_TYPE_GET: u8 = 0x12;
+
     const TRACKING_MODE_STANDARD: u8 = 0x00;
     const TRACKING_MODE_HEADROOM: u8 = 0x01;
+
+    /// Offsets into the AI status payload.
+    const STATUS_ENABLED: usize = 1;
+    const STATUS_TRACKING_MODE: usize = 33;
 
     /// Whether the Tiny 4K offers the given mode at all.
     ///
@@ -83,6 +90,51 @@ impl LegacyAiModeCommand {
                 &[Self::TARGET_SELECT_PAYLOAD],
             ),
         ])
+    }
+}
+
+impl LegacyAiModeCommand {
+    /// Builds the request that asks the camera for its AI status.
+    ///
+    /// The answer has to be picked up from the command channel afterwards, see
+    /// [`Self::parse_status`].
+    pub fn status_request(sequence_nr: u16) -> [u8; 60] {
+        crate::libs::camera::command_legacy::command_legacy_typed(
+            Self::ROUTE_AI,
+            Self::COMMAND_AI_STATUS,
+            sequence_nr,
+            &[],
+            Self::FRAME_TYPE_GET,
+        )
+    }
+
+    /// Reads the AI status out of a reply, if it is the answer we asked for.
+    ///
+    /// The camera keeps the previous answer on the channel until the new one is
+    /// ready, so the sequence number has to be checked rather than assumed (#72).
+    pub fn parse_status(reply: &[u8], sequence_nr: u16) -> Option<AIMode> {
+        let length = *reply.get(2)? as usize;
+
+        if reply.first() != Some(&0xaa)
+            || reply.len() < length
+            || length < 12
+            || u16::from_be_bytes([*reply.get(4)?, *reply.get(5)?]) != sequence_nr
+            || reply.get(10..12)? != Self::COMMAND_AI_STATUS
+        {
+            return None;
+        }
+
+        let payload = reply.get(12..length)?;
+
+        Some(match payload.get(Self::STATUS_ENABLED)? {
+            0 => AIMode::NoTracking,
+            _ => match *payload.get(Self::STATUS_TRACKING_MODE)? {
+                Self::TRACKING_MODE_STANDARD => AIMode::NormalTracking,
+                Self::TRACKING_MODE_HEADROOM => AIMode::UpperBody,
+                // the 4K also has a motion mode, which this tool has no name for
+                _ => AIMode::Unknown,
+            },
+        })
     }
 }
 
@@ -142,6 +194,77 @@ mod tests {
     fn modes_the_tiny_4k_does_not_have(mode: AIMode) {
         assert!(!LegacyAiModeCommand::supports(mode));
         assert!(LegacyAiModeCommand::build(mode).is_err());
+    }
+
+    /// Builds a reply the way the camera does: header, echoed sequence number and
+    /// command, then the AI status payload.
+    fn reply(sequence_nr: u16, enabled: u8, tracking_mode: u8) -> [u8; 60] {
+        let mut reply = [0u8; 60];
+        reply[0] = 0xaa;
+        reply[1] = 0x20;
+        reply[2] = 0x34;
+        reply[3] = 0x13;
+        reply[4..6].copy_from_slice(&sequence_nr.to_be_bytes());
+        reply[10..12].copy_from_slice(&[0x30, 0x92]);
+        reply[12 + 1] = enabled;
+        reply[12 + 33] = tracking_mode;
+        reply
+    }
+
+    #[test_case(0, 0, AIMode::NoTracking; "disabled")]
+    #[test_case(1, 0, AIMode::NormalTracking; "enabled, standard framing")]
+    #[test_case(1, 1, AIMode::UpperBody; "enabled, headroom framing")]
+    #[test_case(1, 2, AIMode::Unknown; "enabled, motion framing has no name here")]
+    fn reads_the_ai_status(enabled: u8, tracking_mode: u8, expected: AIMode) {
+        let reply = reply(0x2a, enabled, tracking_mode);
+
+        assert_eq!(
+            LegacyAiModeCommand::parse_status(&reply, 0x2a),
+            Some(expected)
+        );
+    }
+
+    #[test]
+    fn refuses_an_answer_to_a_different_request() {
+        let reply = reply(0x2a, 1, 0);
+
+        assert_eq!(
+            LegacyAiModeCommand::parse_status(&reply, 0x2b),
+            None,
+            "the camera keeps the previous answer around, so the sequence number decides"
+        );
+
+        let mut wrong_command = reply;
+        wrong_command[10..12].copy_from_slice(&[0x20, 0x01]);
+        assert_eq!(
+            LegacyAiModeCommand::parse_status(&wrong_command, 0x2a),
+            None,
+            "an answer to another command is not an AI status"
+        );
+    }
+
+    #[test]
+    fn survives_a_truncated_or_empty_reply() {
+        assert_eq!(LegacyAiModeCommand::parse_status(&[], 1), None);
+        assert_eq!(LegacyAiModeCommand::parse_status(&[0xaa, 0x20], 1), None);
+        assert_eq!(
+            LegacyAiModeCommand::parse_status(&[0xaa, 0x20, 0x0c, 0x13, 0x00, 0x01], 1),
+            None,
+            "a reply without a payload is not a status"
+        );
+    }
+
+    #[test]
+    fn the_status_request_is_a_get_frame() {
+        let request = LegacyAiModeCommand::status_request(0x2a);
+
+        assert_eq!(request[3], 0x12, "0x12 asks, 0x10 sets");
+        assert_eq!(
+            request[4..6],
+            [0x00, 0x2a],
+            "the sequence number is echoed back"
+        );
+        assert_eq!(request[9..12], [0xe3, 0x30, 0x92]);
     }
 
     #[test_case(AIMode::NoTracking; "no tracking")]

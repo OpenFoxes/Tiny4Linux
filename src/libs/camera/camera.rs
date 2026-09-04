@@ -10,8 +10,10 @@ use crate::{
     SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
+use std::sync::atomic::{AtomicU16, Ordering};
 use std::thread::sleep;
 use std::time::Duration;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 /// Pause between two legacy frames sent in one sequence.
 ///
@@ -19,6 +21,10 @@ use std::time::Duration;
 /// app no two legacy frames are ever closer than about 50 ms, with a median of
 /// roughly 95 ms, so the sequence is paced accordingly (#72).
 const LEGACY_FRAME_GAP: Duration = Duration::from_millis(100);
+
+/// How long to wait before looking for an answer, and how often to look.
+const LEGACY_REPLY_GAP: Duration = Duration::from_millis(60);
+const LEGACY_REPLY_ATTEMPTS: usize = 6;
 
 /// Device hints tried in this order by [`Camera::detect`].
 ///
@@ -31,6 +37,8 @@ pub struct Camera {
     transport: CameraTransport,
     model: CameraModel,
     debugging: bool,
+    /// Sequence number for the next legacy request that expects an answer.
+    sequence_nr: AtomicU16,
 }
 
 impl Camera {
@@ -39,6 +47,7 @@ impl Camera {
             transport: CameraTransport::new(hint)?,
             model: CameraModel::from_hint(hint),
             debugging: false,
+            sequence_nr: AtomicU16::new(Self::first_sequence_nr()),
         })
     }
 
@@ -62,9 +71,44 @@ impl Camera {
         self.transport.get_status(self.debugging, self.model)
     }
 
+    /// Starting point for the sequence numbers of requests that expect an answer.
+    ///
+    /// The camera keeps the previous answer on its command channel, and that answer
+    /// outlives the process that asked for it. Starting every run at the same number
+    /// would therefore accept the answer to a *previous* run's request, so the
+    /// counter starts somewhere that differs between runs (#72).
+    fn first_sequence_nr() -> u16 {
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|since_epoch| since_epoch.subsec_nanos() as u16)
+            .unwrap_or(1)
+    }
+
     /// The model this camera was detected as, see [`CameraModel`].
     pub fn model(&self) -> CameraModel {
         self.model
+    }
+
+    /// Asks an OBSBOT Tiny 4K which tracking mode it is in.
+    ///
+    /// The answer is picked up from the command channel, retrying until the camera
+    /// returns the answer to our own request rather than the previous one (#72).
+    fn read_ai_mode_tiny_4k(&self) -> Result<AIMode, T4lError> {
+        let sequence_nr = self.sequence_nr.fetch_add(1, Ordering::Relaxed);
+
+        self.send_cmd(0x2, 0x2, &LegacyAiModeCommand::status_request(sequence_nr))?;
+
+        for _ in 0..LEGACY_REPLY_ATTEMPTS {
+            sleep(LEGACY_REPLY_GAP);
+
+            if let Ok(reply) = self.transport.get_reply()
+                && let Some(mode) = LegacyAiModeCommand::parse_status(&reply, sequence_nr)
+            {
+                return Ok(mode);
+            }
+        }
+
+        Ok(AIMode::Unknown)
     }
 
     /// Whether this camera has the given AI tracking mode.
@@ -153,8 +197,15 @@ impl Tiny2Camera for Camera {
         }
     }
 
+    /// Reads the tracking mode the camera is in.
+    ///
+    /// The Tiny 2 keeps it in the status buffer. The Tiny 4K leaves those bytes at
+    /// zero and answers a separate request instead (#72).
     fn get_ai_mode(&self) -> Result<AIMode, T4lError> {
-        Ok(self.get_status()?.ai_mode)
+        match self.model {
+            CameraModel::Tiny2 => Ok(self.get_status()?.ai_mode),
+            CameraModel::Tiny4K => self.read_ai_mode_tiny_4k(),
+        }
     }
 
     /// Moves the camera to a stored preset position.

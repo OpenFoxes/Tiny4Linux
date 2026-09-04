@@ -151,6 +151,19 @@ impl CameraTransport {
         Ok(CameraStatus::decode_for(model, &data))
     }
 
+    /// Reads the answer an OBSBOT Tiny 4K left on its command channel.
+    ///
+    /// The camera keeps the previous answer there until the new one is ready, and a
+    /// read before any request stalls, so callers have to retry and check the
+    /// sequence number of what they get back (#72).
+    pub fn get_reply(&self) -> Result<[u8; 60], T4lError> {
+        let mut data: [u8; 60] = [0u8; 60];
+        self.get_cur(0x2, 0x2, &mut data)
+            .map_err(|x| T4lError::USBIOError(x.0))?;
+
+        Ok(data)
+    }
+
     /// Reads the preset position table of an OBSBOT Tiny 4K.
     ///
     /// The camera returns the whole table in one go on extension unit 2,

@@ -49,6 +49,17 @@ fn crc16_usb(bytes: &[u8]) -> u16 {
 /// - `payload`: command arguments, may be empty and at most 48 bytes, since the
 ///   frame is padded to the 60 byte extension unit buffer
 pub fn command_legacy(route: u8, command: [u8; 2], sequence_nr: u16, payload: &[u8]) -> [u8; 60] {
+    command_legacy_typed(route, command, sequence_nr, payload, FRAME_TYPE_SET)
+}
+
+/// Builds a legacy frame with an explicit frame type, `0x10` to set and `0x12` to ask.
+pub fn command_legacy_typed(
+    route: u8,
+    command: [u8; 2],
+    sequence_nr: u16,
+    payload: &[u8],
+    frame_type: u8,
+) -> [u8; 60] {
     debug_assert!(
         payload.len() <= 60 - FRAME_HEADER_LENGTH as usize,
         "payload does not fit into the extension unit buffer"
@@ -60,7 +71,7 @@ pub fn command_legacy(route: u8, command: [u8; 2], sequence_nr: u16, payload: &[
     frame[0] = 0xaa;
     frame[1] = 0x00;
     frame[2] = length;
-    frame[3] = FRAME_TYPE_SET;
+    frame[3] = frame_type;
     frame[4..6].copy_from_slice(&sequence_nr.to_be_bytes());
     // frame[6..8] stays zeroed while the checksum is calculated over it
     frame[8] = 0x00;
