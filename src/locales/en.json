@@ -12,12 +12,17 @@
     "info": {
       "ai_mode": "AI Mode",
       "camera_status": "Camera status",
+      "custom_presets": "Custom presets",
       "exposure": "Exposure",
       "hdr": "HDR",
+      "movement": "Movement",
+      "pan": "Pan",
       "presets": "Presets",
       "sleep_mode": "Sleep Mode",
+      "tilt": "Tilt",
       "tracking": "Tracking",
       "tracking_speed": "Tracking Speed",
+      "zoom": "Zoom",
       "t4l_version": "T4L Version"
     }
   },
@@ -46,6 +51,22 @@
         "clear_x": "Clear %{to_clear}",
         "0x02_hex_string": "0x02 hex string",
         "0x06_hex_string": "0x06 hex string"
+      },
+      "zoom": {
+        "placeholder": "Enter zoom value",
+        "apply": "Set"
+      },
+      "pan": {
+        "placeholder": "Enter pan value",
+        "apply": "Set"
+      },
+      "tilt": {
+        "placeholder": "Enter tilt value",
+        "apply": "Set"
+      },
+      "custom_presets": {
+        "placeholder": "Preset name",
+        "save": "Save"
       }
     },
     "tooltips": {
@@ -62,6 +83,11 @@
         "turns_off": "Turns off HDR on click"
       },
       "preset": "Sets the cameras position to preset %{preset_number}",
+      "custom_presets": {
+        "save": "Save the current position and zoom",
+        "recall": "Pan: %{pan}  Tilt: %{tilt}  Zoom: %{zoom}",
+        "delete": "Delete this preset"
+      },
       "window_mode": {
         "widget": "Switch to Widget-Mode",
         "dashboard": "Switch to Dashboard-Mode"
@@ -112,6 +138,31 @@
       "option_on": "HDR on",
       "option_off": "HDR off"
     },
+    "zoom": {
+      "response_to_set": "Setting the camera zoom to %{value}",
+      "current": "Current zoom: %{current} (range %{min}-%{max})"
+    },
+    "pan": {
+      "response_to_set": "Setting the camera pan to %{value}",
+      "current": "Current pan: %{current} (range %{min}-%{max})"
+    },
+    "preset_save": {
+      "response_to_save": "Saved custom preset %{name}"
+    },
+    "preset_recall": {
+      "response_to_recall": "Recalling custom preset %{name}"
+    },
+    "preset_list": {
+      "empty": "No custom presets saved",
+      "entry": "%{name}: Pan %{pan}, Tilt %{tilt}, Zoom %{zoom}"
+    },
+    "preset_delete": {
+      "response_to_delete": "Deleted custom preset %{name}"
+    },
+    "tilt": {
+      "response_to_set": "Setting the camera tilt to %{value}",
+      "current": "Current tilt: %{current} (range %{min}-%{max})"
+    },
     "exposure": {
       "response_to_manual": "Setting exposure mode to manual",
       "response_to_global": "Setting exposure mode to global",
@@ -133,6 +184,13 @@
       "preset": "Sets the camera to a specific preset position previously defined in OBSBOT Center",
       "hdr": "Controls the HDR-mode of the camera",
       "exposure": "Controls the exposure-mode of the camera",
+      "zoom": "Controls the zoom of the camera",
+      "pan": "Controls the pan of the camera",
+      "tilt": "Controls the tilt of the camera",
+      "preset_save": "Saves the current position and zoom as a custom preset",
+      "preset_recall": "Recalls a saved custom preset",
+      "preset_list": "Lists all saved custom presets",
+      "preset_delete": "Deletes a saved custom preset",
       "info": "Displays information about the current state of the camera",
       "version": "Displays the version of the CLI-tool",
       "completions": "Generates shell-completion scripts for the CLI-tool",

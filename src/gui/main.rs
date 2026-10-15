@@ -13,7 +13,8 @@ use iced::{Length, Size, Subscription, Task, time, window};
 use rust_i18n::{i18n, set_locale, t};
 use std::time::Duration;
 use tiny4linux::{
-    AIMode, Camera, ExposureMode, SleepMode, Tiny2Camera, TrackingSpeed, get_language,
+    AIMode, Camera, CustomPreset, CustomPresetStore, ExposureMode, SUPPORTED_CAMERAS, SleepMode,
+    Tiny2Camera, TrackingSpeed, get_language,
 };
 
 i18n!("src/locales", fallback = "en");
@@ -29,6 +30,16 @@ enum Message {
     ChangePresetPosition(i8),
     ChangeHDR(bool),
     ChangeExposure(ExposureMode),
+    ChangeZoom(i32),
+    ChangeZoomText(String),
+    ChangePan(i32),
+    ChangePanText(String),
+    ChangeTilt(i32),
+    ChangeTiltText(String),
+    CustomPresetName(String),
+    SaveCustomPreset,
+    RecallCustomPreset(String),
+    DeleteCustomPreset(String),
     ChangeDebugging(bool),
     TextInput(String),
     TextInput02(String),
@@ -47,6 +58,20 @@ struct MainPanel {
     tracking: AIMode,
     tracking_speed: TrackingSpeed,
     hdr_on: bool,
+    zoom: Option<i32>,
+    zoom_min: i32,
+    zoom_max: i32,
+    zoom_text: String,
+    pan: Option<i32>,
+    pan_min: i32,
+    pan_max: i32,
+    pan_text: String,
+    tilt: Option<i32>,
+    tilt_min: i32,
+    tilt_max: i32,
+    tilt_text: String,
+    custom_presets: Vec<CustomPreset>,
+    custom_preset_name: String,
     debugging_on: bool,
     text_input: String,
     text_input_02: String,
@@ -54,12 +79,26 @@ struct MainPanel {
 
 impl MainPanel {
     fn init_state(window_mode: WindowMode) -> (Self, Task<Message>) {
-        let camera = Camera::new("OBSBOT Tiny 2").ok();
+        let camera = Camera::new(SUPPORTED_CAMERAS).ok();
 
         let status = camera
             .as_ref()
             .and_then(|c| c.get_status().ok())
             .unwrap_or_else(|| tiny4linux::CameraStatus::default());
+
+        let zoom_range = camera.as_ref().and_then(|c| c.get_zoom_range().ok());
+        let zoom = camera.as_ref().and_then(|c| c.get_zoom_absolute().ok());
+
+        let pan_range = camera.as_ref().and_then(|c| c.get_pan_range().ok());
+        let pan = camera.as_ref().and_then(|c| c.get_pan_absolute().ok());
+
+        let tilt_range = camera.as_ref().and_then(|c| c.get_tilt_range().ok());
+        let tilt = camera.as_ref().and_then(|c| c.get_tilt_absolute().ok());
+
+        let custom_presets = camera
+            .as_ref()
+            .map(|c| c.get_custom_presets())
+            .unwrap_or_default();
 
         (
             MainPanel {
@@ -70,6 +109,20 @@ impl MainPanel {
                 tracking: status.ai_mode,
                 tracking_speed: status.speed,
                 hdr_on: status.hdr_on,
+                zoom,
+                zoom_min: zoom_range.map(|r| r.0).unwrap_or(0),
+                zoom_max: zoom_range.map(|r| r.1).unwrap_or(0),
+                zoom_text: zoom.map(|z| z.to_string()).unwrap_or_default(),
+                pan,
+                pan_min: pan_range.map(|r| r.0).unwrap_or(0),
+                pan_max: pan_range.map(|r| r.1).unwrap_or(0),
+                pan_text: pan.map(|p| p.to_string()).unwrap_or_default(),
+                tilt,
+                tilt_min: tilt_range.map(|r| r.0).unwrap_or(0),
+                tilt_max: tilt_range.map(|r| r.1).unwrap_or(0),
+                tilt_text: tilt.map(|t| t.to_string()).unwrap_or_default(),
+                custom_presets,
+                custom_preset_name: String::new(),
                 debugging_on: false,
                 text_input: String::new(),
                 text_input_02: String::new(),
@@ -80,7 +133,7 @@ impl MainPanel {
 
     fn update(&mut self, message: Message) -> Task<Message> {
         if self.camera.is_none() {
-            self.camera = Camera::new("OBSBOT Tiny 2").ok();
+            self.camera = Camera::new(SUPPORTED_CAMERAS).ok();
 
             if self.camera.is_none() {
                 return Task::none();
@@ -150,6 +203,86 @@ impl MainPanel {
             }
             Message::ChangeExposure(mode) => {
                 camera.set_exposure_mode(mode).unwrap();
+                Task::none()
+            }
+            Message::ChangeZoom(value) => {
+                self.zoom = Some(value);
+                self.zoom_text = value.to_string();
+                camera.set_zoom_absolute(value).unwrap();
+                Task::none()
+            }
+            Message::ChangeZoomText(s) => {
+                self.zoom_text = s;
+                Task::none()
+            }
+            Message::ChangePan(value) => {
+                let value = value.clamp(self.pan_min, self.pan_max);
+                self.pan = Some(value);
+                self.pan_text = value.to_string();
+                camera.set_pan_absolute(value).unwrap();
+                Task::none()
+            }
+            Message::ChangePanText(s) => {
+                self.pan_text = s;
+                Task::none()
+            }
+            Message::ChangeTilt(value) => {
+                let value = value.clamp(self.tilt_min, self.tilt_max);
+                self.tilt = Some(value);
+                self.tilt_text = value.to_string();
+                camera.set_tilt_absolute(value).unwrap();
+                Task::none()
+            }
+            Message::ChangeTiltText(s) => {
+                self.tilt_text = s;
+                Task::none()
+            }
+            Message::CustomPresetName(s) => {
+                self.custom_preset_name = s;
+                Task::none()
+            }
+            Message::SaveCustomPreset => {
+                let store = CustomPresetStore::new();
+
+                if !self.custom_preset_name.trim().is_empty()
+                    && let (Some(pan), Some(tilt), Some(zoom)) = (self.pan, self.tilt, self.zoom)
+                {
+                    store
+                        .save(&CustomPreset {
+                            name: self.custom_preset_name.clone(),
+                            pan,
+                            tilt,
+                            zoom,
+                        })
+                        .unwrap();
+
+                    self.custom_presets = store.load();
+                    self.custom_preset_name.clear();
+                }
+
+                Task::none()
+            }
+            Message::RecallCustomPreset(name) => {
+                camera.recall_custom_preset(&name).unwrap();
+
+                let store = CustomPresetStore::new();
+                let preset = store.load().into_iter().find(|p| p.name == name).unwrap();
+
+                self.tracking = AIMode::NoTracking;
+                self.awake = SleepMode::Awake;
+                self.pan = Some(preset.pan);
+                self.pan_text = preset.pan.to_string();
+                self.tilt = Some(preset.tilt);
+                self.tilt_text = preset.tilt.to_string();
+                self.zoom = Some(preset.zoom);
+                self.zoom_text = preset.zoom.to_string();
+
+                Task::none()
+            }
+            Message::DeleteCustomPreset(name) => {
+                let store = CustomPresetStore::new();
+                store.delete(&name).unwrap();
+                self.custom_presets = store.load();
                 Task::none()
             }
             Message::ChangeDebugging(new_mode) => {

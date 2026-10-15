@@ -17,11 +17,11 @@ impl CameraTransport {
     /// Creates a new instance of the CameraTransport struct.
     ///
     /// This function initializes a new instance by attempting to open a camera
-    /// using the provided `hint`. If the camera cannot be opened, it returns an
+    /// using the provided `hints`. If the camera cannot be opened, it returns an
     /// error of type `T4lError`.
     ///
     /// # Parameters
-    /// - `hint`: A string slice that serves as a hint to identify the camera to open.
+    /// - `hints`: A slice of string slices that serves as hints to identify the camera to open.
     ///
     /// # Returns
     /// - `Ok(Self)`: A new instance of the struct if the camera is successfully opened.
@@ -29,15 +29,15 @@ impl CameraTransport {
     ///
     /// # Examples
     /// ```rust,ignore
-    /// let instance = CameraTransport::new("OBSBOT Tiny 2");
+    /// let instance = CameraTransport::new(&["OBSBOT Tiny 2", "OBSBOT Tiny 3"]);
     /// match instance {
     ///     Ok(camera) => println!("Camera opened successfully."),
     ///     Err(e) => println!("Failed to open camera: {:?}", e),
     /// }
     /// ```
-    pub fn new(hint: &str) -> Result<Self, T4lError> {
+    pub fn new(hints: &[&str]) -> Result<Self, T4lError> {
         Ok(Self {
-            handle: open_camera(hint)?,
+            handle: open_camera(hints)?,
         })
     }
 
@@ -238,5 +238,41 @@ impl CameraTransport {
 
     fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno> {
         self.handle.io(unit, selector, query, data)
+    }
+
+    pub fn get_zoom_absolute(&self) -> Result<i32, T4lError> {
+        self.handle
+            .get_zoom_absolute()
+            .map_err(|e| T4lError::USBIOError(e.0))
+    }
+
+    pub fn set_zoom_absolute(&self, value: i32) -> Result<(), T4lError> {
+        self.handle
+            .set_zoom_absolute(value)
+            .map_err(|e| T4lError::USBIOError(e.0))
+    }
+
+    pub fn get_zoom_range(&self) -> Result<(i32, i32), T4lError> {
+        self.handle
+            .get_zoom_range()
+            .map_err(|e| T4lError::USBIOError(e.0))
+    }
+
+    pub fn get_control(&self, id: u32) -> Result<i32, T4lError> {
+        self.handle
+            .get_control(id)
+            .map_err(|e| T4lError::USBIOError(e.0))
+    }
+
+    pub fn set_control(&self, id: u32, value: i32) -> Result<(), T4lError> {
+        self.handle
+            .set_control(id, value)
+            .map_err(|e| T4lError::USBIOError(e.0))
+    }
+
+    pub fn get_control_range(&self, id: u32) -> Result<(i32, i32), T4lError> {
+        self.handle
+            .get_control_range(id)
+            .map_err(|e| T4lError::USBIOError(e.0))
     }
 }

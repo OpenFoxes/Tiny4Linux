@@ -4,7 +4,7 @@ use clap::{Parser, Subcommand};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
-use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera, get_language};
+use tiny4linux::{AIMode, Camera, SUPPORTED_CAMERAS, SleepMode, Tiny2Camera, get_language};
 
 i18n!("src/locales", fallback = "en");
 
@@ -43,6 +43,14 @@ enum Command {
     },
     #[command(alias = "position", subcommand_required = false, about = t!("cli.help.preset"))]
     Preset { position_id: Option<i8> },
+    #[command(about = t!("cli.help.preset_save"))]
+    PresetSave { name: String },
+    #[command(about = t!("cli.help.preset_recall"))]
+    PresetRecall { name: String },
+    #[command(about = t!("cli.help.preset_list"))]
+    PresetList,
+    #[command(about = t!("cli.help.preset_delete"))]
+    PresetDelete { name: String },
     #[command(about = t!("cli.help.hdr"))]
     Hdr {
         #[command(subcommand)]
@@ -53,6 +61,12 @@ enum Command {
         #[command(subcommand)]
         exposure_mode: Option<ExposureArg>,
     },
+    #[command(about = t!("cli.help.zoom"))]
+    Zoom { value: Option<i32> },
+    #[command(about = t!("cli.help.pan"))]
+    Pan { value: Option<i32> },
+    #[command(about = t!("cli.help.tilt"))]
+    Tilt { value: Option<i32> },
     #[command(about = t!("cli.help.info"))]
     Info,
     #[command(about = t!("cli.help.version"))]
@@ -106,7 +120,7 @@ fn main() {
 
     let args = Args::parse();
 
-    let mut camera = Camera::new("OBSBOT Tiny 2").ok();
+    let mut camera = Camera::new(SUPPORTED_CAMERAS).ok();
 
     if camera.is_none() {
         println!("{}", t!("shared.errors.no_camera"));
@@ -126,8 +140,15 @@ fn main() {
         Command::Tracking { tracking_mode } => evaluate_tracking_arg(tracking_mode.clone(), camera),
         Command::Speed { speed } => evaluate_speed_arg(speed.clone(), camera),
         Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera),
+        Command::PresetSave { name } => evaluate_preset_save_arg(name.clone(), camera),
+        Command::PresetRecall { name } => evaluate_preset_recall_arg(name.clone(), camera),
+        Command::PresetList => evaluate_preset_list_arg(camera),
+        Command::PresetDelete { name } => evaluate_preset_delete_arg(name.clone(), camera),
         Command::Hdr { hdr_mode } => evaluate_hdr_arg(hdr_mode.clone(), camera),
         Command::Exposure { exposure_mode } => evaluate_exposure_arg(exposure_mode.clone(), camera),
+        Command::Zoom { value } => evaluate_zoom_arg(*value, camera),
+        Command::Pan { value } => evaluate_pan_arg(*value, camera),
+        Command::Tilt { value } => evaluate_tilt_arg(*value, camera),
         Command::Info => {
             let info = camera.get_status();
 
@@ -375,6 +396,60 @@ fn evaluate_speed_arg(speed: Option<TrackingSpeedArg>, camera: Camera) {
     }
 }
 
+fn evaluate_zoom_arg(value: Option<i32>, camera: Camera) {
+    match value {
+        Some(value) => {
+            println!("{}", t!("cli.zoom.response_to_set", value = value));
+            camera.set_zoom_absolute(value).unwrap();
+        }
+        None => {
+            let (min, max) = camera.get_zoom_range().unwrap();
+            let current = camera.get_zoom_absolute().unwrap();
+
+            println!(
+                "{}",
+                t!("cli.zoom.current", current = current, min = min, max = max)
+            );
+        }
+    }
+}
+
+fn evaluate_pan_arg(value: Option<i32>, camera: Camera) {
+    match value {
+        Some(value) => {
+            println!("{}", t!("cli.pan.response_to_set", value = value));
+            camera.set_pan_absolute(value).unwrap();
+        }
+        None => {
+            let (min, max) = camera.get_pan_range().unwrap();
+            let current = camera.get_pan_absolute().unwrap();
+
+            println!(
+                "{}",
+                t!("cli.pan.current", current = current, min = min, max = max)
+            );
+        }
+    }
+}
+
+fn evaluate_tilt_arg(value: Option<i32>, camera: Camera) {
+    match value {
+        Some(value) => {
+            println!("{}", t!("cli.tilt.response_to_set", value = value));
+            camera.set_tilt_absolute(value).unwrap();
+        }
+        None => {
+            let (min, max) = camera.get_tilt_range().unwrap();
+            let current = camera.get_tilt_absolute().unwrap();
+
+            println!(
+                "{}",
+                t!("cli.tilt.current", current = current, min = min, max = max)
+            );
+        }
+    }
+}
+
 fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
     if position_id.is_none() {
         let options = [1, 2, 3];
@@ -401,6 +476,55 @@ fn evaluate_preset_arg(position_id: Option<i8>, camera: Camera) {
     camera
         .goto_preset_position(position_id.unwrap() - 1)
         .unwrap();
+}
+
+fn evaluate_preset_save_arg(name: String, camera: Camera) {
+    match camera.save_custom_preset(&name) {
+        Ok(_) => println!("{}", t!("cli.preset_save.response_to_save", name = name)),
+        Err(e) => println!("{}", e),
+    }
+}
+
+fn evaluate_preset_recall_arg(name: String, camera: Camera) {
+    match camera.recall_custom_preset(&name) {
+        Ok(_) => println!(
+            "{}",
+            t!("cli.preset_recall.response_to_recall", name = name)
+        ),
+        Err(e) => println!("{}", e),
+    }
+}
+
+fn evaluate_preset_list_arg(camera: Camera) {
+    let presets = camera.get_custom_presets();
+
+    if presets.is_empty() {
+        println!("{}", t!("cli.preset_list.empty"));
+        return;
+    }
+
+    for preset in presets {
+        println!(
+            "{}",
+            t!(
+                "cli.preset_list.entry",
+                name = preset.name,
+                pan = preset.pan,
+                tilt = preset.tilt,
+                zoom = preset.zoom
+            )
+        );
+    }
+}
+
+fn evaluate_preset_delete_arg(name: String, camera: Camera) {
+    match camera.delete_custom_preset(&name) {
+        Ok(_) => println!(
+            "{}",
+            t!("cli.preset_delete.response_to_delete", name = name)
+        ),
+        Err(e) => println!("{}", e),
+    }
 }
 
 fn evaluate_hdr_arg(hdr_mode: Option<OnOffArg>, camera: Camera) {

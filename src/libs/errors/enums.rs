@@ -13,6 +13,8 @@ pub enum T4lError {
     IOError(#[from] io::Error),
     #[error("no camera found")]
     NoCameraFound,
+    #[error("preset '{0}' not found")]
+    PresetNotFound(String),
     #[error("Invalid setting")]
     InvalidSetting,
 }

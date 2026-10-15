@@ -10,8 +10,8 @@ use crate::ui_modules::settings_area::settings_area;
 use crate::{MainPanel, Message, WindowMode};
 use iced::alignment::Vertical;
 use iced::widget::{
-    Column, Container, Space, button, column, container, horizontal_rule, horizontal_space, image,
-    row, text,
+    Column, Container, Scrollable, Space, button, column, container, horizontal_rule,
+    horizontal_space, image, row, text,
 };
 use iced::{Alignment, FillPortion, Length};
 use rust_i18n::t;
@@ -89,8 +89,7 @@ fn dashboard_settings_area(app: &MainPanel) -> Column<'static, Message> {
             Space::with_width(Length::Fill),
             button_window_mode_change(WindowMode::Dashboard)
         ],
-        settings_area(app),
-        debug_area(app)
+        Scrollable::new(column![settings_area(app), debug_area(app)]).height(Length::Fill)
     ]
 }
 
@@ -118,5 +117,5 @@ fn widget_head_area(app: &MainPanel) -> Container<'static, Message> {
 }
 
 fn widget_body_area(app: &MainPanel) -> Column<'static, Message> {
-    column![settings_area(app)]
+    column![Scrollable::new(settings_area(app)).height(Length::Fill)]
 }

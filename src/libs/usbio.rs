@@ -14,6 +14,12 @@ use std::str;
 pub trait UvcUsbIo {
     fn info(&self) -> Result<(), Errno>;
     fn io(&self, unit: u8, selector: u8, query: u8, data: &mut [u8]) -> Result<(), Errno>;
+    fn get_control(&self, id: u32) -> Result<i32, Errno>;
+    fn set_control(&self, id: u32, value: i32) -> Result<(), Errno>;
+    fn get_control_range(&self, id: u32) -> Result<(i32, i32), Errno>;
+    fn get_zoom_absolute(&self) -> Result<i32, Errno>;
+    fn set_zoom_absolute(&self, value: i32) -> Result<(), Errno>;
+    fn get_zoom_range(&self) -> Result<(i32, i32), Errno>;
 }
 
 #[derive(Debug)]
@@ -61,15 +67,72 @@ impl UvcUsbIo for CameraHandle {
             }
         }
     }
-}
 
-pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, T4lError> {
-    if let Ok(file) = File::open(hint) {
-        return Ok(file.into());
+    fn get_control(&self, id: u32) -> Result<i32, Errno> {
+        let control = v4l2_control { id, value: 0 };
+
+        unsafe {
+            match ioctl_videoc_g_ctrl(self.0.as_raw_fd(), &mut [control]) {
+                Ok(_) => Ok(control.value),
+                _ => Err(Errno(Error::last_raw())),
+            }
+        }
     }
 
-    if let Ok(file) = File::open("/dev/".to_owned() + hint) {
-        return Ok(file.into());
+    fn set_control(&self, id: u32, value: i32) -> Result<(), Errno> {
+        let control = v4l2_control { id, value };
+
+        unsafe {
+            match ioctl_videoc_s_ctrl(self.0.as_raw_fd(), &mut [control]) {
+                Ok(_) => Ok(()),
+                _ => Err(Errno(Error::last_raw())),
+            }
+        }
+    }
+
+    fn get_control_range(&self, id: u32) -> Result<(i32, i32), Errno> {
+        let query = v4l2_queryctrl {
+            id,
+            ..Default::default()
+        };
+
+        unsafe {
+            match ioctl_videoc_queryctrl(self.0.as_raw_fd(), &mut [query]) {
+                Ok(_) => Ok((query.minimum, query.maximum)),
+                _ => Err(Errno(Error::last_raw())),
+            }
+        }
+    }
+
+    fn get_zoom_absolute(&self) -> Result<i32, Errno> {
+        self.get_control(V4L2_CID_ZOOM_ABSOLUTE)
+    }
+
+    fn set_zoom_absolute(&self, value: i32) -> Result<(), Errno> {
+        self.set_control(V4L2_CID_ZOOM_ABSOLUTE, value)
+    }
+
+    fn get_zoom_range(&self) -> Result<(i32, i32), Errno> {
+        match self.get_control_range(V4L2_CID_ZOOM_ABSOLUTE) {
+            Ok((min, max)) if max > min => Ok((min, max)),
+            // The uvcvideo driver reports a degenerate range (0..0) for the
+            // OBSBOT zoom control, so fall back to a 0-100 scale.
+            _ => Ok((0, 100)),
+        }
+    }
+}
+
+pub const SUPPORTED_CAMERAS: &[&str] = &["OBSBOT Tiny 2", "OBSBOT Tiny 3"];
+
+pub(crate) fn open_camera(hints: &[&str]) -> Result<CameraHandle, T4lError> {
+    for hint in hints {
+        if let Ok(file) = File::open(hint) {
+            return Ok(file.into());
+        }
+
+        if let Ok(file) = File::open("/dev/".to_owned() + hint) {
+            return Ok(file.into());
+        }
     }
 
     // enumerate all cameras and check for match
@@ -81,9 +144,10 @@ pub(crate) fn open_camera(hint: &str) -> Result<CameraHandle, T4lError> {
     for path in glob_with("/dev/video*", options).unwrap().flatten() {
         if let Ok(device) = File::open(&path) {
             if let Ok(video_info) = v4l2_capability::new(&device) {
-                if (str::from_utf8(&video_info.card).unwrap().contains(hint)
-                    || str::from_utf8(&video_info.bus_info).unwrap().contains(hint))
-                    && (video_info.device_caps & 0x800000 == 0)
+                if hints.iter().any(|hint| {
+                    str::from_utf8(&video_info.card).unwrap().contains(hint)
+                        || str::from_utf8(&video_info.bus_info).unwrap().contains(hint)
+                }) && (video_info.device_caps & 0x800000 == 0)
                 {
                     return Ok(device.into());
                 }
@@ -128,6 +192,58 @@ ioctl_read_buf!(
     VIDIOC_QUERYCAP_MAGIC,
     VIDIOC_QUERYCAP_QUERY_MESSAGE,
     v4l2_capability
+);
+
+/* Standard UVC Camera-Terminal zoom control (V4L2_CID_ZOOM_ABSOLUTE,
+ * defined in linux/v4l2-controls.h). Camera Terminal controls are not
+ * reachable via UVCIOC_CTRL_QUERY, so V4L2 control ioctls are used. */
+const V4L2_CID_ZOOM_ABSOLUTE: u32 = 0x009A_090D;
+pub const V4L2_CID_PAN_ABSOLUTE: u32 = 0x009A_0908;
+pub const V4L2_CID_TILT_ABSOLUTE: u32 = 0x009A_0909;
+
+#[allow(non_camel_case_types)]
+#[repr(C)]
+#[derive(Copy, Clone, Default, Debug)]
+pub struct v4l2_control {
+    id: u32,
+    value: i32,
+}
+
+#[allow(non_camel_case_types)]
+#[repr(C)]
+#[derive(Copy, Clone, Default, Debug)]
+pub struct v4l2_queryctrl {
+    id: u32,
+    ctrl_type: u32,
+    name: [u8; 32],
+    minimum: i32,
+    maximum: i32,
+    step: i32,
+    default_value: i32,
+    flags: u32,
+    reserved: [u32; 2],
+}
+
+const VIDIOC_G_CTRL_QUERY_MESSAGE: u8 = 27; // Defined in linux/videodev2.h
+const VIDIOC_S_CTRL_QUERY_MESSAGE: u8 = 28; // Defined in linux/videodev2.h
+const VIDIOC_QUERYCTRL_QUERY_MESSAGE: u8 = 36; // Defined in linux/videodev2.h
+ioctl_readwrite_buf!(
+    ioctl_videoc_g_ctrl,
+    VIDIOC_QUERYCAP_MAGIC,
+    VIDIOC_G_CTRL_QUERY_MESSAGE,
+    v4l2_control
+);
+ioctl_readwrite_buf!(
+    ioctl_videoc_s_ctrl,
+    VIDIOC_QUERYCAP_MAGIC,
+    VIDIOC_S_CTRL_QUERY_MESSAGE,
+    v4l2_control
+);
+ioctl_readwrite_buf!(
+    ioctl_videoc_queryctrl,
+    VIDIOC_QUERYCAP_MAGIC,
+    VIDIOC_QUERYCTRL_QUERY_MESSAGE,
+    v4l2_queryctrl
 );
 
 #[allow(non_camel_case_types)]

@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">🇩🇪 🇬🇧 🇪🇸 🇫🇷 🇮🇹 🇹🇷 🇺🇦</p>
-<p align="center"><b>A GUI-Controller for the OBSBOT Tiny2</b></p>
+<p align="center"><b>A GUI-Controller for the OBSBOT Tiny2 and Tiny3</b></p>
 
 ---
 
@@ -13,8 +13,8 @@
 
 <img src="src/assets/screenshot-widget.png" align="right" width="20%" alt="GUI of the current version"/>
 
-Control your OBSBOT Tiny2 camera from your Linux desktop or terminal.
-Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, and more.
+Control your OBSBOT Tiny2 or Tiny3 camera from your Linux desktop or terminal.
+Set the camera to sleep, wake it up, set the AI-tracking mode, set the tracking speed, set the preset position, control the pan, tilt, and zoom, save custom presets, and more.
 
 ### Credit
 
@@ -26,6 +26,10 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 - Toggle for **Sleep/Wake**
 - Controls for the **tracking speed**
 - Controls for **preset positions**
+- **Custom presets** to save and recall the current pan, tilt, and zoom
+- **Pan/Tilt** movement control (GUI and CLI)
+- **Zoom** control (GUI and CLI)
+- Support for the **OBSBOT Tiny 3**
 - **CLI** for camera controls (same functions as GUI)
 - Updated Dependencies
 
@@ -37,11 +41,10 @@ which itself is substantially based on [samliddicott's meet4k package](https://g
 ### Info on PTZ-/Gimbal-Controls
 
 The main focus of the [original project](https://github.com/cgevans/tiny2) was the implementation of OBSBOT-specific functionalities on Linux.
-General controls, such as **color settings, exposure, or movement control**, are already implemented via the standard video interface **V4L2**.
+General controls, such as **color settings or exposure**, are already implemented via the standard video interface **V4L2**.
 Therefore, the use of a corresponding V4L2 tool, such as **[Camset](https://github.com/azeam/camset)** (GUI), is currently recommended for controlling these properties.
 
-An integration in Tiny4Linux is planned eventually.
-Progress on that topic will be tracked in the corresponding [issue](https://github.com/OpenFoxes/Tiny4Linux/issues/86).
+The movement control (**pan**, **tilt**, and **zoom**) is directly integrated into Tiny4Linux via V4L2 and is available in both the GUI and the CLI.
 
 ### Motivation
 

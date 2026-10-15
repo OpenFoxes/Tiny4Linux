@@ -3788,6 +3788,8 @@ dependencies = [
  "iced_font_awesome",
  "nix 0.30.1",
  "rust-i18n",
+ "serde",
+ "serde_json",
  "sys-locale",
  "test-case",
  "thiserror 2.0.18",
