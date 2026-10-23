@@ -25,6 +25,14 @@ impl From<File> for CameraHandle {
     }
 }
 
+impl CameraHandle {
+    pub fn card_name(&self) -> Option<String> {
+        let video_info = v4l2_capability::new(&self.0).ok()?;
+        let card = str::from_utf8(&video_info.card).ok()?;
+        Some(card.trim_end_matches('\0').to_string())
+    }
+}
+
 impl UvcUsbIo for CameraHandle {
     fn info(&self) -> Result<(), Errno> {
         match v4l2_capability::new(&self.0) {
