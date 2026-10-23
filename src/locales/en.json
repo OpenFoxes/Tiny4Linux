@@ -18,7 +18,10 @@
       "sleep_mode": "Sleep Mode",
       "tracking": "Tracking",
       "tracking_speed": "Tracking Speed",
-      "t4l_version": "T4L Version"
+      "t4l_version": "T4L Version",
+      "auto_sleep": "Auto-Sleep",
+      "sleep_background": "Sleep Background",
+      "sleep_background_mirror": "Sleep Background Mirrored"
     }
   },
   "gui": {
@@ -122,7 +125,8 @@
       "option_face": "Face"
     },
     "errors": {
-      "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera."
+      "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera.",
+      "invalid_auto_sleep": "expected \"off\", seconds (e.g. 90 or 30s) or minutes (e.g. 2m), at most 32767 seconds"
     },
     "help": {
       "sleep": "Sets the camera to sleep",
@@ -138,8 +142,15 @@
       "completions": "Generates shell-completion scripts for the CLI-tool",
       "args": {
         "debug_logging": "Turning the debug logging on",
-        "lang": "Setting the language for the current command execution"
-      }
+        "lang": "Setting the language for the current command execution",
+        "auto_sleep_time": "off, 30s, 2m, 10m or a time in seconds",
+        "sleep_background_mirror": "Mirrors the sleep background"
+      },
+      "auto_sleep": "Sets the time after which the camera falls asleep on its own",
+      "sleep_background": "Sets what the camera shows while asleep"
+    },
+    "settings": {
+      "response": "Setting %{setting} to %{value}"
     }
   },
   "display": {
@@ -174,6 +185,15 @@
     "states": {
       "on": "On",
       "off": "Off"
+    },
+    "auto_sleep": {
+      "on": "%{seconds} s",
+      "off": "Off (%{seconds} s)"
+    },
+    "sleep_background": {
+      "black": "Black",
+      "image": "Image",
+      "unknown": "Unknown"
     }
   },
   "errors": {

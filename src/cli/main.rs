@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use clap::{Parser, Subcommand};
+use clap::{ArgGroup, Parser, Subcommand, ValueEnum};
 use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
-use tiny4linux::{AIMode, Camera, SleepMode, Tiny2Camera, get_language};
+use tiny4linux::{
+    AIMode, AutoSleepTime, Camera, SleepBackground, SleepMode, Tiny2Camera, get_language,
+};
 
 i18n!("src/locales", fallback = "en");
 
@@ -53,6 +55,19 @@ enum Command {
         #[command(subcommand)]
         exposure_mode: Option<ExposureArg>,
     },
+    #[command(about = t!("cli.help.auto_sleep"))]
+    AutoSleep {
+        #[arg(value_parser = parse_auto_sleep, help = t!("cli.help.args.auto_sleep_time"))]
+        time: AutoSleepArg,
+    },
+    #[command(about = t!("cli.help.sleep_background"))]
+    #[command(group(ArgGroup::new("setting").required(true).multiple(true).args(["background", "mirror"])))]
+    SleepBackground {
+        #[arg(value_enum)]
+        background: Option<SleepBackgroundArg>,
+        #[arg(long, value_enum, help = t!("cli.help.args.sleep_background_mirror"))]
+        mirror: Option<OnOffArg>,
+    },
     #[command(about = t!("cli.help.info"))]
     Info,
     #[command(about = t!("cli.help.version"))]
@@ -61,7 +76,7 @@ enum Command {
     Completions { shell: clap_complete::Shell },
 }
 
-#[derive(Subcommand, Clone)]
+#[derive(Subcommand, ValueEnum, Clone)]
 enum OnOffArg {
     On,
     Off,
@@ -100,6 +115,59 @@ enum ExposureArg {
     Face,
 }
 
+#[derive(Clone, Debug, PartialEq)]
+enum AutoSleepArg {
+    Off,
+    Seconds(i16),
+}
+
+#[derive(ValueEnum, Clone)]
+enum SleepBackgroundArg {
+    Black,
+    Image,
+}
+
+/// Parses `off`, plain seconds (`90`), seconds with unit (`30s`) or minutes (`2m`, `10m`).
+fn parse_auto_sleep(value: &str) -> Result<AutoSleepArg, String> {
+    let value = value.trim().to_lowercase();
+    if value == "off" {
+        return Ok(AutoSleepArg::Off);
+    }
+
+    let (number, factor) = if let Some(minutes) = value.strip_suffix('m') {
+        (minutes, 60)
+    } else {
+        (value.strip_suffix('s').unwrap_or(&value), 1)
+    };
+
+    number
+        .parse::<i16>()
+        .ok()
+        .and_then(|n| n.checked_mul(factor))
+        .filter(|seconds| *seconds > 0)
+        .map(AutoSleepArg::Seconds)
+        .ok_or_else(|| t!("cli.errors.invalid_auto_sleep").to_string())
+}
+
+fn on_off(state: bool) -> Cow<'static, str> {
+    if state {
+        t!("display.states.on")
+    } else {
+        t!("display.states.off")
+    }
+}
+
+fn print_setting(setting: Cow<str>, value: impl std::fmt::Display) {
+    println!(
+        "{}",
+        t!(
+            "cli.settings.response",
+            setting = setting,
+            value = value.to_string()
+        )
+    );
+}
+
 fn main() {
     let language = get_language(false);
     set_locale(language.as_str());
@@ -128,6 +196,10 @@ fn main() {
         Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera),
         Command::Hdr { hdr_mode } => evaluate_hdr_arg(hdr_mode.clone(), camera),
         Command::Exposure { exposure_mode } => evaluate_exposure_arg(exposure_mode.clone(), camera),
+        Command::AutoSleep { time } => evaluate_auto_sleep_arg(time.clone(), camera),
+        Command::SleepBackground { background, mirror } => {
+            evaluate_sleep_background_arg(background.clone(), mirror.clone(), camera)
+        }
         Command::Info => {
             let info = camera.get_status();
 
@@ -142,6 +214,21 @@ fn main() {
                 println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
                 println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
                 println!("  💐  {}: {}", t!("shared.info.hdr"), info.hdr_on);
+                println!(
+                    "  ⏲️  {}: {}",
+                    t!("shared.info.auto_sleep"),
+                    info.auto_sleep
+                );
+                println!(
+                    "  🌙  {}: {}",
+                    t!("shared.info.sleep_background"),
+                    info.sleep_background
+                );
+                println!(
+                    "  🪞  {}: {}",
+                    t!("shared.info.sleep_background_mirror"),
+                    on_off(info.sleep_background_mirror)
+                );
             }
         }
         Command::Version => {
@@ -497,5 +584,66 @@ fn evaluate_exposure_arg(exposure_mode: Option<ExposureArg>, camera: Camera) {
 
             evaluate_exposure_arg(Option::from(options[selection].result.clone()), camera);
         }
+    }
+}
+
+fn evaluate_auto_sleep_arg(time: AutoSleepArg, camera: Camera) {
+    match time {
+        AutoSleepArg::Off => {
+            print_setting(t!("shared.info.auto_sleep"), t!("display.states.off"));
+            camera.disable_auto_sleep().unwrap();
+        }
+        AutoSleepArg::Seconds(seconds) => {
+            let time = AutoSleepTime(seconds);
+            print_setting(t!("shared.info.auto_sleep"), time);
+            camera.set_auto_sleep(time).unwrap();
+        }
+    }
+}
+
+fn evaluate_sleep_background_arg(
+    background: Option<SleepBackgroundArg>,
+    mirror: Option<OnOffArg>,
+    camera: Camera,
+) {
+    if let Some(background) = background {
+        let background = match background {
+            SleepBackgroundArg::Black => SleepBackground::Black,
+            SleepBackgroundArg::Image => SleepBackground::Image,
+        };
+        print_setting(t!("shared.info.sleep_background"), background);
+        camera.set_sleep_background(background).unwrap();
+    }
+
+    if let Some(mirror) = mirror {
+        let mirrored = matches!(mirror, OnOffArg::On);
+        print_setting(t!("shared.info.sleep_background_mirror"), on_off(mirrored));
+        camera.set_sleep_background_mirror(mirrored).unwrap();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{AutoSleepArg, parse_auto_sleep};
+    use test_case::test_case;
+
+    #[test_case("off", AutoSleepArg::Off; "off")]
+    #[test_case("30s", AutoSleepArg::Seconds(30); "seconds with unit")]
+    #[test_case("2m", AutoSleepArg::Seconds(120); "minutes are converted to seconds")]
+    #[test_case("10m", AutoSleepArg::Seconds(600); "ten minutes")]
+    #[test_case("90", AutoSleepArg::Seconds(90); "plain seconds")]
+    fn valid_auto_sleep(value: &str, expected: AutoSleepArg) {
+        assert_eq!(parse_auto_sleep(value), Ok(expected));
+    }
+
+    // 0 and negative times would turn auto-sleep off on the camera, which `off` already does
+    // while keeping the configured time; 32768 s and more do not fit the camera's i16.
+    #[test_case("0"; "zero")]
+    #[test_case("-5"; "negative")]
+    #[test_case("600m"; "minutes overflowing i16")]
+    #[test_case("32768"; "seconds overflowing i16")]
+    #[test_case("soon"; "not a number")]
+    fn invalid_auto_sleep(value: &str) {
+        assert!(parse_auto_sleep(value).is_err());
     }
 }

@@ -94,6 +94,29 @@ t4l exposure manual
 | Global | Uses global reference for setting the exposure    | `global` |
 | Face   | Uses a face as reference for setting the exposure | `face`   |
 
+## Auto-Sleep
+
+With the command `auto-sleep` you can set the time after which the camera falls asleep on its own,
+or turn auto-sleep off.
+
+```shell
+t4l auto-sleep 2m
+t4l auto-sleep off
+```
+
+Valid times are `off`, seconds (`90` or `30s`) and minutes (`2m`, `10m`).
+Turning auto-sleep off keeps the configured time, like OBSBOT Center does.
+
+## Sleep Background
+
+With the command `sleep-background` you can choose what the camera shows while asleep (`black` or the built-in `image`)
+and whether that background is mirrored.
+
+```shell
+t4l sleep-background image
+t4l sleep-background black --mirror off
+```
+
 ## Info
 
 You can display available information about the current state of the camera with the command `info`.

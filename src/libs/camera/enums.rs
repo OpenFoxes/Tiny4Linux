@@ -91,6 +91,73 @@ pub enum ExposureModeType {
     Manual,
 }
 
+/// Auto-sleep time as reported in the status block and sent with the auto-sleep command.
+///
+/// The camera stores seconds as `i16`; a negative value means auto-sleep is off and keeps
+/// the last time, so turning it on again restores it.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AutoSleepTime(pub i16);
+
+impl AutoSleepTime {
+    /// Factory default, used when there is no previous time to keep.
+    pub const DEFAULT_SECONDS: i16 = 120;
+
+    pub fn is_enabled(&self) -> bool {
+        self.0 > 0
+    }
+
+    pub fn seconds(&self) -> u16 {
+        self.0.unsigned_abs()
+    }
+
+    /// The value that turns auto-sleep off: OBSBOT Center sends the current time negated
+    /// (e.g. -120 when 120 s were set). An already disabled time is kept as it is.
+    pub fn disabled(&self) -> Self {
+        match self.0 {
+            t if t > 0 => AutoSleepTime(-t),
+            0 => AutoSleepTime(-Self::DEFAULT_SECONDS),
+            t => AutoSleepTime(t),
+        }
+    }
+}
+
+impl Display for AutoSleepTime {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.is_enabled() {
+            write!(
+                f,
+                "{}",
+                t!("display.auto_sleep.on", seconds = self.seconds())
+            )
+        } else if self.0 == 0 {
+            write!(f, "{}", t!("display.states.off"))
+        } else {
+            write!(
+                f,
+                "{}",
+                t!("display.auto_sleep.off", seconds = self.seconds())
+            )
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum SleepBackground {
+    Black,
+    Image,
+    Unknown,
+}
+
+impl Display for SleepBackground {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            SleepBackground::Black => write!(f, "{}", t!("display.sleep_background.black")),
+            SleepBackground::Image => write!(f, "{}", t!("display.sleep_background.image")),
+            SleepBackground::Unknown => write!(f, "{}", t!("display.sleep_background.unknown")),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod unit {
@@ -148,6 +215,52 @@ mod tests {
                 fn exposure_mode(mode: ExposureMode, expected: &str) {
                     assert_eq!(&mode.to_string(), expected);
                 }
+            }
+
+            mod auto_sleep_time {
+                use crate::AutoSleepTime;
+                use test_case::test_case;
+
+                #[test_case(120, "120 s"; "enabled")]
+                #[test_case(-120, "Off (120 s)"; "disabled keeps the time")]
+                #[test_case(0, "Off"; "zero")]
+                fn auto_sleep_time(seconds: i16, expected: &str) {
+                    assert_eq!(&AutoSleepTime(seconds).to_string(), expected);
+                }
+            }
+
+            mod sleep_background {
+                use crate::SleepBackground;
+                use test_case::test_case;
+
+                #[test_case(SleepBackground::Black, "Black"; "black")]
+                #[test_case(SleepBackground::Image, "Image"; "image")]
+                #[test_case(SleepBackground::Unknown, "Unknown"; "unknown")]
+                fn sleep_background(background: SleepBackground, expected: &str) {
+                    assert_eq!(&background.to_string(), expected);
+                }
+            }
+        }
+
+        mod auto_sleep_time {
+            use crate::AutoSleepTime;
+            use test_case::test_case;
+
+            // Turning auto-sleep off must keep the time (negated) so the camera, like
+            // OBSBOT Center, can restore it when auto-sleep is turned on again.
+            #[test_case(120, -120; "enabled time is negated")]
+            #[test_case(600, -600; "other enabled time is negated")]
+            #[test_case(-30, -30; "already disabled stays as it is")]
+            #[test_case(0, -120; "no time falls back to the factory default")]
+            fn disabled(current: i16, expected: i16) {
+                assert_eq!(AutoSleepTime(current).disabled(), AutoSleepTime(expected));
+            }
+
+            #[test_case(120, true; "positive is enabled")]
+            #[test_case(-120, false; "negative is disabled")]
+            #[test_case(0, false; "zero is disabled")]
+            fn is_enabled(seconds: i16, expected: bool) {
+                assert_eq!(AutoSleepTime(seconds).is_enabled(), expected);
             }
         }
     }

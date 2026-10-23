@@ -18,7 +18,10 @@
       "sleep_mode": "Schlafmodus",
       "tracking": "Tracking",
       "tracking_speed": "Tempo",
-      "t4l_version": "T4L-Version"
+      "t4l_version": "T4L-Version",
+      "auto_sleep": "Automatischer Schlaf",
+      "sleep_background": "Schlafhintergrund",
+      "sleep_background_mirror": "Schlafhintergrund gespiegelt"
     }
   },
   "gui": {
@@ -122,7 +125,8 @@
       "option_face": "Gesicht"
     },
     "errors": {
-      "info_error": "Die Kamera konnte nicht gefunden werden oder lieferte fehlerhafte Informationen. Bitte überprüfen Sie die Verbindung der Kamera."
+      "info_error": "Die Kamera konnte nicht gefunden werden oder lieferte fehlerhafte Informationen. Bitte überprüfen Sie die Verbindung der Kamera.",
+      "invalid_auto_sleep": "erwartet \"off\", Sekunden (z. B. 90 oder 30s) oder Minuten (z. B. 2m), höchstens 32767 Sekunden"
     },
     "help": {
       "sleep": "Versetzt die Kamera in den Schlafmodus",
@@ -138,8 +142,15 @@
       "completions": "Erzeugt Shell-Vervollständigungs-Skripte für das CLI-Tool",
       "args": {
         "debug_logging": "Das Debug-Logging einschalten",
-        "lang": "Die Sprache für die aktuelle Kommandoausführung festlegen"
-      }
+        "lang": "Die Sprache für die aktuelle Kommandoausführung festlegen",
+        "auto_sleep_time": "off, 30s, 2m, 10m oder eine Zeit in Sekunden",
+        "sleep_background_mirror": "Spiegelt den Schlafhintergrund"
+      },
+      "auto_sleep": "Legt fest, nach welcher Zeit die Kamera von selbst einschläft",
+      "sleep_background": "Legt fest, was die Kamera im Schlafmodus zeigt"
+    },
+    "settings": {
+      "response": "Setze %{setting} auf %{value}"
     }
   },
   "display": {
@@ -174,6 +185,15 @@
     "states": {
       "on": "An",
       "off": "Aus"
+    },
+    "auto_sleep": {
+      "on": "%{seconds} s",
+      "off": "Aus (%{seconds} s)"
+    },
+    "sleep_background": {
+      "black": "Schwarz",
+      "image": "Bild",
+      "unknown": "Unbekannt"
     }
   },
   "errors": {

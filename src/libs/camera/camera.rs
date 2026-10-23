@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::libs::camera::enums::{AIMode, ExposureMode, SleepMode, TrackingSpeed};
+use crate::libs::camera::enums::{
+    AIMode, AutoSleepTime, ExposureMode, SleepBackground, SleepMode, TrackingSpeed,
+};
 use crate::libs::camera::frame::FrameSequence;
 use crate::libs::camera::status::CameraStatus;
 use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
-    AIModeCommand, ExposureModeCommand, ExposureModeTypeCommand, GotoPresetPositionCommand,
-    HdrModeCommand, SleepCommand, TrackingSpeedCommand,
+    AIModeCommand, AutoSleepCommand, ExposureModeCommand, ExposureModeTypeCommand,
+    GotoPresetPositionCommand, HdrModeCommand, SleepBackgroundCommand,
+    SleepBackgroundMirrorCommand, SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
 
@@ -66,6 +69,11 @@ pub trait Tiny2Camera {
     fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), T4lError>;
     fn set_hdr_mode(&self, mode: bool) -> Result<(), T4lError>;
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), T4lError>;
+    fn set_auto_sleep(&self, time: AutoSleepTime) -> Result<(), T4lError>;
+    /// Turns auto-sleep off while keeping the configured time, like OBSBOT Center does.
+    fn disable_auto_sleep(&self) -> Result<(), T4lError>;
+    fn set_sleep_background(&self, background: SleepBackground) -> Result<(), T4lError>;
+    fn set_sleep_background_mirror(&self, mirrored: bool) -> Result<(), T4lError>;
     fn set_debugging(&mut self, debugging: bool);
 }
 
@@ -126,6 +134,24 @@ impl Tiny2Camera for Camera {
             .map(|exposure_mode_command| self.send_cmd(0x2, 0x6, &exposure_mode_command));
 
         Ok(())
+    }
+
+    fn set_auto_sleep(&self, time: AutoSleepTime) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &AutoSleepCommand::build(time))
+    }
+
+    fn disable_auto_sleep(&self) -> Result<(), T4lError> {
+        let current = self.get_status()?.auto_sleep;
+
+        self.set_auto_sleep(current.disabled())
+    }
+
+    fn set_sleep_background(&self, background: SleepBackground) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &SleepBackgroundCommand::build(background)?)
+    }
+
+    fn set_sleep_background_mirror(&self, mirrored: bool) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &SleepBackgroundMirrorCommand::build(mirrored))
     }
 
     fn set_debugging(&mut self, debugging: bool) {
