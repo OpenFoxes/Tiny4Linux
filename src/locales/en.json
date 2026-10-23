@@ -21,7 +21,11 @@
       "t4l_version": "T4L Version",
       "auto_sleep": "Auto-Sleep",
       "sleep_background": "Sleep Background",
-      "sleep_background_mirror": "Sleep Background Mirrored"
+      "sleep_background_mirror": "Sleep Background Mirrored",
+      "led": "Status LED",
+      "field_of_view": "Field of View",
+      "mirror": "Mirror Image",
+      "invert": "Invert View and Gimbal"
     }
   },
   "gui": {
@@ -147,7 +151,11 @@
         "sleep_background_mirror": "Mirrors the sleep background"
       },
       "auto_sleep": "Sets the time after which the camera falls asleep on its own",
-      "sleep_background": "Sets what the camera shows while asleep"
+      "sleep_background": "Sets what the camera shows while asleep",
+      "led": "Sets the brightness of the status LED (off, 1, 2, 3)",
+      "fov": "Sets the field of view of the camera",
+      "mirror": "Mirrors the image of the camera",
+      "invert": "Turns view and gimbal upside down, for a camera mounted upside down (the camera does not report this setting)"
     },
     "settings": {
       "response": "Setting %{setting} to %{value}"
@@ -193,6 +201,12 @@
     "sleep_background": {
       "black": "Black",
       "image": "Image",
+      "unknown": "Unknown"
+    },
+    "field_of_view": {
+      "wide": "Wide",
+      "medium": "Medium",
+      "narrow": "Narrow",
       "unknown": "Unknown"
     }
   },

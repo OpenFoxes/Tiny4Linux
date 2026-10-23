@@ -158,6 +158,25 @@ impl Display for SleepBackground {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum FieldOfView {
+    Wide,
+    Medium,
+    Narrow,
+    Unknown,
+}
+
+impl Display for FieldOfView {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            FieldOfView::Wide => write!(f, "{}", t!("display.field_of_view.wide")),
+            FieldOfView::Medium => write!(f, "{}", t!("display.field_of_view.medium")),
+            FieldOfView::Narrow => write!(f, "{}", t!("display.field_of_view.narrow")),
+            FieldOfView::Unknown => write!(f, "{}", t!("display.field_of_view.unknown")),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod unit {
@@ -226,6 +245,19 @@ mod tests {
                 #[test_case(0, "Off"; "zero")]
                 fn auto_sleep_time(seconds: i16, expected: &str) {
                     assert_eq!(&AutoSleepTime(seconds).to_string(), expected);
+                }
+            }
+
+            mod field_of_view {
+                use crate::FieldOfView;
+                use test_case::test_case;
+
+                #[test_case(FieldOfView::Wide, "Wide"; "wide")]
+                #[test_case(FieldOfView::Medium, "Medium"; "medium")]
+                #[test_case(FieldOfView::Narrow, "Narrow"; "narrow")]
+                #[test_case(FieldOfView::Unknown, "Unknown"; "unknown")]
+                fn field_of_view(fov: FieldOfView, expected: &str) {
+                    assert_eq!(&fov.to_string(), expected);
                 }
             }
 

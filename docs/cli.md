@@ -94,6 +94,31 @@ t4l exposure manual
 | Global | Uses global reference for setting the exposure    | `global` |
 | Face   | Uses a face as reference for setting the exposure | `face`   |
 
+## Image
+
+These commands change the picture of the camera.
+
+```shell
+t4l fov medium
+t4l mirror on
+```
+
+| Action        | Description                                                         | Command                    | Aliases         |
+| ------------- | ------------------------------------------------------------------- | -------------------------- | --------------- |
+| Field of View | Sets the field of view                                              | `fov wide\|medium\|narrow` | `field-of-view` |
+| Mirror        | Mirrors the image                                                   | `mirror on\|off`           |                 |
+| Invert        | Turns view and gimbal upside down, for a camera mounted upside down | `invert on\|off`           |                 |
+
+The camera does not report the invert setting back, so `info` cannot show it.
+
+## Status LED
+
+With the command `led` you can set the brightness of the status LED (`off`, `1`, `2` or `3`).
+
+```shell
+t4l led 2
+```
+
 ## Auto-Sleep
 
 With the command `auto-sleep` you can set the time after which the camera falls asleep on its own,

@@ -21,7 +21,11 @@
       "t4l_version": "T4L-Version",
       "auto_sleep": "Automatischer Schlaf",
       "sleep_background": "Schlafhintergrund",
-      "sleep_background_mirror": "Schlafhintergrund gespiegelt"
+      "sleep_background_mirror": "Schlafhintergrund gespiegelt",
+      "led": "Status-LED",
+      "field_of_view": "Sichtfeld",
+      "mirror": "Bild spiegeln",
+      "invert": "Ansicht und Gimbal umkehren"
     }
   },
   "gui": {
@@ -147,7 +151,11 @@
         "sleep_background_mirror": "Spiegelt den Schlafhintergrund"
       },
       "auto_sleep": "Legt fest, nach welcher Zeit die Kamera von selbst einschläft",
-      "sleep_background": "Legt fest, was die Kamera im Schlafmodus zeigt"
+      "sleep_background": "Legt fest, was die Kamera im Schlafmodus zeigt",
+      "led": "Legt die Helligkeit der Status-LED fest (off, 1, 2, 3)",
+      "fov": "Legt das Sichtfeld der Kamera fest",
+      "mirror": "Spiegelt das Bild der Kamera",
+      "invert": "Stellt Ansicht und Gimbal auf den Kopf, für eine kopfüber montierte Kamera (die Kamera meldet diese Einstellung nicht zurück)"
     },
     "settings": {
       "response": "Setze %{setting} auf %{value}"
@@ -193,6 +201,12 @@
     "sleep_background": {
       "black": "Schwarz",
       "image": "Bild",
+      "unknown": "Unbekannt"
+    },
+    "field_of_view": {
+      "wide": "Weit",
+      "medium": "Mittel",
+      "narrow": "Eng",
       "unknown": "Unbekannt"
     }
   },

@@ -5,7 +5,8 @@ use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{
-    AIMode, AutoSleepTime, Camera, SleepBackground, SleepMode, Tiny2Camera, get_language,
+    AIMode, AutoSleepTime, Camera, FieldOfView, SleepBackground, SleepMode, Tiny2Camera,
+    get_language,
 };
 
 i18n!("src/locales", fallback = "en");
@@ -68,6 +69,26 @@ enum Command {
         #[arg(long, value_enum, help = t!("cli.help.args.sleep_background_mirror"))]
         mirror: Option<OnOffArg>,
     },
+    #[command(about = t!("cli.help.led"))]
+    Led {
+        #[arg(value_enum)]
+        brightness: LedArg,
+    },
+    #[command(alias = "field-of-view", about = t!("cli.help.fov"))]
+    Fov {
+        #[arg(value_enum)]
+        fov: FovArg,
+    },
+    #[command(about = t!("cli.help.mirror"))]
+    Mirror {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(about = t!("cli.help.invert"))]
+    Invert {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
     #[command(about = t!("cli.help.info"))]
     Info,
     #[command(about = t!("cli.help.version"))]
@@ -122,6 +143,24 @@ enum AutoSleepArg {
 }
 
 #[derive(ValueEnum, Clone)]
+enum LedArg {
+    Off,
+    #[value(name = "1")]
+    Dim,
+    #[value(name = "2")]
+    Medium,
+    #[value(name = "3")]
+    Bright,
+}
+
+#[derive(ValueEnum, Clone)]
+enum FovArg {
+    Wide,
+    Medium,
+    Narrow,
+}
+
+#[derive(ValueEnum, Clone)]
 enum SleepBackgroundArg {
     Black,
     Image,
@@ -154,6 +193,13 @@ fn on_off(state: bool) -> Cow<'static, str> {
         t!("display.states.on")
     } else {
         t!("display.states.off")
+    }
+}
+
+fn led_brightness(brightness: u8) -> Cow<'static, str> {
+    match brightness {
+        0 => t!("display.states.off"),
+        level => Cow::Owned(level.to_string()),
     }
 }
 
@@ -196,6 +242,35 @@ fn main() {
         Command::Preset { position_id } => evaluate_preset_arg(*position_id, camera),
         Command::Hdr { hdr_mode } => evaluate_hdr_arg(hdr_mode.clone(), camera),
         Command::Exposure { exposure_mode } => evaluate_exposure_arg(exposure_mode.clone(), camera),
+        Command::Led { brightness } => {
+            let brightness = match brightness {
+                LedArg::Off => 0,
+                LedArg::Dim => 1,
+                LedArg::Medium => 2,
+                LedArg::Bright => 3,
+            };
+            print_setting(t!("shared.info.led"), led_brightness(brightness));
+            camera.set_led_brightness(brightness).unwrap();
+        }
+        Command::Fov { fov } => {
+            let fov = match fov {
+                FovArg::Wide => FieldOfView::Wide,
+                FovArg::Medium => FieldOfView::Medium,
+                FovArg::Narrow => FieldOfView::Narrow,
+            };
+            print_setting(t!("shared.info.field_of_view"), fov);
+            camera.set_field_of_view(fov).unwrap();
+        }
+        Command::Mirror { state } => {
+            let mirrored = matches!(state, OnOffArg::On);
+            print_setting(t!("shared.info.mirror"), on_off(mirrored));
+            camera.set_mirror(mirrored).unwrap();
+        }
+        Command::Invert { state } => {
+            let inverted = matches!(state, OnOffArg::On);
+            print_setting(t!("shared.info.invert"), on_off(inverted));
+            camera.set_invert(inverted).unwrap();
+        }
         Command::AutoSleep { time } => evaluate_auto_sleep_arg(time.clone(), camera),
         Command::SleepBackground { background, mirror } => {
             evaluate_sleep_background_arg(background.clone(), mirror.clone(), camera)
@@ -214,6 +289,21 @@ fn main() {
                 println!("  🤖  {}: {}", t!("shared.info.ai_mode"), info.ai_mode);
                 println!("  🏃  {}: {}", t!("shared.info.tracking_speed"), info.speed);
                 println!("  💐  {}: {}", t!("shared.info.hdr"), info.hdr_on);
+                println!(
+                    "  🔭  {}: {}",
+                    t!("shared.info.field_of_view"),
+                    info.field_of_view
+                );
+                println!(
+                    "  ↔️  {}: {}",
+                    t!("shared.info.mirror"),
+                    on_off(info.mirror)
+                );
+                println!(
+                    "  💡  {}: {}",
+                    t!("shared.info.led"),
+                    led_brightness(info.led_brightness)
+                );
                 println!(
                     "  ⏲️  {}: {}",
                     t!("shared.info.auto_sleep"),

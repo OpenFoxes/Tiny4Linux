@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::libs::camera::enums::{
-    AIMode, AutoSleepTime, SleepBackground, SleepMode, TrackingSpeed,
+    AIMode, AutoSleepTime, FieldOfView, SleepBackground, SleepMode, TrackingSpeed,
 };
 
 /// Decoded status block (unit 2, selector 6, GET_CUR).
@@ -17,6 +17,10 @@ pub struct CameraStatus {
     pub auto_sleep: AutoSleepTime,
     pub sleep_background: SleepBackground,
     pub sleep_background_mirror: bool,
+    pub field_of_view: FieldOfView,
+    pub mirror: bool,
+    /// Status LED, 0 off, 1-3 brightness. On the Tiny 2 Lite this is byte 0x21.
+    pub led_brightness: u8,
 }
 
 impl CameraStatus {
@@ -29,6 +33,9 @@ impl CameraStatus {
             auto_sleep: Self::decode_auto_sleep(bytes),
             sleep_background: Self::decode_sleep_background(bytes),
             sleep_background_mirror: bytes[0x1d] != 0,
+            field_of_view: Self::decode_field_of_view(bytes),
+            mirror: bytes[0x13] != 0,
+            led_brightness: bytes[0x21],
         }
     }
 
@@ -75,6 +82,15 @@ impl CameraStatus {
         AutoSleepTime(i16::from_le_bytes([bytes[0x0a], bytes[0x0b]]))
     }
 
+    fn decode_field_of_view(bytes: &[u8]) -> FieldOfView {
+        match bytes[0x11] {
+            0 => FieldOfView::Wide,
+            1 => FieldOfView::Medium,
+            2 => FieldOfView::Narrow,
+            _ => FieldOfView::Unknown,
+        }
+    }
+
     fn decode_sleep_background(bytes: &[u8]) -> SleepBackground {
         match bytes[0x1b] {
             0 => SleepBackground::Black,
@@ -92,6 +108,9 @@ impl CameraStatus {
             auto_sleep: AutoSleepTime(0),
             sleep_background: SleepBackground::Unknown,
             sleep_background_mirror: false,
+            field_of_view: FieldOfView::Unknown,
+            mirror: false,
+            led_brightness: 0,
         }
     }
 }
@@ -101,7 +120,8 @@ mod tests {
     mod unit {
         mod decode {
             use crate::{
-                AIMode, AutoSleepTime, CameraStatus, SleepBackground, SleepMode, TrackingSpeed,
+                AIMode, AutoSleepTime, CameraStatus, FieldOfView, SleepBackground, SleepMode,
+                TrackingSpeed,
             };
             use test_case::test_case;
 
@@ -199,6 +219,42 @@ mod tests {
                 assert_eq!(expected, status.sleep_background_mirror);
             }
 
+            #[test_case(0x00, FieldOfView::Wide; "wide")]
+            #[test_case(0x01, FieldOfView::Medium; "medium")]
+            #[test_case(0x02, FieldOfView::Narrow; "narrow")]
+            #[test_case(0x03, FieldOfView::Unknown; "unknown")]
+            fn field_of_view(hex_value: u8, expected: FieldOfView) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x11] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.field_of_view);
+            }
+
+            #[test_case(0x01, true; "mirrored")]
+            #[test_case(0x00, false; "not mirrored")]
+            fn mirror(hex_value: u8, expected: bool) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x13] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.mirror);
+            }
+
+            #[test_case(0x00; "off")]
+            #[test_case(0x02; "medium")]
+            #[test_case(0x03; "bright")]
+            fn led_brightness(hex_value: u8) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x21] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(hex_value, status.led_brightness);
+            }
+
             #[test]
             fn status_defaults() {
                 let default_status = CameraStatus::default();
@@ -222,7 +278,8 @@ mod tests {
     mod integration {
         mod camera_status {
             use crate::{
-                AIMode, AutoSleepTime, CameraStatus, SleepBackground, SleepMode, TrackingSpeed,
+                AIMode, AutoSleepTime, CameraStatus, FieldOfView, SleepBackground, SleepMode,
+                TrackingSpeed,
             };
 
             #[test]
@@ -261,6 +318,9 @@ mod tests {
                 assert_eq!(status.auto_sleep, AutoSleepTime(120));
                 assert_eq!(status.sleep_background, SleepBackground::Black);
                 assert_eq!(status.sleep_background_mirror, false);
+                assert_eq!(status.field_of_view, FieldOfView::Wide);
+                assert_eq!(status.mirror, false);
+                assert_eq!(status.led_brightness, 3);
             }
         }
     }
