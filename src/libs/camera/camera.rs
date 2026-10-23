@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::libs::camera::enums::{AIMode, ExposureMode, SleepMode, TrackingSpeed};
+use crate::libs::camera::frame::FrameSequence;
 use crate::libs::camera::status::CameraStatus;
 use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
@@ -13,6 +14,7 @@ use errno::Errno;
 pub struct Camera {
     transport: CameraTransport,
     debugging: bool,
+    sequence: FrameSequence,
 }
 
 impl Camera {
@@ -20,6 +22,7 @@ impl Camera {
         Ok(Self {
             transport: CameraTransport::new(hint)?,
             debugging: false,
+            sequence: FrameSequence::new(),
         })
     }
 
@@ -29,6 +32,11 @@ impl Camera {
 
     pub fn send_cmd(&self, unit: u8, selector: u8, cmd: &[u8]) -> Result<(), T4lError> {
         self.transport.send_cmd(unit, selector, cmd, self.debugging)
+    }
+
+    /// Returns a fresh sequence number for the next framed command (unit 2, selector 2).
+    pub fn next_sequence_nr(&self) -> u16 {
+        self.sequence.next()
     }
 
     pub fn get_status(&self) -> Result<CameraStatus, T4lError> {
@@ -63,7 +71,7 @@ pub trait Tiny2Camera {
 
 impl Tiny2Camera for Camera {
     fn set_sleep_mode(&self, mode: SleepMode) -> Result<(), T4lError> {
-        let cmd = SleepCommand::build(mode)?;
+        let cmd = SleepCommand::build(mode, self.next_sequence_nr())?;
 
         self.send_cmd(0x2, 0x2, &cmd)
     }
@@ -83,7 +91,7 @@ impl Tiny2Camera for Camera {
     }
 
     fn goto_preset_position(&self, preset_nr: i8) -> Result<(), T4lError> {
-        let cmd = GotoPresetPositionCommand::build(preset_nr)?;
+        let cmd = GotoPresetPositionCommand::build(preset_nr, self.next_sequence_nr())?;
 
         self.send_cmd(0x2, 0x2, &cmd)
     }
@@ -93,7 +101,7 @@ impl Tiny2Camera for Camera {
     }
 
     fn set_tracking_speed(&self, speed: TrackingSpeed) -> Result<(), T4lError> {
-        let cmd = TrackingSpeedCommand::build(speed)?;
+        let cmd = TrackingSpeedCommand::build(speed, self.next_sequence_nr())?;
 
         self.get_status()?.speed = speed;
 
@@ -107,7 +115,8 @@ impl Tiny2Camera for Camera {
     }
 
     fn set_exposure_mode(&self, mode: ExposureMode) -> Result<(), T4lError> {
-        let exposure_mode_type_command = ExposureModeTypeCommand::build(mode);
+        let exposure_mode_type_command =
+            ExposureModeTypeCommand::build(mode, self.next_sequence_nr());
 
         self.send_cmd(0x2, 0x2, &exposure_mode_type_command)?;
 
