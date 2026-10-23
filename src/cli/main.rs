@@ -2,7 +2,7 @@
 
 use clap::{ArgGroup, Parser, Subcommand, ValueEnum};
 use clap_complete::generate;
-use dialoguer::{FuzzySelect, Select};
+use dialoguer::{Confirm, FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{
     AIMode, AutoSleepTime, Camera, FieldOfView, Gesture, GestureZoomRatioCommand, NoiseReduction,
@@ -98,6 +98,11 @@ enum Command {
     Gesture {
         #[command(subcommand)]
         setting: GestureArg,
+    },
+    #[command(about = t!("cli.help.factory_reset"))]
+    FactoryReset {
+        #[arg(long, short, help = t!("cli.help.args.yes"))]
+        yes: bool,
     },
     #[command(about = t!("cli.help.info"))]
     Info,
@@ -369,6 +374,7 @@ fn main() {
         }
         Command::Audio { setting } => evaluate_audio_arg(setting.clone(), camera),
         Command::Gesture { setting } => evaluate_gesture_arg(setting.clone(), camera),
+        Command::FactoryReset { yes } => evaluate_factory_reset(*yes, camera),
         Command::AutoSleep { time } => evaluate_auto_sleep_arg(time.clone(), camera),
         Command::SleepBackground { background, mirror } => {
             evaluate_sleep_background_arg(background.clone(), mirror.clone(), camera)
@@ -903,6 +909,25 @@ fn evaluate_gesture_arg(setting: GestureArg, camera: Camera) {
     let enabled = matches!(state, OnOffArg::On);
     print_setting(label, on_off(enabled));
     camera.set_gesture(gesture, enabled).unwrap();
+}
+
+fn evaluate_factory_reset(confirmed: bool, camera: Camera) {
+    println!("{}", t!("cli.factory_reset.warning"));
+
+    let confirmed = confirmed
+        || Confirm::new()
+            .with_prompt(t!("cli.factory_reset.request_confirmation"))
+            .default(false)
+            .interact()
+            .unwrap_or(false);
+
+    if !confirmed {
+        println!("{}", t!("cli.factory_reset.aborted"));
+        return;
+    }
+
+    println!("{}", t!("cli.factory_reset.response"));
+    camera.factory_reset().unwrap();
 }
 
 #[cfg(test)]

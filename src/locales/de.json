@@ -159,7 +159,8 @@
         "debug_logging": "Das Debug-Logging einschalten",
         "lang": "Die Sprache für die aktuelle Kommandoausführung festlegen",
         "auto_sleep_time": "off, 30s, 2m, 10m oder eine Zeit in Sekunden",
-        "sleep_background_mirror": "Spiegelt den Schlafhintergrund"
+        "sleep_background_mirror": "Spiegelt den Schlafhintergrund",
+        "yes": "Überspringt die Bestätigung"
       },
       "auto_sleep": "Legt fest, nach welcher Zeit die Kamera von selbst einschläft",
       "sleep_background": "Legt fest, was die Kamera im Schlafmodus zeigt",
@@ -182,13 +183,20 @@
         "dynamic_zoom": "Schaltet die Geste für dynamischen Zoom ein oder aus",
         "direction": "Schaltet die gespiegelte Richtung der Gesten ein oder aus",
         "zoom_ratio": "Legt fest, wie weit die Zoom-Geste heranzoomt (1.0 bis 4.0)"
-      }
+      },
+      "factory_reset": "Setzt die Kamera auf Werkseinstellungen zurück (die Kamera startet neu)"
     },
     "settings": {
       "response": "Setze %{setting} auf %{value}"
     },
     "audio": {
       "warning_restart": "Achtung: Die Kamera startet für diese Einstellung möglicherweise neu und ist dann etwa 20 Sekunden nicht erreichbar."
+    },
+    "factory_reset": {
+      "warning": "Dies setzt alle Einstellungen der Kamera auf die Werkseinstellungen zurück. Die Kamera startet danach neu.",
+      "request_confirmation": "Kamera auf Werkseinstellungen zurücksetzen?",
+      "aborted": "Zurücksetzen abgebrochen",
+      "response": "Setze die Kamera auf Werkseinstellungen zurück"
     }
   },
   "display": {

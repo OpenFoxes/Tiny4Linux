@@ -10,10 +10,10 @@ use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
     AIModeCommand, AutoGainCommand, AutoSleepCommand, ExposureModeCommand, ExposureModeTypeCommand,
-    FieldOfViewCommand, GestureCommand, GestureZoomRatioCommand, GotoPresetPositionCommand,
-    HdrModeCommand, InvertCommand, LedCommand, MicInSleepCommand, MicrophoneCommand, MirrorCommand,
-    NoiseReductionCommand, PickupDistanceCommand, SleepBackgroundCommand,
-    SleepBackgroundMirrorCommand, SleepCommand, TrackingSpeedCommand,
+    FactoryResetCommand, FieldOfViewCommand, GestureCommand, GestureZoomRatioCommand,
+    GotoPresetPositionCommand, HdrModeCommand, InvertCommand, LedCommand, MicInSleepCommand,
+    MicrophoneCommand, MirrorCommand, NoiseReductionCommand, PickupDistanceCommand,
+    SleepBackgroundCommand, SleepBackgroundMirrorCommand, SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
 
@@ -91,6 +91,8 @@ pub trait Tiny2Camera {
     fn set_gesture(&self, gesture: Gesture, enabled: bool) -> Result<(), T4lError>;
     /// Sets how far the zoom gesture zooms in (1.0 to 4.0). The camera does not report it back.
     fn set_gesture_zoom_ratio(&self, ratio: f32) -> Result<(), T4lError>;
+    /// Resets the camera to its factory settings. The camera restarts afterwards.
+    fn factory_reset(&self) -> Result<(), T4lError>;
     fn set_debugging(&mut self, debugging: bool);
 }
 
@@ -221,6 +223,14 @@ impl Tiny2Camera for Camera {
         let cmd = GestureZoomRatioCommand::build(ratio, self.next_sequence_nr())?;
 
         self.send_cmd(0x2, 0x2, &cmd)
+    }
+
+    fn factory_reset(&self) -> Result<(), T4lError> {
+        self.send_cmd(
+            0x2,
+            0x2,
+            &FactoryResetCommand::build(self.next_sequence_nr()),
+        )
     }
 
     fn set_debugging(&mut self, debugging: bool) {

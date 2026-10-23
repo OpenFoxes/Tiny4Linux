@@ -183,6 +183,15 @@ t4l gesture zoom-ratio 2.5
 
 The camera only reports the target lock back, so `info` cannot show the other gesture settings.
 
+## Factory Reset
+
+With the command `factory-reset` you can reset all settings of the camera to their factory defaults.
+The camera asks for a confirmation unless you pass `--yes`, and restarts afterwards.
+
+```shell
+t4l factory-reset
+```
+
 ## Info
 
 You can display available information about the current state of the camera with the command `info`.

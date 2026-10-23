@@ -159,7 +159,8 @@
         "debug_logging": "Turning the debug logging on",
         "lang": "Setting the language for the current command execution",
         "auto_sleep_time": "off, 30s, 2m, 10m or a time in seconds",
-        "sleep_background_mirror": "Mirrors the sleep background"
+        "sleep_background_mirror": "Mirrors the sleep background",
+        "yes": "Skips the confirmation"
       },
       "auto_sleep": "Sets the time after which the camera falls asleep on its own",
       "sleep_background": "Sets what the camera shows while asleep",
@@ -182,13 +183,20 @@
         "dynamic_zoom": "Turns the dynamic zoom gesture on or off",
         "direction": "Turns the mirrored direction of the gestures on or off",
         "zoom_ratio": "Sets how far the zoom gesture zooms in (1.0 to 4.0)"
-      }
+      },
+      "factory_reset": "Resets the camera to its factory settings (the camera restarts)"
     },
     "settings": {
       "response": "Setting %{setting} to %{value}"
     },
     "audio": {
       "warning_restart": "Warning: the camera may restart to apply this setting and be unavailable for about 20 seconds."
+    },
+    "factory_reset": {
+      "warning": "This resets all settings of the camera to their factory defaults. The camera restarts afterwards.",
+      "request_confirmation": "Reset the camera to its factory settings?",
+      "aborted": "Factory reset aborted",
+      "response": "Resetting the camera to its factory settings"
     }
   },
   "display": {
