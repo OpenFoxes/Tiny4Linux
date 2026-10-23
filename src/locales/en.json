@@ -25,7 +25,12 @@
       "led": "Status LED",
       "field_of_view": "Field of View",
       "mirror": "Mirror Image",
-      "invert": "Invert View and Gimbal"
+      "invert": "Invert View and Gimbal",
+      "noise_reduction": "Noise Reduction",
+      "auto_gain": "Automatic Gain",
+      "pickup_distance": "Pickup Distance",
+      "mic_in_sleep": "Microphone while asleep",
+      "microphone": "Microphone"
     }
   },
   "gui": {
@@ -155,10 +160,21 @@
       "led": "Sets the brightness of the status LED (off, 1, 2, 3)",
       "fov": "Sets the field of view of the camera",
       "mirror": "Mirrors the image of the camera",
-      "invert": "Turns view and gimbal upside down, for a camera mounted upside down (the camera does not report this setting)"
+      "invert": "Turns view and gimbal upside down, for a camera mounted upside down (the camera does not report this setting)",
+      "audio": {
+        "command": "Controls the microphone of the camera",
+        "noise_reduction": "Sets the noise reduction of the microphone",
+        "auto_gain": "Turns the automatic gain of the microphone on or off",
+        "pickup_distance": "Sets the audio pickup distance",
+        "mic_in_sleep": "Keeps the microphone on while the camera is asleep",
+        "mic": "Enables or disables the microphone (the camera restarts)"
+      }
     },
     "settings": {
       "response": "Setting %{setting} to %{value}"
+    },
+    "audio": {
+      "warning_restart": "Warning: the camera may restart to apply this setting and be unavailable for about 20 seconds."
     }
   },
   "display": {
@@ -207,6 +223,18 @@
       "wide": "Wide",
       "medium": "Medium",
       "narrow": "Narrow",
+      "unknown": "Unknown"
+    },
+    "noise_reduction": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "unknown": "Unknown"
+    },
+    "pickup_distance": {
+      "near": "Near",
+      "standard": "Standard",
+      "far": "Far",
       "unknown": "Unknown"
     }
   },

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::libs::camera::enums::{
-    AIMode, AutoSleepTime, FieldOfView, SleepBackground, SleepMode, TrackingSpeed,
+    AIMode, AutoSleepTime, FieldOfView, NoiseReduction, PickupDistance, SleepBackground, SleepMode,
+    TrackingSpeed,
 };
 
 /// Decoded status block (unit 2, selector 6, GET_CUR).
@@ -21,6 +22,10 @@ pub struct CameraStatus {
     pub mirror: bool,
     /// Status LED, 0 off, 1-3 brightness. On the Tiny 2 Lite this is byte 0x21.
     pub led_brightness: u8,
+    pub mic_in_sleep: bool,
+    pub noise_reduction: NoiseReduction,
+    pub auto_gain: bool,
+    pub pickup_distance: PickupDistance,
 }
 
 impl CameraStatus {
@@ -36,6 +41,10 @@ impl CameraStatus {
             field_of_view: Self::decode_field_of_view(bytes),
             mirror: bytes[0x13] != 0,
             led_brightness: bytes[0x21],
+            mic_in_sleep: bytes[0x10] != 0,
+            noise_reduction: Self::decode_noise_reduction(bytes),
+            auto_gain: bytes[0x19] != 0,
+            pickup_distance: Self::decode_pickup_distance(bytes),
         }
     }
 
@@ -91,6 +100,26 @@ impl CameraStatus {
         }
     }
 
+    fn decode_noise_reduction(bytes: &[u8]) -> NoiseReduction {
+        match bytes[0x08] {
+            0 => NoiseReduction::Off,
+            1 => NoiseReduction::Weak,
+            2 => NoiseReduction::Medium,
+            3 => NoiseReduction::Strong,
+            _ => NoiseReduction::Unknown,
+        }
+    }
+
+    /// The pickup distance sits in the low bits of byte 0x22, on top of a base of 0x10.
+    fn decode_pickup_distance(bytes: &[u8]) -> PickupDistance {
+        match bytes[0x22] & 0x0f {
+            0 => PickupDistance::Near,
+            1 => PickupDistance::Standard,
+            2 => PickupDistance::Far,
+            _ => PickupDistance::Unknown,
+        }
+    }
+
     fn decode_sleep_background(bytes: &[u8]) -> SleepBackground {
         match bytes[0x1b] {
             0 => SleepBackground::Black,
@@ -111,6 +140,10 @@ impl CameraStatus {
             field_of_view: FieldOfView::Unknown,
             mirror: false,
             led_brightness: 0,
+            mic_in_sleep: false,
+            noise_reduction: NoiseReduction::Unknown,
+            auto_gain: false,
+            pickup_distance: PickupDistance::Unknown,
         }
     }
 }
@@ -120,8 +153,8 @@ mod tests {
     mod unit {
         mod decode {
             use crate::{
-                AIMode, AutoSleepTime, CameraStatus, FieldOfView, SleepBackground, SleepMode,
-                TrackingSpeed,
+                AIMode, AutoSleepTime, CameraStatus, FieldOfView, NoiseReduction, PickupDistance,
+                SleepBackground, SleepMode, TrackingSpeed,
             };
             use test_case::test_case;
 
@@ -255,6 +288,56 @@ mod tests {
                 assert_eq!(hex_value, status.led_brightness);
             }
 
+            #[test_case(0x01, true; "on")]
+            #[test_case(0x00, false; "off")]
+            fn mic_in_sleep(hex_value: u8, expected: bool) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x10] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.mic_in_sleep);
+            }
+
+            #[test_case(0x00, NoiseReduction::Off; "off")]
+            #[test_case(0x01, NoiseReduction::Weak; "weak")]
+            #[test_case(0x02, NoiseReduction::Medium; "medium")]
+            #[test_case(0x03, NoiseReduction::Strong; "strong")]
+            #[test_case(0x04, NoiseReduction::Unknown; "unknown")]
+            fn noise_reduction(hex_value: u8, expected: NoiseReduction) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x08] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.noise_reduction);
+            }
+
+            #[test_case(0x01, true; "on")]
+            #[test_case(0x00, false; "off")]
+            fn auto_gain(hex_value: u8, expected: bool) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x19] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.auto_gain);
+            }
+
+            // The camera reports the distance on top of a base of 0x10 (near = 0x10).
+            #[test_case(0x10, PickupDistance::Near; "near")]
+            #[test_case(0x11, PickupDistance::Standard; "standard")]
+            #[test_case(0x12, PickupDistance::Far; "far")]
+            #[test_case(0x13, PickupDistance::Unknown; "unknown")]
+            fn pickup_distance(hex_value: u8, expected: PickupDistance) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x22] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.pickup_distance);
+            }
+
             #[test]
             fn status_defaults() {
                 let default_status = CameraStatus::default();
@@ -278,8 +361,8 @@ mod tests {
     mod integration {
         mod camera_status {
             use crate::{
-                AIMode, AutoSleepTime, CameraStatus, FieldOfView, SleepBackground, SleepMode,
-                TrackingSpeed,
+                AIMode, AutoSleepTime, CameraStatus, FieldOfView, NoiseReduction, PickupDistance,
+                SleepBackground, SleepMode, TrackingSpeed,
             };
 
             #[test]
@@ -321,6 +404,10 @@ mod tests {
                 assert_eq!(status.field_of_view, FieldOfView::Wide);
                 assert_eq!(status.mirror, false);
                 assert_eq!(status.led_brightness, 3);
+                assert_eq!(status.mic_in_sleep, false);
+                assert_eq!(status.noise_reduction, NoiseReduction::Weak);
+                assert_eq!(status.auto_gain, true);
+                assert_eq!(status.pickup_distance, PickupDistance::Near);
             }
         }
     }

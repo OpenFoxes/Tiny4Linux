@@ -177,6 +177,46 @@ impl Display for FieldOfView {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum NoiseReduction {
+    Off,
+    Weak,
+    Medium,
+    Strong,
+    Unknown,
+}
+
+impl Display for NoiseReduction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NoiseReduction::Off => write!(f, "{}", t!("display.states.off")),
+            NoiseReduction::Weak => write!(f, "{}", t!("display.noise_reduction.weak")),
+            NoiseReduction::Medium => write!(f, "{}", t!("display.noise_reduction.medium")),
+            NoiseReduction::Strong => write!(f, "{}", t!("display.noise_reduction.strong")),
+            NoiseReduction::Unknown => write!(f, "{}", t!("display.noise_reduction.unknown")),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PickupDistance {
+    Near,
+    Standard,
+    Far,
+    Unknown,
+}
+
+impl Display for PickupDistance {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PickupDistance::Near => write!(f, "{}", t!("display.pickup_distance.near")),
+            PickupDistance::Standard => write!(f, "{}", t!("display.pickup_distance.standard")),
+            PickupDistance::Far => write!(f, "{}", t!("display.pickup_distance.far")),
+            PickupDistance::Unknown => write!(f, "{}", t!("display.pickup_distance.unknown")),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     mod unit {
@@ -258,6 +298,33 @@ mod tests {
                 #[test_case(FieldOfView::Unknown, "Unknown"; "unknown")]
                 fn field_of_view(fov: FieldOfView, expected: &str) {
                     assert_eq!(&fov.to_string(), expected);
+                }
+            }
+
+            mod noise_reduction {
+                use crate::NoiseReduction;
+                use test_case::test_case;
+
+                #[test_case(NoiseReduction::Off, "Off"; "off")]
+                #[test_case(NoiseReduction::Weak, "Weak"; "weak")]
+                #[test_case(NoiseReduction::Medium, "Medium"; "medium")]
+                #[test_case(NoiseReduction::Strong, "Strong"; "strong")]
+                #[test_case(NoiseReduction::Unknown, "Unknown"; "unknown")]
+                fn noise_reduction(level: NoiseReduction, expected: &str) {
+                    assert_eq!(&level.to_string(), expected);
+                }
+            }
+
+            mod pickup_distance {
+                use crate::PickupDistance;
+                use test_case::test_case;
+
+                #[test_case(PickupDistance::Near, "Near"; "near")]
+                #[test_case(PickupDistance::Standard, "Standard"; "standard")]
+                #[test_case(PickupDistance::Far, "Far"; "far")]
+                #[test_case(PickupDistance::Unknown, "Unknown"; "unknown")]
+                fn pickup_distance(distance: PickupDistance, expected: &str) {
+                    assert_eq!(&distance.to_string(), expected);
                 }
             }
 

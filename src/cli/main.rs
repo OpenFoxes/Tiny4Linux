@@ -5,8 +5,8 @@ use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{
-    AIMode, AutoSleepTime, Camera, FieldOfView, SleepBackground, SleepMode, Tiny2Camera,
-    get_language,
+    AIMode, AutoSleepTime, Camera, FieldOfView, NoiseReduction, PickupDistance, SleepBackground,
+    SleepMode, Tiny2Camera, get_language,
 };
 
 i18n!("src/locales", fallback = "en");
@@ -89,6 +89,11 @@ enum Command {
         #[arg(value_enum)]
         state: OnOffArg,
     },
+    #[command(about = t!("cli.help.audio.command"))]
+    Audio {
+        #[command(subcommand)]
+        setting: AudioArg,
+    },
     #[command(about = t!("cli.help.info"))]
     Info,
     #[command(about = t!("cli.help.version"))]
@@ -158,6 +163,50 @@ enum FovArg {
     Wide,
     Medium,
     Narrow,
+}
+
+#[derive(Subcommand, Clone)]
+enum AudioArg {
+    #[command(about = t!("cli.help.audio.noise_reduction"))]
+    NoiseReduction {
+        #[arg(value_enum)]
+        level: NoiseReductionArg,
+    },
+    #[command(about = t!("cli.help.audio.auto_gain"))]
+    AutoGain {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(about = t!("cli.help.audio.pickup_distance"))]
+    PickupDistance {
+        #[arg(value_enum)]
+        distance: PickupDistanceArg,
+    },
+    #[command(about = t!("cli.help.audio.mic_in_sleep"))]
+    MicInSleep {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(alias = "microphone", about = t!("cli.help.audio.mic"))]
+    Mic {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+}
+
+#[derive(ValueEnum, Clone)]
+enum NoiseReductionArg {
+    Off,
+    Weak,
+    Medium,
+    Strong,
+}
+
+#[derive(ValueEnum, Clone)]
+enum PickupDistanceArg {
+    Near,
+    Standard,
+    Far,
 }
 
 #[derive(ValueEnum, Clone)]
@@ -271,6 +320,7 @@ fn main() {
             print_setting(t!("shared.info.invert"), on_off(inverted));
             camera.set_invert(inverted).unwrap();
         }
+        Command::Audio { setting } => evaluate_audio_arg(setting.clone(), camera),
         Command::AutoSleep { time } => evaluate_auto_sleep_arg(time.clone(), camera),
         Command::SleepBackground { background, mirror } => {
             evaluate_sleep_background_arg(background.clone(), mirror.clone(), camera)
@@ -303,6 +353,26 @@ fn main() {
                     "  💡  {}: {}",
                     t!("shared.info.led"),
                     led_brightness(info.led_brightness)
+                );
+                println!(
+                    "  🎙️  {}: {}",
+                    t!("shared.info.noise_reduction"),
+                    info.noise_reduction
+                );
+                println!(
+                    "  🎚️  {}: {}",
+                    t!("shared.info.auto_gain"),
+                    on_off(info.auto_gain)
+                );
+                println!(
+                    "  📏  {}: {}",
+                    t!("shared.info.pickup_distance"),
+                    info.pickup_distance
+                );
+                println!(
+                    "  😴  {}: {}",
+                    t!("shared.info.mic_in_sleep"),
+                    on_off(info.mic_in_sleep)
                 );
                 println!(
                     "  ⏲️  {}: {}",
@@ -709,6 +779,46 @@ fn evaluate_sleep_background_arg(
         let mirrored = matches!(mirror, OnOffArg::On);
         print_setting(t!("shared.info.sleep_background_mirror"), on_off(mirrored));
         camera.set_sleep_background_mirror(mirrored).unwrap();
+    }
+}
+
+fn evaluate_audio_arg(setting: AudioArg, camera: Camera) {
+    match setting {
+        AudioArg::NoiseReduction { level } => {
+            let level = match level {
+                NoiseReductionArg::Off => NoiseReduction::Off,
+                NoiseReductionArg::Weak => NoiseReduction::Weak,
+                NoiseReductionArg::Medium => NoiseReduction::Medium,
+                NoiseReductionArg::Strong => NoiseReduction::Strong,
+            };
+            print_setting(t!("shared.info.noise_reduction"), level);
+            camera.set_noise_reduction(level).unwrap();
+        }
+        AudioArg::AutoGain { state } => {
+            let enabled = matches!(state, OnOffArg::On);
+            print_setting(t!("shared.info.auto_gain"), on_off(enabled));
+            camera.set_auto_gain(enabled).unwrap();
+        }
+        AudioArg::PickupDistance { distance } => {
+            let distance = match distance {
+                PickupDistanceArg::Near => PickupDistance::Near,
+                PickupDistanceArg::Standard => PickupDistance::Standard,
+                PickupDistanceArg::Far => PickupDistance::Far,
+            };
+            print_setting(t!("shared.info.pickup_distance"), distance);
+            camera.set_pickup_distance(distance).unwrap();
+        }
+        AudioArg::MicInSleep { state } => {
+            let enabled = matches!(state, OnOffArg::On);
+            print_setting(t!("shared.info.mic_in_sleep"), on_off(enabled));
+            camera.set_mic_in_sleep(enabled).unwrap();
+        }
+        AudioArg::Mic { state } => {
+            let enabled = matches!(state, OnOffArg::On);
+            print_setting(t!("shared.info.microphone"), on_off(enabled));
+            println!("{}", t!("cli.audio.warning_restart"));
+            camera.set_microphone(enabled).unwrap();
+        }
     }
 }
 

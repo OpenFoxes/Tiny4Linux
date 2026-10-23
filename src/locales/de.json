@@ -25,7 +25,12 @@
       "led": "Status-LED",
       "field_of_view": "Sichtfeld",
       "mirror": "Bild spiegeln",
-      "invert": "Ansicht und Gimbal umkehren"
+      "invert": "Ansicht und Gimbal umkehren",
+      "noise_reduction": "Rauschunterdrückung",
+      "auto_gain": "Automatische Verstärkung",
+      "pickup_distance": "Aufnahmeabstand",
+      "mic_in_sleep": "Mikrofon im Schlafmodus",
+      "microphone": "Mikrofon"
     }
   },
   "gui": {
@@ -155,10 +160,21 @@
       "led": "Legt die Helligkeit der Status-LED fest (off, 1, 2, 3)",
       "fov": "Legt das Sichtfeld der Kamera fest",
       "mirror": "Spiegelt das Bild der Kamera",
-      "invert": "Stellt Ansicht und Gimbal auf den Kopf, für eine kopfüber montierte Kamera (die Kamera meldet diese Einstellung nicht zurück)"
+      "invert": "Stellt Ansicht und Gimbal auf den Kopf, für eine kopfüber montierte Kamera (die Kamera meldet diese Einstellung nicht zurück)",
+      "audio": {
+        "command": "Steuert das Mikrofon der Kamera",
+        "noise_reduction": "Legt die Rauschunterdrückung des Mikrofons fest",
+        "auto_gain": "Schaltet die automatische Verstärkung des Mikrofons ein oder aus",
+        "pickup_distance": "Legt den Aufnahmeabstand fest",
+        "mic_in_sleep": "Lässt das Mikrofon im Schlafmodus eingeschaltet",
+        "mic": "Schaltet das Mikrofon ein oder aus (die Kamera startet neu)"
+      }
     },
     "settings": {
       "response": "Setze %{setting} auf %{value}"
+    },
+    "audio": {
+      "warning_restart": "Achtung: Die Kamera startet für diese Einstellung möglicherweise neu und ist dann etwa 20 Sekunden nicht erreichbar."
     }
   },
   "display": {
@@ -207,6 +223,18 @@
       "wide": "Weit",
       "medium": "Mittel",
       "narrow": "Eng",
+      "unknown": "Unbekannt"
+    },
+    "noise_reduction": {
+      "weak": "Schwach",
+      "medium": "Mittel",
+      "strong": "Stark",
+      "unknown": "Unbekannt"
+    },
+    "pickup_distance": {
+      "near": "Nah",
+      "standard": "Standard",
+      "far": "Fern",
       "unknown": "Unbekannt"
     }
   },

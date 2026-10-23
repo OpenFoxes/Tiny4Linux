@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::libs::camera::enums::{
-    AIMode, AutoSleepTime, ExposureMode, FieldOfView, SleepBackground, SleepMode, TrackingSpeed,
+    AIMode, AutoSleepTime, ExposureMode, FieldOfView, NoiseReduction, PickupDistance,
+    SleepBackground, SleepMode, TrackingSpeed,
 };
 use crate::libs::camera::frame::FrameSequence;
 use crate::libs::camera::status::CameraStatus;
 use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
-    AIModeCommand, AutoSleepCommand, ExposureModeCommand, ExposureModeTypeCommand,
+    AIModeCommand, AutoGainCommand, AutoSleepCommand, ExposureModeCommand, ExposureModeTypeCommand,
     FieldOfViewCommand, GotoPresetPositionCommand, HdrModeCommand, InvertCommand, LedCommand,
-    MirrorCommand, SleepBackgroundCommand, SleepBackgroundMirrorCommand, SleepCommand,
+    MicInSleepCommand, MicrophoneCommand, MirrorCommand, NoiseReductionCommand,
+    PickupDistanceCommand, SleepBackgroundCommand, SleepBackgroundMirrorCommand, SleepCommand,
     TrackingSpeedCommand,
 };
 use errno::Errno;
@@ -80,6 +82,12 @@ pub trait Tiny2Camera {
     fn set_mirror(&self, mirrored: bool) -> Result<(), T4lError>;
     /// Turns view and gimbal upside down. The camera does not report this setting back.
     fn set_invert(&self, inverted: bool) -> Result<(), T4lError>;
+    fn set_mic_in_sleep(&self, enabled: bool) -> Result<(), T4lError>;
+    fn set_noise_reduction(&self, level: NoiseReduction) -> Result<(), T4lError>;
+    fn set_auto_gain(&self, enabled: bool) -> Result<(), T4lError>;
+    fn set_pickup_distance(&self, distance: PickupDistance) -> Result<(), T4lError>;
+    /// Enables or disables the microphone. Disabling it makes the camera restart.
+    fn set_microphone(&self, enabled: bool) -> Result<(), T4lError>;
     fn set_debugging(&mut self, debugging: bool);
 }
 
@@ -178,6 +186,26 @@ impl Tiny2Camera for Camera {
             0x2,
             &InvertCommand::build(inverted, self.next_sequence_nr()),
         )
+    }
+
+    fn set_mic_in_sleep(&self, enabled: bool) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &MicInSleepCommand::build(enabled))
+    }
+
+    fn set_noise_reduction(&self, level: NoiseReduction) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &NoiseReductionCommand::build(level)?)
+    }
+
+    fn set_auto_gain(&self, enabled: bool) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &AutoGainCommand::build(enabled))
+    }
+
+    fn set_pickup_distance(&self, distance: PickupDistance) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &PickupDistanceCommand::build(distance)?)
+    }
+
+    fn set_microphone(&self, enabled: bool) -> Result<(), T4lError> {
+        self.send_cmd(0x2, 0x6, &MicrophoneCommand::build(enabled))
     }
 
     fn set_debugging(&mut self, debugging: bool) {

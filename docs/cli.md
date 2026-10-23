@@ -142,6 +142,26 @@ t4l sleep-background image
 t4l sleep-background black --mirror off
 ```
 
+## Audio
+
+With these commands you can control the microphone of the camera.
+
+All audio commands begin with `audio`, e.g.:
+
+```shell
+t4l audio noise-reduction medium
+```
+
+| Action                  | Description                                        | Command                                     | Aliases      |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------- | ------------ |
+| Noise Reduction         | Sets the noise reduction of the microphone         | `noise-reduction off\|weak\|medium\|strong` |              |
+| Automatic Gain          | Turns the automatic gain on or off                 | `auto-gain on\|off`                         |              |
+| Pickup Distance         | Sets the audio pickup distance                     | `pickup-distance near\|standard\|far`       |              |
+| Microphone while asleep | Keeps the microphone on while the camera is asleep | `mic-in-sleep on\|off`                      |              |
+| Microphone              | Enables or disables the microphone                 | `mic on\|off`                               | `microphone` |
+
+WARNING: Disabling the microphone makes the camera restart. It is unavailable for about 20 seconds.
+
 ## Info
 
 You can display available information about the current state of the camera with the command `info`.
