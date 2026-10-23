@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2
 
-use crate::libs::camera::enums::{AIMode, ExposureMode, SleepMode, TrackingSpeed};
+use crate::libs::camera::enums::{AIMode, CameraModel, ExposureMode, SleepMode, TrackingSpeed};
 use crate::libs::camera::status::CameraStatus;
 use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
@@ -12,13 +12,16 @@ use errno::Errno;
 
 pub struct Camera {
     transport: CameraTransport,
+    model: CameraModel,
     debugging: bool,
 }
 
 impl Camera {
     pub fn new(hint: &str) -> Result<Self, T4lError> {
+        let transport = CameraTransport::new(hint)?;
         Ok(Self {
-            transport: CameraTransport::new(hint)?,
+            model: transport.model(),
+            transport,
             debugging: false,
         })
     }
@@ -32,7 +35,7 @@ impl Camera {
     }
 
     pub fn get_status(&self) -> Result<CameraStatus, T4lError> {
-        self.transport.get_status(self.debugging)
+        self.transport.get_status(self.debugging, self.model)
     }
 
     pub fn dump(&self) -> Result<(), Errno> {

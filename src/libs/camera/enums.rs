@@ -3,6 +3,25 @@
 use rust_i18n::t;
 use std::fmt::Display;
 
+/// Camera models of the Tiny 2 series. They take the same commands, but the Tiny 2 Lite
+/// reports some values at different places in the status block (see `CameraStatus::decode`).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum CameraModel {
+    Tiny2,
+    Tiny2Lite,
+}
+
+impl CameraModel {
+    /// Derives the model from the V4L2 card name, e.g. "OBSBOT Tiny 2 Lite: OBSBOT Tiny".
+    pub fn from_card_name(card_name: &str) -> Self {
+        if card_name.contains("Tiny 2 Lite") {
+            CameraModel::Tiny2Lite
+        } else {
+            CameraModel::Tiny2
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SleepMode {
     Awake,
