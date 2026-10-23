@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2
 
 use crate::libs::camera::enums::{
-    AIMode, AutoSleepTime, ExposureMode, FieldOfView, NoiseReduction, PickupDistance,
+    AIMode, AutoSleepTime, ExposureMode, FieldOfView, Gesture, NoiseReduction, PickupDistance,
     SleepBackground, SleepMode, TrackingSpeed,
 };
 use crate::libs::camera::frame::FrameSequence;
@@ -10,10 +10,10 @@ use crate::libs::camera::transport::CameraTransport;
 use crate::libs::errors::T4lError;
 use crate::{
     AIModeCommand, AutoGainCommand, AutoSleepCommand, ExposureModeCommand, ExposureModeTypeCommand,
-    FieldOfViewCommand, GotoPresetPositionCommand, HdrModeCommand, InvertCommand, LedCommand,
-    MicInSleepCommand, MicrophoneCommand, MirrorCommand, NoiseReductionCommand,
-    PickupDistanceCommand, SleepBackgroundCommand, SleepBackgroundMirrorCommand, SleepCommand,
-    TrackingSpeedCommand,
+    FieldOfViewCommand, GestureCommand, GestureZoomRatioCommand, GotoPresetPositionCommand,
+    HdrModeCommand, InvertCommand, LedCommand, MicInSleepCommand, MicrophoneCommand, MirrorCommand,
+    NoiseReductionCommand, PickupDistanceCommand, SleepBackgroundCommand,
+    SleepBackgroundMirrorCommand, SleepCommand, TrackingSpeedCommand,
 };
 use errno::Errno;
 
@@ -88,6 +88,9 @@ pub trait Tiny2Camera {
     fn set_pickup_distance(&self, distance: PickupDistance) -> Result<(), T4lError>;
     /// Enables or disables the microphone. Disabling it makes the camera restart.
     fn set_microphone(&self, enabled: bool) -> Result<(), T4lError>;
+    fn set_gesture(&self, gesture: Gesture, enabled: bool) -> Result<(), T4lError>;
+    /// Sets how far the zoom gesture zooms in (1.0 to 4.0). The camera does not report it back.
+    fn set_gesture_zoom_ratio(&self, ratio: f32) -> Result<(), T4lError>;
     fn set_debugging(&mut self, debugging: bool);
 }
 
@@ -206,6 +209,18 @@ impl Tiny2Camera for Camera {
 
     fn set_microphone(&self, enabled: bool) -> Result<(), T4lError> {
         self.send_cmd(0x2, 0x6, &MicrophoneCommand::build(enabled))
+    }
+
+    fn set_gesture(&self, gesture: Gesture, enabled: bool) -> Result<(), T4lError> {
+        let cmd = GestureCommand::build(gesture, enabled, self.next_sequence_nr());
+
+        self.send_cmd(0x2, 0x2, &cmd)
+    }
+
+    fn set_gesture_zoom_ratio(&self, ratio: f32) -> Result<(), T4lError> {
+        let cmd = GestureZoomRatioCommand::build(ratio, self.next_sequence_nr())?;
+
+        self.send_cmd(0x2, 0x2, &cmd)
     }
 
     fn set_debugging(&mut self, debugging: bool) {

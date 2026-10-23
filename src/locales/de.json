@@ -30,7 +30,12 @@
       "auto_gain": "Automatische Verstärkung",
       "pickup_distance": "Aufnahmeabstand",
       "mic_in_sleep": "Mikrofon im Schlafmodus",
-      "microphone": "Mikrofon"
+      "microphone": "Mikrofon",
+      "gesture_target_lock": "Geste: Ziel erfassen",
+      "gesture_zoom": "Geste: Zoom",
+      "gesture_dynamic_zoom": "Geste: Dynamischer Zoom",
+      "gesture_direction": "Geste: Richtungswechsel",
+      "gesture_zoom_ratio": "Zoomfaktor der Geste"
     }
   },
   "gui": {
@@ -135,7 +140,8 @@
     },
     "errors": {
       "info_error": "Die Kamera konnte nicht gefunden werden oder lieferte fehlerhafte Informationen. Bitte überprüfen Sie die Verbindung der Kamera.",
-      "invalid_auto_sleep": "erwartet \"off\", Sekunden (z. B. 90 oder 30s) oder Minuten (z. B. 2m), höchstens 32767 Sekunden"
+      "invalid_auto_sleep": "erwartet \"off\", Sekunden (z. B. 90 oder 30s) oder Minuten (z. B. 2m), höchstens 32767 Sekunden",
+      "invalid_zoom_ratio": "erwartet einen Zoomfaktor von 1.0 bis 4.0"
     },
     "help": {
       "sleep": "Versetzt die Kamera in den Schlafmodus",
@@ -168,6 +174,14 @@
         "pickup_distance": "Legt den Aufnahmeabstand fest",
         "mic_in_sleep": "Lässt das Mikrofon im Schlafmodus eingeschaltet",
         "mic": "Schaltet das Mikrofon ein oder aus (die Kamera startet neu)"
+      },
+      "gesture": {
+        "command": "Steuert die Gestensteuerung der Kamera (nur \"Ziel erfassen\" meldet die Kamera zurück)",
+        "target_lock": "Schaltet die Geste zum Erfassen des Ziels ein oder aus",
+        "zoom": "Schaltet die Zoom-Geste ein oder aus",
+        "dynamic_zoom": "Schaltet die Geste für dynamischen Zoom ein oder aus",
+        "direction": "Schaltet die gespiegelte Richtung der Gesten ein oder aus",
+        "zoom_ratio": "Legt fest, wie weit die Zoom-Geste heranzoomt (1.0 bis 4.0)"
       }
     },
     "settings": {

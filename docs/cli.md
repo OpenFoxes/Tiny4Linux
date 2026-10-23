@@ -162,6 +162,27 @@ t4l audio noise-reduction medium
 
 WARNING: Disabling the microphone makes the camera restart. It is unavailable for about 20 seconds.
 
+## Gestures
+
+With these commands you can control the gesture control of the camera.
+
+All gesture commands begin with `gesture` or `gestures`, e.g.:
+
+```shell
+t4l gesture zoom on
+t4l gesture zoom-ratio 2.5
+```
+
+| Action           | Description                              | Command                | Aliases            |
+| ---------------- | ---------------------------------------- | ---------------------- | ------------------ |
+| Target Lock      | Turns the target lock gesture on or off  | `target-lock on\|off`  |                    |
+| Zoom             | Turns the zoom gesture on or off         | `zoom on\|off`         |                    |
+| Dynamic Zoom     | Turns the dynamic zoom gesture on or off | `dynamic-zoom on\|off` |                    |
+| Direction Change | Mirrors the direction of the gestures    | `direction on\|off`    | `direction-change` |
+| Zoom Ratio       | Sets how far the zoom gesture zooms in   | `zoom-ratio <1.0-4.0>` |                    |
+
+The camera only reports the target lock back, so `info` cannot show the other gesture settings.
+
 ## Info
 
 You can display available information about the current state of the camera with the command `info`.

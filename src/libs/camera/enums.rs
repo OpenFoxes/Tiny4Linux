@@ -217,6 +217,15 @@ impl Display for PickupDistance {
     }
 }
 
+/// Gestures that can be turned on or off.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Gesture {
+    TargetLock,
+    Zoom,
+    DynamicZoom,
+    DirectionChange,
+}
+
 #[cfg(test)]
 mod tests {
     mod unit {

@@ -30,7 +30,12 @@
       "auto_gain": "Automatic Gain",
       "pickup_distance": "Pickup Distance",
       "mic_in_sleep": "Microphone while asleep",
-      "microphone": "Microphone"
+      "microphone": "Microphone",
+      "gesture_target_lock": "Gesture: Target Lock",
+      "gesture_zoom": "Gesture: Zoom",
+      "gesture_dynamic_zoom": "Gesture: Dynamic Zoom",
+      "gesture_direction": "Gesture: Direction Change",
+      "gesture_zoom_ratio": "Gesture Zoom Ratio"
     }
   },
   "gui": {
@@ -135,7 +140,8 @@
     },
     "errors": {
       "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera.",
-      "invalid_auto_sleep": "expected \"off\", seconds (e.g. 90 or 30s) or minutes (e.g. 2m), at most 32767 seconds"
+      "invalid_auto_sleep": "expected \"off\", seconds (e.g. 90 or 30s) or minutes (e.g. 2m), at most 32767 seconds",
+      "invalid_zoom_ratio": "expected a zoom ratio from 1.0 to 4.0"
     },
     "help": {
       "sleep": "Sets the camera to sleep",
@@ -168,6 +174,14 @@
         "pickup_distance": "Sets the audio pickup distance",
         "mic_in_sleep": "Keeps the microphone on while the camera is asleep",
         "mic": "Enables or disables the microphone (the camera restarts)"
+      },
+      "gesture": {
+        "command": "Controls the gesture control of the camera (only target lock is reported back by the camera)",
+        "target_lock": "Turns the target lock gesture on or off",
+        "zoom": "Turns the zoom gesture on or off",
+        "dynamic_zoom": "Turns the dynamic zoom gesture on or off",
+        "direction": "Turns the mirrored direction of the gestures on or off",
+        "zoom_ratio": "Sets how far the zoom gesture zooms in (1.0 to 4.0)"
       }
     },
     "settings": {

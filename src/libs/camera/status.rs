@@ -26,6 +26,8 @@ pub struct CameraStatus {
     pub noise_reduction: NoiseReduction,
     pub auto_gain: bool,
     pub pickup_distance: PickupDistance,
+    /// Gesture "target lock". The other gesture switches are not in the status block.
+    pub gesture_target_lock: bool,
 }
 
 impl CameraStatus {
@@ -45,6 +47,7 @@ impl CameraStatus {
             noise_reduction: Self::decode_noise_reduction(bytes),
             auto_gain: bytes[0x19] != 0,
             pickup_distance: Self::decode_pickup_distance(bytes),
+            gesture_target_lock: bytes[0x01] != 0,
         }
     }
 
@@ -144,6 +147,7 @@ impl CameraStatus {
             noise_reduction: NoiseReduction::Unknown,
             auto_gain: false,
             pickup_distance: PickupDistance::Unknown,
+            gesture_target_lock: false,
         }
     }
 }
@@ -338,6 +342,17 @@ mod tests {
                 assert_eq!(expected, status.pickup_distance);
             }
 
+            #[test_case(0x01, true; "on")]
+            #[test_case(0x00, false; "off")]
+            fn gesture_target_lock(hex_value: u8, expected: bool) {
+                let mut test_string = RAW_TEST_STRING;
+                test_string[0x01] = hex_value;
+
+                let status = CameraStatus::decode(&test_string);
+
+                assert_eq!(expected, status.gesture_target_lock);
+            }
+
             #[test]
             fn status_defaults() {
                 let default_status = CameraStatus::default();
@@ -408,6 +423,7 @@ mod tests {
                 assert_eq!(status.noise_reduction, NoiseReduction::Weak);
                 assert_eq!(status.auto_gain, true);
                 assert_eq!(status.pickup_distance, PickupDistance::Near);
+                assert_eq!(status.gesture_target_lock, true);
             }
         }
     }

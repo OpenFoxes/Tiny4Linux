@@ -5,8 +5,8 @@ use clap_complete::generate;
 use dialoguer::{FuzzySelect, Select};
 use rust_i18n::{i18n, set_locale, t};
 use tiny4linux::{
-    AIMode, AutoSleepTime, Camera, FieldOfView, NoiseReduction, PickupDistance, SleepBackground,
-    SleepMode, Tiny2Camera, get_language,
+    AIMode, AutoSleepTime, Camera, FieldOfView, Gesture, GestureZoomRatioCommand, NoiseReduction,
+    PickupDistance, SleepBackground, SleepMode, Tiny2Camera, get_language,
 };
 
 i18n!("src/locales", fallback = "en");
@@ -93,6 +93,11 @@ enum Command {
     Audio {
         #[command(subcommand)]
         setting: AudioArg,
+    },
+    #[command(alias = "gestures", about = t!("cli.help.gesture.command"))]
+    Gesture {
+        #[command(subcommand)]
+        setting: GestureArg,
     },
     #[command(about = t!("cli.help.info"))]
     Info,
@@ -192,6 +197,48 @@ enum AudioArg {
         #[arg(value_enum)]
         state: OnOffArg,
     },
+}
+
+#[derive(Subcommand, Clone)]
+enum GestureArg {
+    #[command(about = t!("cli.help.gesture.target_lock"))]
+    TargetLock {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(about = t!("cli.help.gesture.zoom"))]
+    Zoom {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(about = t!("cli.help.gesture.dynamic_zoom"))]
+    DynamicZoom {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(alias = "direction-change", about = t!("cli.help.gesture.direction"))]
+    Direction {
+        #[arg(value_enum)]
+        state: OnOffArg,
+    },
+    #[command(about = t!("cli.help.gesture.zoom_ratio"))]
+    ZoomRatio {
+        #[arg(value_parser = parse_zoom_ratio)]
+        ratio: f32,
+    },
+}
+
+/// Parses the zoom ratio of the zoom gesture, 1.0 to 4.0.
+fn parse_zoom_ratio(value: &str) -> Result<f32, String> {
+    value
+        .trim()
+        .parse::<f32>()
+        .ok()
+        .filter(|ratio| {
+            (GestureZoomRatioCommand::MIN_RATIO..=GestureZoomRatioCommand::MAX_RATIO)
+                .contains(ratio)
+        })
+        .ok_or_else(|| t!("cli.errors.invalid_zoom_ratio").to_string())
 }
 
 #[derive(ValueEnum, Clone)]
@@ -321,6 +368,7 @@ fn main() {
             camera.set_invert(inverted).unwrap();
         }
         Command::Audio { setting } => evaluate_audio_arg(setting.clone(), camera),
+        Command::Gesture { setting } => evaluate_gesture_arg(setting.clone(), camera),
         Command::AutoSleep { time } => evaluate_auto_sleep_arg(time.clone(), camera),
         Command::SleepBackground { background, mirror } => {
             evaluate_sleep_background_arg(background.clone(), mirror.clone(), camera)
@@ -353,6 +401,11 @@ fn main() {
                     "  💡  {}: {}",
                     t!("shared.info.led"),
                     led_brightness(info.led_brightness)
+                );
+                println!(
+                    "  ✋  {}: {}",
+                    t!("shared.info.gesture_target_lock"),
+                    on_off(info.gesture_target_lock)
                 );
                 println!(
                     "  🎙️  {}: {}",
@@ -822,9 +875,39 @@ fn evaluate_audio_arg(setting: AudioArg, camera: Camera) {
     }
 }
 
+fn evaluate_gesture_arg(setting: GestureArg, camera: Camera) {
+    let (gesture, state, label) = match setting {
+        GestureArg::ZoomRatio { ratio } => {
+            print_setting(t!("shared.info.gesture_zoom_ratio"), ratio);
+            camera.set_gesture_zoom_ratio(ratio).unwrap();
+            return;
+        }
+        GestureArg::TargetLock { state } => (
+            Gesture::TargetLock,
+            state,
+            t!("shared.info.gesture_target_lock"),
+        ),
+        GestureArg::Zoom { state } => (Gesture::Zoom, state, t!("shared.info.gesture_zoom")),
+        GestureArg::DynamicZoom { state } => (
+            Gesture::DynamicZoom,
+            state,
+            t!("shared.info.gesture_dynamic_zoom"),
+        ),
+        GestureArg::Direction { state } => (
+            Gesture::DirectionChange,
+            state,
+            t!("shared.info.gesture_direction"),
+        ),
+    };
+
+    let enabled = matches!(state, OnOffArg::On);
+    print_setting(label, on_off(enabled));
+    camera.set_gesture(gesture, enabled).unwrap();
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{AutoSleepArg, parse_auto_sleep};
+    use crate::{AutoSleepArg, parse_auto_sleep, parse_zoom_ratio};
     use test_case::test_case;
 
     #[test_case("off", AutoSleepArg::Off; "off")]
@@ -845,5 +928,21 @@ mod tests {
     #[test_case("soon"; "not a number")]
     fn invalid_auto_sleep(value: &str) {
         assert!(parse_auto_sleep(value).is_err());
+    }
+
+    #[test_case("1", 1.0; "minimum")]
+    #[test_case("2.5", 2.5; "fraction")]
+    #[test_case("4.0", 4.0; "maximum")]
+    fn valid_zoom_ratio(value: &str, expected: f32) {
+        assert_eq!(parse_zoom_ratio(value), Ok(expected));
+    }
+
+    // The camera accepts ratios from 1.0 to 4.0 only.
+    #[test_case("0.5"; "below minimum")]
+    #[test_case("4.5"; "above maximum")]
+    #[test_case("NaN"; "not a number")]
+    #[test_case("wide"; "text")]
+    fn invalid_zoom_ratio(value: &str) {
+        assert!(parse_zoom_ratio(value).is_err());
     }
 }
