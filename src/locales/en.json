@@ -18,7 +18,24 @@
       "sleep_mode": "Sleep Mode",
       "tracking": "Tracking",
       "tracking_speed": "Tracking Speed",
-      "t4l_version": "T4L Version"
+      "t4l_version": "T4L Version",
+      "auto_sleep": "Auto-Sleep",
+      "sleep_background": "Sleep Background",
+      "sleep_background_mirror": "Sleep Background Mirrored",
+      "led": "Status LED",
+      "field_of_view": "Field of View",
+      "mirror": "Mirror Image",
+      "invert": "Invert View and Gimbal",
+      "noise_reduction": "Noise Reduction",
+      "auto_gain": "Automatic Gain",
+      "pickup_distance": "Pickup Distance",
+      "mic_in_sleep": "Microphone while asleep",
+      "microphone": "Microphone",
+      "gesture_target_lock": "Gesture: Target Lock",
+      "gesture_zoom": "Gesture: Zoom",
+      "gesture_dynamic_zoom": "Gesture: Dynamic Zoom",
+      "gesture_direction": "Gesture: Direction Change",
+      "gesture_zoom_ratio": "Gesture Zoom Ratio"
     }
   },
   "gui": {
@@ -122,7 +139,9 @@
       "option_face": "Face"
     },
     "errors": {
-      "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera."
+      "info_error": "Camera could not be found or gave a faulty info. Please check the connection of the camera.",
+      "invalid_auto_sleep": "expected \"off\", seconds (e.g. 90 or 30s) or minutes (e.g. 2m), at most 32767 seconds",
+      "invalid_zoom_ratio": "expected a zoom ratio from 1.0 to 4.0"
     },
     "help": {
       "sleep": "Sets the camera to sleep",
@@ -138,8 +157,46 @@
       "completions": "Generates shell-completion scripts for the CLI-tool",
       "args": {
         "debug_logging": "Turning the debug logging on",
-        "lang": "Setting the language for the current command execution"
-      }
+        "lang": "Setting the language for the current command execution",
+        "auto_sleep_time": "off, 30s, 2m, 10m or a time in seconds",
+        "sleep_background_mirror": "Mirrors the sleep background",
+        "yes": "Skips the confirmation"
+      },
+      "auto_sleep": "Sets the time after which the camera falls asleep on its own",
+      "sleep_background": "Sets what the camera shows while asleep",
+      "led": "Sets the brightness of the status LED (off, 1, 2, 3)",
+      "fov": "Sets the field of view of the camera",
+      "mirror": "Mirrors the image of the camera",
+      "invert": "Reverses the gimbal's left/right direction; the image does not change (the camera does not report this setting)",
+      "audio": {
+        "command": "Controls the microphone of the camera",
+        "noise_reduction": "Sets the noise reduction of the microphone",
+        "auto_gain": "Turns the automatic gain of the microphone on or off",
+        "pickup_distance": "Sets the audio pickup distance",
+        "mic_in_sleep": "Keeps the microphone on while the camera is asleep",
+        "mic": "Enables or disables the microphone (the camera restarts)"
+      },
+      "gesture": {
+        "command": "Controls the gesture control of the camera (only target lock is reported back by the camera)",
+        "target_lock": "Turns the target lock gesture on or off",
+        "zoom": "Turns the zoom gesture on or off",
+        "dynamic_zoom": "Turns the dynamic zoom gesture on or off",
+        "direction": "Turns the mirrored direction of the gestures on or off",
+        "zoom_ratio": "Sets how far the zoom gesture zooms in (1.0 to 4.0)"
+      },
+      "factory_reset": "Resets the camera to its factory settings (the camera restarts)"
+    },
+    "settings": {
+      "response": "Setting %{setting} to %{value}"
+    },
+    "audio": {
+      "warning_restart": "Warning: the camera may restart to apply this setting and be unavailable for about 20 seconds."
+    },
+    "factory_reset": {
+      "warning": "This resets all settings of the camera to their factory defaults. The camera restarts afterwards.",
+      "request_confirmation": "Reset the camera to its factory settings?",
+      "aborted": "Factory reset aborted",
+      "response": "Resetting the camera to its factory settings"
     }
   },
   "display": {
@@ -174,6 +231,33 @@
     "states": {
       "on": "On",
       "off": "Off"
+    },
+    "auto_sleep": {
+      "on": "%{seconds} s",
+      "off": "Off (%{seconds} s)"
+    },
+    "sleep_background": {
+      "black": "Black",
+      "image": "Image",
+      "unknown": "Unknown"
+    },
+    "field_of_view": {
+      "wide": "Wide",
+      "medium": "Medium",
+      "narrow": "Narrow",
+      "unknown": "Unknown"
+    },
+    "noise_reduction": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "unknown": "Unknown"
+    },
+    "pickup_distance": {
+      "near": "Near",
+      "standard": "Standard",
+      "far": "Far",
+      "unknown": "Unknown"
     }
   },
   "errors": {

@@ -94,6 +94,104 @@ t4l exposure manual
 | Global | Uses global reference for setting the exposure    | `global` |
 | Face   | Uses a face as reference for setting the exposure | `face`   |
 
+## Image
+
+These commands change the picture of the camera.
+
+```shell
+t4l fov medium
+t4l mirror on
+```
+
+| Action        | Description                                                           | Command                    | Aliases         |
+| ------------- | --------------------------------------------------------------------- | -------------------------- | --------------- |
+| Field of View | Sets the field of view                                                | `fov wide\|medium\|narrow` | `field-of-view` |
+| Mirror        | Mirrors the image                                                     | `mirror on\|off`           |                 |
+| Invert        | Reverses the gimbal's left/right direction; the image does not change | `invert on\|off`           |                 |
+
+The camera does not report the invert setting back, so `info` cannot show it.
+
+## Status LED
+
+With the command `led` you can set the brightness of the status LED (`off`, `1`, `2` or `3`).
+
+```shell
+t4l led 2
+```
+
+## Auto-Sleep
+
+With the command `auto-sleep` you can set the time after which the camera falls asleep on its own,
+or turn auto-sleep off.
+
+```shell
+t4l auto-sleep 2m
+t4l auto-sleep off
+```
+
+Valid times are `off`, seconds (`90` or `30s`) and minutes (`2m`, `10m`).
+Turning auto-sleep off keeps the configured time, like OBSBOT Center does.
+
+## Sleep Background
+
+With the command `sleep-background` you can choose what the camera shows while asleep (`black` or the built-in `image`)
+and whether that background is mirrored.
+
+```shell
+t4l sleep-background image
+t4l sleep-background black --mirror off
+```
+
+## Audio
+
+With these commands you can control the microphone of the camera.
+
+All audio commands begin with `audio`, e.g.:
+
+```shell
+t4l audio noise-reduction medium
+```
+
+| Action                  | Description                                        | Command                                     | Aliases      |
+| ----------------------- | -------------------------------------------------- | ------------------------------------------- | ------------ |
+| Noise Reduction         | Sets the noise reduction of the microphone         | `noise-reduction off\|weak\|medium\|strong` |              |
+| Automatic Gain          | Turns the automatic gain on or off                 | `auto-gain on\|off`                         |              |
+| Pickup Distance         | Sets the audio pickup distance                     | `pickup-distance near\|standard\|far`       |              |
+| Microphone while asleep | Keeps the microphone on while the camera is asleep | `mic-in-sleep on\|off`                      |              |
+| Microphone              | Enables or disables the microphone                 | `mic on\|off`                               | `microphone` |
+
+WARNING: Disabling the microphone makes the camera restart. It is unavailable for about 20 seconds.
+
+## Gestures
+
+With these commands you can control the gesture control of the camera.
+
+All gesture commands begin with `gesture` or `gestures`, e.g.:
+
+```shell
+t4l gesture zoom on
+t4l gesture zoom-ratio 2.5
+```
+
+| Action           | Description                              | Command                | Aliases            |
+| ---------------- | ---------------------------------------- | ---------------------- | ------------------ |
+| Target Lock      | Turns the target lock gesture on or off  | `target-lock on\|off`  |                    |
+| Zoom             | Turns the zoom gesture on or off         | `zoom on\|off`         |                    |
+| Dynamic Zoom     | Turns the dynamic zoom gesture on or off | `dynamic-zoom on\|off` |                    |
+| Direction Change | Mirrors the direction of the gestures    | `direction on\|off`    | `direction-change` |
+| Zoom Ratio       | Sets how far the zoom gesture zooms in   | `zoom-ratio <1.0-4.0>` |                    |
+
+The camera only reports the target lock back, so `info` cannot show the other gesture settings.
+
+## Factory Reset
+
+With the command `factory-reset` you can reset all settings of the camera to their factory defaults.
+The camera asks for a confirmation unless you pass `--yes`, and restarts afterwards.
+
+```shell
+t4l factory-reset
+```
+
 ## Info
 
 You can display available information about the current state of the camera with the command `info`.
