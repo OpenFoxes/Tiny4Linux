@@ -80,7 +80,8 @@ pub trait Tiny2Camera {
     fn set_led_brightness(&self, brightness: u8) -> Result<(), T4lError>;
     fn set_field_of_view(&self, fov: FieldOfView) -> Result<(), T4lError>;
     fn set_mirror(&self, mirrored: bool) -> Result<(), T4lError>;
-    /// Turns view and gimbal upside down. The camera does not report this setting back.
+    /// Reverses the gimbal's left/right (pan) direction; the image does not change. The camera
+    /// does not report this setting back.
     fn set_invert(&self, inverted: bool) -> Result<(), T4lError>;
     fn set_mic_in_sleep(&self, enabled: bool) -> Result<(), T4lError>;
     fn set_noise_reduction(&self, level: NoiseReduction) -> Result<(), T4lError>;

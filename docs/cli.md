@@ -103,11 +103,11 @@ t4l fov medium
 t4l mirror on
 ```
 
-| Action        | Description                                                         | Command                    | Aliases         |
-| ------------- | ------------------------------------------------------------------- | -------------------------- | --------------- |
-| Field of View | Sets the field of view                                              | `fov wide\|medium\|narrow` | `field-of-view` |
-| Mirror        | Mirrors the image                                                   | `mirror on\|off`           |                 |
-| Invert        | Turns view and gimbal upside down, for a camera mounted upside down | `invert on\|off`           |                 |
+| Action        | Description                                                           | Command                    | Aliases         |
+| ------------- | --------------------------------------------------------------------- | -------------------------- | --------------- |
+| Field of View | Sets the field of view                                                | `fov wide\|medium\|narrow` | `field-of-view` |
+| Mirror        | Mirrors the image                                                     | `mirror on\|off`           |                 |
+| Invert        | Reverses the gimbal's left/right direction; the image does not change | `invert on\|off`           |                 |
 
 The camera does not report the invert setting back, so `info` cannot show it.
 

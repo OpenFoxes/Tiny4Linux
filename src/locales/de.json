@@ -167,7 +167,7 @@
       "led": "Legt die Helligkeit der Status-LED fest (off, 1, 2, 3)",
       "fov": "Legt das Sichtfeld der Kamera fest",
       "mirror": "Spiegelt das Bild der Kamera",
-      "invert": "Stellt Ansicht und Gimbal auf den Kopf, für eine kopfüber montierte Kamera (die Kamera meldet diese Einstellung nicht zurück)",
+      "invert": "Kehrt die Links-Rechts-Richtung des Gimbals um; das Bild ändert sich nicht (die Kamera meldet diese Einstellung nicht zurück)",
       "audio": {
         "command": "Steuert das Mikrofon der Kamera",
         "noise_reduction": "Legt die Rauschunterdrückung des Mikrofons fest",

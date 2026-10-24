@@ -167,7 +167,7 @@
       "led": "Sets the brightness of the status LED (off, 1, 2, 3)",
       "fov": "Sets the field of view of the camera",
       "mirror": "Mirrors the image of the camera",
-      "invert": "Turns view and gimbal upside down, for a camera mounted upside down (the camera does not report this setting)",
+      "invert": "Reverses the gimbal's left/right direction; the image does not change (the camera does not report this setting)",
       "audio": {
         "command": "Controls the microphone of the camera",
         "noise_reduction": "Sets the noise reduction of the microphone",

@@ -2,8 +2,9 @@
 
 use crate::frame;
 
-/// Framed command (unit 2, selector 2) that turns the view and the gimbal upside down,
-/// for a camera mounted upside down. The camera does not report this setting back.
+/// Framed command (unit 2, selector 2) that reverses the gimbal's left/right (pan) direction
+/// ("Invert view and gimbal" in OBSBOT Center); the image does not change. The camera does not
+/// report this setting back.
 pub struct InvertCommand;
 
 impl InvertCommand {
